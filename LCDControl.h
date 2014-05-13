@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal.h>
-#include <PString.h>
 
 class LCDControl {
     public:
