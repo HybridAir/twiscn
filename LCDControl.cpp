@@ -1,12 +1,18 @@
+
+#include <PString.h>
+
 //Used for controlling the LCD
 //Handles text formatting, display, scrolling, and backlight control
 
 #include <Arduino.h>                                                            //too stubborn to move away from their nice library c:
-#include <LiquidCrystal.h>
+//#include <LiquidCrystal.h>
+//#include <PString.h>
 
-LCDControl::LCDControl(Options in) {                                            //Constructor, wants the options object probably created in main.cpp
-    color = in.getColor();                                                      //get the color var
-    brightness = in.getBright();                                                //and brightness var from the options class (not yet made)
+LCDControl::LCDControl(Options optin, TweetHandler twtin) {                                            //Constructor, wants the options object probably created in main.cpp
+    opt = optin;
+    twt = twtin;
+    color = opt.getColor();                                                      //get the color var
+    brightness = opt.getBright();                                                //and brightness var from the options class (not yet made)
     digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
     //turns out there are some things called noDisplay() and display(), never even needed the contrast pin (kill me c:)
     lcd.begin(LCDWIDTH,2);                                                      //get that LCD going
@@ -17,13 +23,45 @@ void LCDControl::printUser(String in) {                                         
     lcd.print(in);                                                              //print the username, don't need to do anything to it
 }
 
+void LCDControl::printTweet() {                                                 //used to print a new tweet, and then handle scrolling
+    printBegin();
+//scrolling stuff here
+
+}
+
+void LCDControl::printBegin() {                                                 //used to print the beginning of the tweet, wants the tweet
+    clearRow(1);                                                                //clear the bottom row first
+    String out = twt.getTwtBegin();                                               //get the beginning on the tweet
+    lcd.print(out);                                                             //since it's going to be LCDWIDTH or less, don't do anything to it and print it 
+    
+    //can get rid of this stuff
+//    int length = LCDWIDTH;                                                      //default the length to the LCDWIDTH
+//    if(twt.getLength() <= LCDWIDTH) {                                               //if the tweet is somehow less than LCDWIDTH, set the length to that instead
+//        length = in.length();
+//    }
+//    
+//    for(int i = 0;i <= length; i++) {                                           //print each character in the TEXT array onto the lcd
+//        lcd.setCursor(i - 1, 1);
+//        lcd.print(in);
+//    }
+}
+
 void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number
     lcd.setCursor(0, row);                                                      //set the row to start clearing
     for(int i = 0;i <= LCDWIDTH; i++) {                                         //for each column in the row
         lcd.print(" ");                                                         //print a space over it, essentially clearing it
     }
-    lcd.setCursor(0, 0);                                                        //reset cursor position
+    lcd.setCursor(0, row);                                                      //reset cursor position
 }
+
+
+
+
+
+
+
+
+
 
 
 //hell I don't even need this either
@@ -36,15 +74,7 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
 
 
 
-void LCDControl::displayBeginning(int textLength) {                             //used to show the beginning (first 16 characters) of the tweet
-    //needs the text length in case the tweet is shorter than 16 characters
-    lcd.setCursor(0, 1);                                                          //first character, bottom row
-    lcd.print("                ");                                                //clear the row, make a separate function for this  
-    for(int i = 1; i <= textLength; i++) {                                        //print each character in the TEXT array onto the lcd
-        lcd.setCursor(i - 1, 1);
-        lcd.print(Row2Array[i]);
-    }
-}
+
 
 
 
