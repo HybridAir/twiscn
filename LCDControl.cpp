@@ -2,118 +2,39 @@
 //Handles text formatting, display, scrolling, and backlight control
 
 #include <Arduino.h>                                                            //too stubborn to move away from their nice library c:
+#include <LiquidCrystal.h>
 
-LCDControl::LCDControl(Options in) {                                            //Constructor, needs starting options
-    color = in.getColor();                                                      //temporary
-    prepareLCD();                                                               //sets up the display with the just set parameters
+LCDControl::LCDControl(Options in) {                                            //Constructor, wants the options object probably created in main.cpp
+    color = in.getColor();                                                      //get the color var
+    brightness = in.getBright();                                                //and brightness var from the options class (not yet made)
+    digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
+    //turns out there are some things called noDisplay() and display(), never even needed the contrast pin (kill me c:)
+    lcd.begin(LCDWIDTH,2);                                                      //get that LCD going
 }
 
-void LCDControl::prepareLCD() { 
-    brightness = 0;
-    digitalWrite(LCDPOWPIN, HIGH);
-    lcd.begin(16,2);
+void LCDControl::printUser(String in) {                                         //prints the tweet's username, wants a String
+    clearRow(0);                                                                //clear the username row to prepare it for an update
+    lcd.print(in);                                                              //print the username, don't need to do anything to it
 }
 
-void LCDControl::CreateChar(byte code, PGM_P character) {                       //creates new characters for use within the display
+void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number
+    lcd.setCursor(0, row);                                                      //set the row to start clearing
+    for(int i = 0;i <= LCDWIDTH; i++) {                                         //for each column in the row
+        lcd.print(" ");                                                         //print a space over it, essentially clearing it
+    }
+    lcd.setCursor(0, 0);                                                        //reset cursor position
+}
+
+
+//hell I don't even need this either
+void LCDControl::CreateChar(byte code, PGM_P character) {                       //creates new characters for use within the display, used for display the logo
     byte* buffer = (byte*)malloc(8);
     memcpy_P(buffer, character,  8);
     lcd.createChar(code, buffer);
     free(buffer);
 }
 
-void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the customs chars are made
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 250;
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 0;
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 250;
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 0;
-    setBacklight(r, g, b);
-    delay(200);
-    brightness = 250;
-    setBacklight(r, g, b); 
 
-    CreateChar(0, top1);
-    CreateChar(1, top2);
-    CreateChar(2, left1);
-    CreateChar(3, left2);
-    CreateChar(4, right2);
-    CreateChar(5, right1);
-
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(" ");
-    lcd.print((char)0);
-    lcd.print((char)1);
-    delay(250);
-    lcd.setCursor(0, 1);
-    lcd.print((char)2);
-    lcd.print((char)3);
-    delay(250);
-    lcd.print((char)4);
-    lcd.print((char)5);
-    delay(250); 
-    lcd.setCursor(6, 0);
-    lcd.print("Twitter");
-    lcd.setCursor(6, 1);
-    lcd.print("Screen v1"); 
-    delay(1000);
-    lcd.setCursor(6, 0);
-    lcd.print("Waiting");
-    lcd.setCursor(6, 1);
-    lcd.print("for USB  ");
-}
-
-void LCDControl::connecting() {                                                 //animation displayed while the device is connecting
-    while(runOnce == 0) {
-        lcd.clear();
-        lcd.setCursor(6, 0);
-        lcd.print("Connecting");
-        lcd.setCursor(6, 1);
-        lcd.print("to Host");
-        runOnce = 1;
-        unsigned long previousMillis = 0; 
-    }
-
-    if (count == 3) {
-        count = 0;
-    }
-    if (count == 0) {
-        lcd.setCursor(0, 1);
-        lcd.print("    ");
-        lcd.setCursor(1, 0);
-        lcd.print((char)0);
-        lcd.print((char)1);
-    }
-    else if (count == 1) {
-        lcd.setCursor(0, 0);
-        lcd.print("   ");
-        lcd.setCursor(0, 1);
-        lcd.print((char)2);
-        lcd.print((char)3);
-    }
-    else if (count == 2) {
-        lcd.setCursor(0, 1);
-        lcd.print("  ");
-        lcd.print((char)4);
-        lcd.print((char)5);
-    }
-    count++;
-}
-
-void LCDControl::connected() {                                                  //shows after the device is connected
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Waiting for");
-    lcd.setCursor(0, 1);
-    lcd.print("latest data...");
-}
 
 void LCDControl::displayBeginning(int textLength) {                             //used to show the beginning (first 16 characters) of the tweet
     //needs the text length in case the tweet is shorter than 16 characters
@@ -125,13 +46,12 @@ void LCDControl::displayBeginning(int textLength) {                             
     }
 }
 
-void LCDControl::displayUser() {                                                //displays the tweet's username, is always <=16 chars
-    lcd.setCursor(0, 0);
-    lcd.print("                ");   //clear the top lcd row  
-    lcd.setCursor(0, 0);
-    lcd.print(Row1);
-}
 
+
+
+
+//so apparently the following fucking mess may not be needed, the liquidcrystal lib has its own scrolling deal?
+//kill me
 void LCDControl::scrolltext() {                                                 //used to scroll the text on the bottom row
     if (Row2.length() <= LCD_COLS) {                                            //check if tweet can fit in the bottom row without scrolling first
         if (newTweet == 1) {                                                    //make sure there is actually a new tweet to display
@@ -228,6 +148,105 @@ void setBacklight(uint8_t r, uint8_t g, uint8_t b) {
     analogWrite(BLUELITE, b);
 }
 
+
+
+
+void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the customs chars are made
+    setBacklight(r, g, b);
+    delay(25);
+    brightness = 250;
+    setBacklight(r, g, b);
+    delay(25);
+    brightness = 0;
+    setBacklight(r, g, b);
+    delay(25);
+    brightness = 250;
+    setBacklight(r, g, b);
+    delay(25);
+    brightness = 0;
+    setBacklight(r, g, b);
+    delay(200);
+    brightness = 250;
+    setBacklight(r, g, b); 
+
+    CreateChar(0, top1);
+    CreateChar(1, top2);
+    CreateChar(2, left1);
+    CreateChar(3, left2);
+    CreateChar(4, right2);
+    CreateChar(5, right1);
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(" ");
+    lcd.print((char)0);
+    lcd.print((char)1);
+    delay(250);
+    lcd.setCursor(0, 1);
+    lcd.print((char)2);
+    lcd.print((char)3);
+    delay(250);
+    lcd.print((char)4);
+    lcd.print((char)5);
+    delay(250); 
+    lcd.setCursor(6, 0);
+    lcd.print("Twitter");
+    lcd.setCursor(6, 1);
+    lcd.print("Screen v1"); 
+    delay(1000);
+    lcd.setCursor(6, 0);
+    lcd.print("Waiting");
+    lcd.setCursor(6, 1);
+    lcd.print("for USB  ");
+}
+
+void LCDControl::connecting() {                                                 //animation displayed while the device is connecting
+    while(runOnce == 0) {
+        lcd.clear();
+        lcd.setCursor(6, 0);
+        lcd.print("Connecting");
+        lcd.setCursor(6, 1);
+        lcd.print("to Host");
+        runOnce = 1;
+        unsigned long previousMillis = 0; 
+    }
+
+    if (count == 3) {
+        count = 0;
+    }
+    if (count == 0) {
+        lcd.setCursor(0, 1);
+        lcd.print("    ");
+        lcd.setCursor(1, 0);
+        lcd.print((char)0);
+        lcd.print((char)1);
+    }
+    else if (count == 1) {
+        lcd.setCursor(0, 0);
+        lcd.print("   ");
+        lcd.setCursor(0, 1);
+        lcd.print((char)2);
+        lcd.print((char)3);
+    }
+    else if (count == 2) {
+        lcd.setCursor(0, 1);
+        lcd.print("  ");
+        lcd.print((char)4);
+        lcd.print((char)5);
+    }
+    count++;
+}
+
+void LCDControl::connected() {                                                  //shows after the device is connected
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Waiting for");
+    lcd.setCursor(0, 1);
+    lcd.print("latest data...");
+}
+
+
+
 void newTweetBlink() {
     if (tweetBlinkEnabled == 1) {
         if (timeToBlink == 1) {
@@ -306,3 +325,10 @@ void checkRainbow() {
             }
         }
     }
+
+
+//void LCDControl::prepareLCD() { 
+//    brightness = 0;
+//    digitalWrite(LCDPOWPIN, HIGH);
+//    lcd.begin(16,2);
+//}
