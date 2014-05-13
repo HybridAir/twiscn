@@ -1,4 +1,4 @@
 TwiScnDevice
 ============
 
-C++ code used in the TwiScn (TwitterScreen?) device. Files are organized in the NetBeans project format. Currently in the process of importing the whole thing from the Arduino IDE, and rewriting it.
+C++ code used for the <a href="http://hybridairworks.tumblr.com/tagged/twitterscreen">TwiScn (TwitterScreen?)</a> device. The project is currently in the process of being imported from the Arduino IDE, and being rewritten.
