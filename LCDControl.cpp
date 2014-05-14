@@ -1,7 +1,8 @@
 //Used for controlling the LCD
 //Handles text formatting, display, scrolling, and backlight control
 
-#include <Arduino.h>                                                            //too stubborn to move away from their nice library c:
+#include <Arduino.h>
+#include <LCD.h>                                                            //too stubborn to move away from their nice library c:
 //#include <LiquidCrystal.h>
 //#include <PString.h>
 
@@ -254,6 +255,29 @@ void LCDControl::connected() {                                                  
     lcd.print("Waiting for");
     lcd.setCursor(0, 1);
     lcd.print("latest data...");
+}
+
+void LCDControl::sleepLCD(bool in) {
+    if(in) {                                                                    //lcd needs to go to sleep
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Host is offline,");
+        lcd.setCursor(0, 1);
+        lcd.print("entering standby");
+        delay(4000);
+        lcd.clear();
+        brightness = 0;
+        setBacklight(r, g, b);
+        digitalWrite(LCDPOWPIN, LOW);
+        lcd.noDisplay();
+    }
+    else {                                                                      //lcd needs to wake up
+        digitalWrite(LCDPOWPIN, HIGH);
+        lcd.display();
+//        brightness = 0;
+//        setBacklight(r, g, b);
+        bootAnimation();
+    }
 }
 
 
