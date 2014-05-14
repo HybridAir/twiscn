@@ -1,6 +1,3 @@
-
-#include <PString.h>
-
 //Used for controlling the LCD
 //Handles text formatting, display, scrolling, and backlight control
 
@@ -33,17 +30,6 @@ void LCDControl::printBegin() {                                                 
     clearRow(1);                                                                //clear the bottom row first
     String out = twt.getTwtBegin();                                               //get the beginning on the tweet
     lcd.print(out);                                                             //since it's going to be LCDWIDTH or less, don't do anything to it and print it 
-    
-    //can get rid of this stuff
-//    int length = LCDWIDTH;                                                      //default the length to the LCDWIDTH
-//    if(twt.getLength() <= LCDWIDTH) {                                               //if the tweet is somehow less than LCDWIDTH, set the length to that instead
-//        length = in.length();
-//    }
-//    
-//    for(int i = 0;i <= length; i++) {                                           //print each character in the TEXT array onto the lcd
-//        lcd.setCursor(i - 1, 1);
-//        lcd.print(in);
-//    }
 }
 
 void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number
@@ -62,10 +48,7 @@ void LCDControl::clearRow(byte row) {                                           
 
 
 
-
-
-//hell I don't even need this either
-void LCDControl::CreateChar(byte code, PGM_P character) {                       //creates new characters for use within the display, used for display the logo
+void LCDControl::CreateChar(byte code, PGM_P character) {                       //used to get customs characters out of progmem and into the lcd
     byte* buffer = (byte*)malloc(8);
     memcpy_P(buffer, character,  8);
     lcd.createChar(code, buffer);
@@ -80,8 +63,6 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
 
 
 
-//so apparently the following fucking mess may not be needed, the liquidcrystal lib has its own scrolling deal?
-//kill me
 void LCDControl::scrolltext() {                                                 //used to scroll the text on the bottom row
     if (Row2.length() <= LCD_COLS) {                                            //check if tweet can fit in the bottom row without scrolling first
         if (newTweet == 1) {                                                    //make sure there is actually a new tweet to display
