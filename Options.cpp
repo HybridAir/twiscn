@@ -39,6 +39,35 @@ byte Options::getBlinkSpd() {
     return blinkSpd;
 }
 
+//==============================================================================
+
+Options::setBrightness(byte in) {
+    brightness = in;
+}
+
+Options::setCol(byte r, byte g, byte b) {
+    color = {r, g, b};
+}
+
+Options::setBlinkCol(byte r, byte g, byte b) {                                  
+    blinkColor = {r, g, b};
+}
+
+Options::setRainbow(bool in) {
+    rainbow = in;
+}
+
+Options::setRainSpd(int in) {
+    rainSpd = in;
+}
+
+Options::setBlink(bool in) {
+    blink = in;
+}
+
+Options::setBlinkSpd(byte in) {
+    blinkSpd = in;
+}
 
 
 
@@ -46,8 +75,6 @@ byte Options::getBlinkSpd() {
 
 
 
-
-//================================================================
 
 void checkFN1() {
   boolean changed = debouncerFN1.update();
