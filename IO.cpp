@@ -4,7 +4,7 @@
 #include "usbdrv.h"                                                             //the usbSofCount variable requires this
 #include <Bounce.h>
 
-IO::IO(Comms commsin) {                                                                      //default constructor, sets up all the inputs and outputs                                                
+IO::IO(Comms commsin, LCDControl lcdin) {                                       //default constructor, sets up all the inputs and outputs                                                
     pinMode(RESETPIN, OUTPUT);
     pinMode(CONLED, OUTPUT);
     pinMode(LCDPOWPIN, OUTPUT);
@@ -15,6 +15,7 @@ IO::IO(Comms commsin) {                                                         
     dbFN1.attach(FN1PIN);
     dbFN2.attach(FN2PIN);
     comms = commsin;
+    lcd = lcdin;
 }
 
 void IO::connectionLED(byte mode) {                                             //controls the connection LED, needs a mode
@@ -26,7 +27,7 @@ void IO::connectionLED(byte mode) {                                             
             digitalWrite(CONLED, HIGH);
             break;
         case 2:                                                                 //blink the LED (non-blocking)
-            currentMillis = millis();
+            unsigned long currentMillis = millis();
             if(currentMillis - previousMillis > BLINKTIME) {
                 previousMillis = currentMillis;
                 if (blinkState) {
@@ -41,7 +42,7 @@ void IO::connectionLED(byte mode) {                                             
     }
 }
 
-void IO::checkButtons() {
+void IO::checkButtons() {                                                       //checks the debounced buttons for any changes, always run this
     if(dbFN1.update()) {
         if(!dbFN1.read()) {                                                     //if the button was just released
             comms.sendBtn(1);                                                   //tell the host the user pushed FN1
@@ -54,85 +55,35 @@ void IO::checkButtons() {
     }
 }
 
+//==============================================================================
 
-
-
-
-void sleepDetect() {
-    unsigned long currentMillis6 = millis();
-  if(currentMillis6 - previousMillis6 > 500) {
-    // save the last time you blinked the LED 
-    previousMillis6 = currentMillis6; 
-    if (detectionState == 0){
-      laststate = usbSofCount; 
-      detectionState = 1;
+void IO::checkConnection() {                                                    //check if the device's data connection was disconnected, always run this
+    unsigned long currentMillis = millis();
+    unsigned long currentSOF = usbSofCount;                                     //get the current number of SOFs
+    if(currentMillis - previousMillis2 > SOFDELAY) {                            //only check for new SOF counts every 500 ms (SOFDELAY)
+        previousMillis2 = currentMillis;  
+        if(currentSOF == lastSOF) {                                             //if the SOF counts match (meaning we lost usb connection)  
+            if(!sleeping) {
+                sleeping = true;
+                goToSleep();
+            }
+        }
+        else {                                                                  //the SOF counts are different (still being updated, so it's still connected)
+            lastSOF = currentSOF;
+            sleeping = false;
+        }
     }
-    else if (detectionState == 1) {
-    currentstate = usbSofCount;
-    detectionState = 0;
-      if (currentstate != laststate) {
-        sleepStatus = 0;
-      }
-      else {
-        sleepStatus = 1; 
-      } 
-    }
-  }
 }
 
-//======================================================================
-
-void sleepState() {
-  if (sleepStatus == 1) {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Host is offline,");
-    lcd.setCursor(0, 1);
-    lcd.print("entering standby");
-    boolean waitingToSleep = 1;
-    previousMillis8 = millis();
-    
-    while(waitingToSleep == 1) {
-      currentMillis8 = millis();
-      if(currentMillis8 - previousMillis8 > 4000) {      
-        waitingToSleep = 0;
-        lcd.clear();
-        brightness = 0;
-        setBacklight(r, g, b);
-        digitalWrite(LCDPOWPIN, LOW);
-        conStatus = 0;
-        asleep = 1;
-      }
+void IO::goToSleep() {
+    lcd.sleepLCD(true);                                                         //turn the LCD off (sleep))
+    connectionLED(0);                                                           //turn the connection LED off, no longer connected
+    while(sleeping) {                                                           //run some checks while the device is "sleeping"
+        usbPoll();
+        sleepDetect();                                                          //check if we still need to be sleeping
+        if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                     
+            lcd.sleepLCD(false);                                                //wake the LCD up                 
+            hostHandshake();                                                    //reconnect to the host
+        }
     }
-  
-    
-    while(asleep == 1) {
-      usbPoll();
-      sleepDetect();
-      if (sleepStatus == 0) {
-        digitalWrite(CONLED,LOW);
-        asleep = 0;
-        runOnce = 0;
-        readyToSleep = 0;
-        digitalWrite(LCDPOWPIN, HIGH);
-        bootAnimation();  
-        hostHandshake();
-        lcd.clear();
-        newTweet = 1;
-      }
-    }
-  }
 }
-
-//======================================================================
-
-void sleepWait() {
-  if (readyToSleep == 0) {
-    howLongItsBeen2 = millis() - lastTimeItHappened2;
-    if ( howLongItsBeen2 >= 5000 ) {
-      readyToSleep = 1;
-    }
-  }
-}
-
-
