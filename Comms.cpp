@@ -9,21 +9,15 @@ Comms::Comms(Options optin, IO ioin) {                                          
     io = ioin;
 }
 
-void Comms::readComms() {                                                      //checks if we got anything new from the host, and then processes it
+void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it
     if (usb.available()) {                                                      //check if there's something in the usb buffer
         usb.read((uint8_t*)usbBuffer);                                          //put the data into a string (probably dont need the uint8_t*)
-        int inByte = usbBuffer.charAt(0);                                       //first character is used to identify the data packet type
+        char inByte = usbBuffer.charAt(0);                                      //first character is used to identify the data packet type
     
         switch (inByte) {                                                       //check what character it is, and process accordingly
             case '=':                                                           //marks the end of the entire transfer, must always be in its own packet     
-                //newOutput = true;                                               //show that new data has been received and is ready to process
                 checkType();                                                    //process the completed data transfer
-                break; 
-                //probably dont even need case + anymore, since we can easily add stuff to strings now
-//            case '+':                                                           //signifies that this transfer will consist of an additional packet
-//                //extendBuffer = 1;      //open the next data buffer
-//                transferOut += usbBuffer;                                       //add the current packet to the output transfer String
-//                break;      
+                break;     
             default:                                                            //this will only trigger if we got transfer type signifier (!, @, etc)            
                 transferOut += usbBuffer;                                       //add the current packet to the output transfer String
                 break;
@@ -31,22 +25,25 @@ void Comms::readComms() {                                                      /
     }
 }
 
+//might need to eventually clear transferOut
+
 void Comms::checkType() {                                                       //used to check the type of transfer
-  //if (newOutput > 0) {   //only do this if we just got stuff from checkComms (a '=' was sent)
     char type = transferOut.charAt(0);                                          //get the first char out of the transfer output, it's the transfer type
     transferOut = transferOut.substring(1);                                     //remove the the first character, it's no longer needed in there
     switch(type) {                                             //check the first char of the transferOut String
         case '@':                                                               //username transfer, also signifies the start of a new tweet
             userOut = transferOut;                                              //put the transfer into a new String for the username
+            transferOut = "";
             gotUser = true;                               
             break;
         case '!':                                                               //tweet transfer, ending for a new tweet     
             twtOut = transferOut;                                               //put the transfer into a new String for the tweet
+            transferOut = "";
             gotTweet = true;
             break;
         case '$':                                                               //option transfer
             opt.extractOption(transferOut);
-            checkOption();
+            transferOut = "";
             break;   
     }
     if (gotUser & gotTweet) {
@@ -54,8 +51,7 @@ void Comms::checkType() {                                                       
         twt.setTweet(userOut);
         gotTweet = false;                                                       //already got the new tweet, so reset those vars
         gotUser = false;
-    }
-    //newOutput = 0;    
+    }   
 }
 
 void Comms::handshake() {                                                       //function used to establish a data connection with the host
