@@ -3,18 +3,16 @@
 
 #include <Arduino.h>
 #include <HIDSerial.h>
-#include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
-#include "usbdrv.h"                                                             //the usbSofCount variable requires this
 
 class Comms {
     public:
-        Comms(Options optin);
+        Comms(Options optin, IO ioin);
         readComms();
         handshake();
     private:
         checkType();
         Options opt;
-        volatile uchar usbSofCount;
+        IO io;
         HIDSerial usb;                                                          //creates a new HIDSerial instance, named usb
         String usbBuffer;
         bool newOutput = false;
@@ -24,7 +22,6 @@ class Comms {
         bool gotUser = false;
         bool gotTweet = false;
         bool connected = false;
-        const int CONLED = A4;
 };
 
 #endif	/* COMMS_H */
