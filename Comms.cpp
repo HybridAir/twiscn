@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <HIDSerial.h>
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
-#include "usbdrv.h"                                                             //the usbSofCount variable requires this
+#include "usbdrv.h"
+#include "IO.h"                                                             //the usbSofCount variable requires this
 
-Comms::Comms(Options optin) {                                                                //default constructor
+Comms::Comms(Options optin, IO ioin) {                                                                //default constructor
     opt = optin;
+    io = ioin;
 }
 
 void Comms::readComms() {                                                      //checks if we got anything new from the host, and then processes it
@@ -59,7 +61,7 @@ void Comms::checkType() {                                                       
 void Comms::handshake() {                                                       //function used to establish a data connection with the host
     while (!connected) {                                                        //do this while we are not connected
         connectingAnimation();                                                  //display the connecting animation on the LCD
-        IO.blinkConn();                                                         //blink the connection led to further signify that the device is connecting
+        io.connectionLED(2);                                                    //blink the connection led to further signify that the device is connecting
         usbPoll();                                                              //keep polling the USB port for any new data
         usb.println("`");                                                       //continuously send this to the host so it knows the we are waiting for a handshake
         if (usb.available()) {                                                  //check if we got any data from the host
@@ -69,6 +71,6 @@ void Comms::handshake() {                                                       
             }
         }  
     }
-    digitalWrite(CONLED,HIGH);    //since we're connected by the time we get here, keep the connection LED on
+    io.connectionLED(1);
     connectedLCD();  
 }
