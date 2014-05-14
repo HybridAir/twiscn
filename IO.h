@@ -8,11 +8,9 @@
 class IO {
     public:
         IO();
-        connectionLED(int in);
+        connectionLED(byte mode);
         checkButtons();
-        checkConnection();
     private:
-        goToSleep();
         const int CONLED = A4;
         const char FN1PIN = 4;
         const char FN2PIN = A3;
