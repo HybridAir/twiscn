@@ -41,36 +41,36 @@ byte Options::getBlinkSpd() {
 
 //==============================================================================
 
-Options::setBrightness(byte in) {
+void Options::setBrightness(byte in) {
     brightness = in;
 }
 
-Options::setCol(byte r, byte g, byte b) {
+void Options::setCol(byte r, byte g, byte b) {
     color = {r, g, b};
 }
 
-Options::setBlinkCol(byte r, byte g, byte b) {                                  
+void Options::setBlinkCol(byte r, byte g, byte b) {                                  
     blinkColor = {r, g, b};
 }
 
-Options::setRainbow(bool in) {
+void Options::setRainbow(bool in) {
     rainbow = in;
 }
 
-Options::setRainSpd(int in) {
+void Options::setRainSpd(int in) {
     rainSpd = in;
 }
 
-Options::setBlink(bool in) {
+void Options::setBlink(bool in) {
     blink = in;
 }
 
-Options::setBlinkSpd(byte in) {
+void Options::setBlinkSpd(byte in) {
     blinkSpd = in;
 }
 
 //==============================================================================
 
-Options::extractOption(String in) {                                             //used to extract the received option String from comms
+void Options::extractOption(String in) {                                             //used to extract the received option String from comms
     //yeah
 }
