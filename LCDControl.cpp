@@ -6,6 +6,46 @@
 //#include <LiquidCrystal.h>
 //#include <PString.h>
 
+
+
+#define REDLITE 9    //used to be 3, which is now for usb
+#define GREENLITE 5
+#define BLUELITE 6
+byte lcdStart = 0;      //stores the current position of the scrolling lcd text
+byte lcdcount = 0;      //stores the Row2.length() offset
+byte count = 0;      //stores the connection animation thing
+
+static prog_char PROGMEM top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
+static prog_char PROGMEM top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
+static prog_char PROGMEM left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
+static prog_char PROGMEM left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
+static prog_char PROGMEM right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
+static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
+
+unsigned int finalSpeed = 0;   //converted speed value taken from the speed potentiometer
+unsigned int interval2 = 3000;   //how long the lcd is kept frozen for
+unsigned int freezeTime = 2000;
+
+
+boolean frozen = 0;   //stores if the lcd is currently frozen
+boolean beginning = 0;   //stores if the text on the lcd is at the beginning
+boolean waitforbegin = 0;   //stores if we are waiting for the beginning of the text
+boolean unFroze = 0;
+
+int howLongItsBeen;   //how long it has been since the color level was changed
+int rain = 0;   //used for changing the color level
+int color1 = 1;
+int color2 = 0;
+int color3 = 0;
+
+
+  pinMode(REDLITE, OUTPUT);
+  pinMode(GREENLITE, OUTPUT);
+  pinMode(BLUELITE, OUTPUT); 
+
+
+
+
 LCDControl::LCDControl(Options optin, TweetHandler twtin) {                                            //Constructor, wants the options object probably created in main.cpp
     opt = optin;
     twt = twtin;
