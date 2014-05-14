@@ -13,6 +13,7 @@ class Comms {
         checkType();
         Options opt;
         IO io;
+        TweetHandler twt;
         HIDSerial usb;                                                          //creates a new HIDSerial instance, named usb
         String usbBuffer;
         bool newOutput = false;
