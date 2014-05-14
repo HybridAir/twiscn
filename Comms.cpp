@@ -4,9 +4,10 @@
 #include "usbdrv.h"
 #include "IO.h"                                                             //the usbSofCount variable requires this
 
-Comms::Comms(Options optin, IO ioin) {                                                                //default constructor
+Comms::Comms(Options optin, IO ioin, TweetHandler twtin) {                                                                //default constructor
     opt = optin;
     io = ioin;
+    twt = twtin;
 }
 
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it
@@ -25,8 +26,6 @@ void Comms::readComms() {                                                       
     }
 }
 
-//might need to eventually clear transferOut
-
 void Comms::checkType() {                                                       //used to check the type of transfer
     char type = transferOut.charAt(0);                                          //get the first char out of the transfer output, it's the transfer type
     transferOut = transferOut.substring(1);                                     //remove the the first character, it's no longer needed in there
@@ -38,17 +37,18 @@ void Comms::checkType() {                                                       
             break;
         case '!':                                                               //tweet transfer, ending for a new tweet     
             twtOut = transferOut;                                               //put the transfer into a new String for the tweet
-            transferOut = "";
+            transferOut = "";                                                   //empty the transferOut to make room for a new one
             gotTweet = true;
             break;
         case '$':                                                               //option transfer
-            opt.extractOption(transferOut);
-            transferOut = "";
+            opt.extractOption(transferOut);                                     //get the option data out of the transfer
+            transferOut = "";                                                   //empty the transferOut to make room for a new one
             break;   
     }
     if (gotUser & gotTweet) {
-        twt.setUser(twtOut);                                                    //these will go somewhere
-        twt.setTweet(userOut);
+        twt.setUser(twtOut);                                                    //give the tweet handler a new user
+        twt.setTweet(userOut);                                                  //give the tweet handler a new tweet
+        twt.sendTweet();                                                        //tell the tweet handler to send those tweets to the lcd
         gotTweet = false;                                                       //already got the new tweet, so reset those vars
         gotUser = false;
     }   
