@@ -13,6 +13,13 @@ class Options {
         getRainSpd();
         getBlink();
         getBlinkSpd();
+        setBrightness(byte in);
+        setCol(byte r, byte g, byte b);
+        setBlinkCol(byte r, byte g, byte b);
+        setRainbow(bool in);
+        setRainSpd(int in);
+        setBlink(bool in);
+        setBlinkSpd(byte in);
     private:
         byte brightness;
         byte color[3];
