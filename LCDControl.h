@@ -9,6 +9,7 @@ class LCDControl {
         LCDControl(Options in);
         printUser();
         printTweet();
+        sleepLCD(bool in);
         void prepareLCD();
         const int LCDWIDTH = 16;                                                //character width of the LCD
     private:
@@ -19,7 +20,6 @@ class LCDControl {
         Options opt;
         TweetHandler twt;
         int brightness= 0;
-        Color color;
         const int CONTRASTPIN = 16;                                               //pin used to supply power to the contrast pot
 };
 
