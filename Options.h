@@ -20,6 +20,7 @@ class Options {
         setRainSpd(int in);
         setBlink(bool in);
         setBlinkSpd(byte in);
+        extractOption(String in);
     private:
         byte brightness;
         byte color[3];
