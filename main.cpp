@@ -1,7 +1,10 @@
 #include <Arduino.h>
 #include "usbdrv.h"
-#include "IO.h"
+#include "Options.h"
+#include "IO.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
+
+//maybe add a demo mode?
 
 void setup();
 void loop();
@@ -11,6 +14,7 @@ void doButtons();
 void doSpeedPot();
 void checkForSleep();
 void prepare();
+void doRainbow();
 
 volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;
@@ -40,6 +44,7 @@ void loop() {
     comms.readComms();
     doButtons();
     doSpeedPot();
+    doRainbow();
     checkForSleep();
 }
 
@@ -59,6 +64,12 @@ void doButtons() {                                                              
 
 void doSpeedPot() {                                                             //used to check the speed pot, must be continuously ran
     lcd.setSpeed(inout.checkPot());                                             //send the lcd the current pot position that inout got
+}
+
+void doRainbow() {
+    if(opt.getRainbow()) {
+        inout.rainbow();
+    }
 }
 
 //==============================================================================
