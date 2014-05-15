@@ -66,7 +66,7 @@ void doSpeedPot() {                                                             
     lcd.setSpeed(inout.checkPot());                                             //send the lcd the current pot position that inout got
 }
 
-void doRainbow() {
+void doRainbow() {                                                              //used to update the rainbow mode backlight color, must be continuously ran
     if(opt.getRainbow()) {
         inout.rainbow();
     }
