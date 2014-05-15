@@ -1,4 +1,5 @@
 //used for holding and handling tweets
+//eventually add in the ability to reprint a previous tweet
 
 #include <Arduino.h>
 
@@ -24,6 +25,10 @@ String TweetHandler::getUser() {
 
 String TweetHandler::getTweet() {
     return tweet;
+}
+
+int TweetHandler::getTweetLength() {
+    return tweet.length();
 }
 
 String TweetHandler::getPrevUser() {
