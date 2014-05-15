@@ -21,7 +21,14 @@ class Options {
         setBlink(bool in);
         setBlinkSpd(byte in);
         extractOption(String in);
+        updateCol();
+        updateBlinkCol();
     private:
+        getBrightnessVal(String in);
+        getColorVal(String in);
+        getTweetBlink(String in);
+        getRainbow(String in);
+        IO inout;
         byte brightness;
         byte color[3];
         byte blinkColor[3];
