@@ -9,6 +9,7 @@ class Comms {
         Comms(Options optin, IO ioin);
         readComms();
         handshake();
+        sendBtn(byte in);
     private:
         checkType();
         Options opt;
