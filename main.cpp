@@ -15,12 +15,14 @@ void doSpeedPot();
 void checkForSleep();
 void prepare();
 void doRainbow();
+void doScrolling();
 
 volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;
 const int SOFDELAY = 500;                                                       //max time to wait in between SOF checks
 unsigned long lastSOF = 0;
 unsigned long previousMillis2 = 0;
+const int LCDWIDTH = 16;                                                //character width of the LCD
     
 IO inout;
 Options opt;
@@ -33,9 +35,11 @@ Comms comms;
 void setup() {  
     inout = IO inout();                                                         //create the instance and set up all inputs and outputs
     opt = Options opt();                                                        //create the instance and set up default options
-    twt = TweetHandler twt();                                                   //create the instance for use by other classes
-    lcd = LCDControl lcd(opt, twt);                                             //new instance, set up LCD and play the boot animation
-    comms = Comms comms(opt, inout, twt);                                       //new instance, set up usb comms
+//    lcd = LCDControl lcd(opt);                                                  //new instance, set up LCD and play the boot animation
+//    twt = TweetHandler twt(lcd);                                                //create the instance for use by other classes
+    twt = TweetHandler twt(LCDWIDTH);                                                //create the instance for use by other classes
+    lcd = LCDControl lcd(opt, twt, LCDWIDTH);                                                  //new instance, set up LCD and play the boot animation
+    comms = Comms comms(opt, inout, twt, lcd);                                       //new instance, set up usb comms
     
     prepare();                                                                  //prepare the device for operation
 }
@@ -45,6 +49,7 @@ void loop() {
     doButtons();
     doSpeedPot();
     doRainbow();
+    doScrolling();
     checkForSleep();
 }
 
@@ -70,6 +75,10 @@ void doRainbow() {                                                              
     if(opt.getRainbow()) {
         inout.rainbow();
     }
+}
+
+void doScrolling() {
+    lcd.scrollTweet();
 }
 
 //==============================================================================
@@ -99,7 +108,7 @@ void goToSleep() {                                                              
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
         usbPoll();                                                              //keep checking the usb
-        checkForSleep();                                                          //check if we still need to be sleeping
+        checkForSleep();                                                        //check if we still need to be sleeping
         if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                     
             lcd.sleepLCD(false);                                                //wake the LCD up                 
             prepare();                                                          //prepare the device for operation again, sort of like resetting
