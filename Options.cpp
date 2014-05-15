@@ -136,3 +136,102 @@ void Options::getRainbow(String in) {                                           
     String spd = in.charAt(1, 3);                                               //get a substring containing the blink speed value out
     setRainSpd(spd.toInt());                                                    //set the speed to that value converted to an int
 }
+
+
+
+
+
+
+void setBacklight(uint8_t r, uint8_t g, uint8_t b) {
+    r = map(r, 0, 255, 0, brightness);
+    g = map(g, 0, 255, 0, brightness);
+    b = map(b, 0, 255, 0, brightness);
+
+    // common anode so invert!
+    r = map(r, 0, 255, 255, 0);
+    g = map(g, 0, 255, 255, 0);
+    b = map(b, 0, 255, 255, 0);
+
+    analogWrite(REDLITE, r);
+    analogWrite(GREENLITE, g);
+    analogWrite(BLUELITE, b);
+}
+
+void newTweetBlink() {
+    if (tweetBlinkEnabled == 1) {
+        if (timeToBlink == 1) {
+            currentMillis5 = millis();
+            if(currentMillis5 - previousMillis5 > blinkTime) {
+                previousMillis5 = currentMillis5;
+                if (blinkCount <= 4) {
+                    if (blinkStatus == 0) {
+                        brightness = 255;
+                        setBacklight(r, g, b);
+                        blinkStatus = 1;
+                    }
+                    else {
+                        brightness = 255;
+                        setBacklight(r2, g2, b2);
+                        blinkStatus = 0;
+                    }
+                    if (blinkCount == 4) {
+                        blinkCount = 0;
+                        timeToBlink = 0;
+                    }
+                    else {
+                        blinkCount++;
+                    }
+                }
+            }
+        }
+        else if (timeToBlink == 0) {
+            brightness = 255;
+            setBacklight(r, g, b);      
+        }
+    }
+}
+
+void checkRainbow() {
+    if (rainbow == 1) {   //do this if rainbow mode is on
+        howLongItsBeen = millis() - lastTimeItHappened;
+            if ( howLongItsBeen >= howLongToWait ) {   //if it's time, ycle through by one increment
+      
+        //Cycle through the rainbow
+                if (color1 == 1) {   //do this if we're at the first rainbow section
+                    if (rain < 255) {   //and only if we're below 255 increments already
+                        setBacklight(rain, 0, 255-rain);
+                        rain++;
+                    }
+                    else {   //if we're not in the first section, go to the next
+                        color1 = 0;
+                        color2 = 1;
+                        rain = 0;   //reset the increment amount
+                    }
+                } 
+                if (color2 == 1) {
+                    if (rain < 255) {
+                        setBacklight(255-rain, rain, 0);
+                        rain++;
+                    }
+                    else {
+                        color2 = 0;
+                        color3 = 1;
+                        rain = 0;
+                    }
+                } 
+                if (color3 == 1) {
+                    if (rain < 255) {
+                        setBacklight(0, 255-rain, rain);
+                        rain++;
+                    }
+                    else {
+                        color3 = 0;
+                        color1 = 1;
+                        rain = 0;
+                    }
+                }  
+   
+                lastTimeItHappened = millis();   //save the last time we cycled through the rainbow by one
+            }
+        }
+    }
