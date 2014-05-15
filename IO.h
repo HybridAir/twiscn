@@ -2,7 +2,6 @@
 #define	IO_H
 
 #include <Arduino.h>
-#include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
 #include <Bounce.h>
 
 class IO {
@@ -10,6 +9,7 @@ class IO {
         IO();
         connectionLED(byte mode);
         checkButtons();
+        checkPot();
     private:
         const int CONLED = A4;
         const char FN1PIN = 4;
