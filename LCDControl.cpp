@@ -50,21 +50,14 @@ void LCDControl::clearRow(byte row) {                                           
 
 void LCDControl::scrollTweet() {                                                //used to scroll the tweet text, must be continuously called
     if(scroll) {
-        
-        //check if we're at the beginning
-            //wait and block other methods here
-        //check if we're at the end
-            //wait and block other methods here
-        //if neither, scroll normally
-        
         switch(section) {
             case 0:                                                             //beginning of tweet section
-                if(printedBegin) {                                              //already printed the beginning, waiting for the user read time to elapse
+                if(printedBegin) {                                              //if we already printed the beginning
                     unsigned long currentMillis = millis();
-                    if(currentMillis - previousMillis > readTime) {             //check if it has been readTime yet
+                    if(currentMillis - previousMillis > readTime) {             //wait for the user read time to elapse
                         previousMillis = currentMillis;
                         section++;                                              //done waiting, allow the program to go to the next section
-                        lcdPos = 0;
+                        lcdPos = 0;                                             //reset the lcdPos var, needs to start at 0 after the beginning
                     }
                 }
                 else {                                                          //did not print the beginning yet
@@ -75,120 +68,38 @@ void LCDControl::scrollTweet() {                                                
                 unsigned long currentMillis = millis();
                 if(currentMillis - previousMillis > textSpeed) {                //check if it's time to shift the text
                     previousMillis = currentMillis;
-                    shiftText();
-                    lcdPos++;
-                        //section++;                                              //done waiting, allow the program to go to the next section
+                    shiftText();                                                //shift the text by one                                                  
+                }
+                break;
+            case 2:                                                             //end of tweet section
+                unsigned long currentMillis = millis();
+                if(currentMillis - previousMillis > readTime) {                 //wait for the user read time to elapse
+                    previousMillis = currentMillis;
+                    section++;                                                  //done waiting, allow the program to go to the next section
                 }
                 break;
         }
     }
 }
-        
-////    if (Row2.length() <= LCD_COLS) {                                            //check if tweet can fit in the bottom row without scrolling first
-////        if (newTweet == 1) {                                                    //make sure there is actually a new tweet to display
-//            lcd.clear();                                                        //clear the entire lcd, check if this function can clear individual rows
-//            displayUser();
-//            displayBeginning(Row2.length() - 1);
-//            greaterThan16 = 0;
-//            newTweet = 0; 
-//            timeToBlink = 1;
-//        }  
-//    }
-//    else if (Row2.length() > LCD_COLS) {                                        //jfc where did I go wrong    
-//        greaterThan16 = 1;
-//        if (newTweet == 0) {   //do this if the text is old, meaning we're scrolling it     
-//            if (lcdStart == 0) {
-//////                if (waitforbegin == 0) {
-//////                    if (unFroze == 0) {
-//////                        frozen = 1;
-//////                        previousMillis4 = millis();
-//////                        waitforbegin = 1;
-//////                        firstTweet = 0;
-//////                    }
-////                    else {
-////                        unFroze = 0;
-////                    }
-////                }
-////            }      
-//            if (frozen == 0) {
-//                if (lcdStart < lcdcount) {    //is there still stuff left to display?
-//                    unsigned long currentMillis = millis();
-//                    if(currentMillis - previousMillis > finalSpeed) {   //check if it has been long enough between scroll iterations
-//                        previousMillis = currentMillis; 
-//                        lcdStart++;   //offset the text position by one
-//                    }
-//                }
-//            }
-//        }
-////        else if (newTweet == 1) {      //display the beginning first, for both lengths 
-////            lcd.clear();
-////            displayUser();
-////            displayBeginning(LCD_COLS); 
-////            timeToBlink = 1;  
-////            newTweet = 0; 
-////            lcdStart = 0;
-////        }
-//    }
-//}
 
-void LCDControl::shiftText() {                                                  //used to shift the tweet text by one space
-    if (lcdPos < twt.getTweetLength() - LCDWIDTH) {                           //check if there is remaining text to shift 
-        //(subtracted LCDWIDTH since we want the ending to use all the space)
+void LCDControl::shiftText() {                                                  //used to shift the tweet text by one column
+    if (lcdPos < (twt.getTweetLength() - LCDWIDTH)) {                            
+        //(subtracted LCDWIDTH since we want the ending to use all the lcd width)
         String subTweet = twt.getTweet();
-        subTweet = subTweet.substring(lcdStart, (lcdStart + LCDWIDTH));         //create a substring from the current position to LCDWIDTH chars ahead
-        lcd.print(subTweet);
-        
-        
-        
-//        for(int i = 0;i < LCDWIDTH;i++) {                                       //for each column in LCDWIDTH
-//            lcd.setCursor(i, 1);                                                //set the cursor on the current column in the bottom row
-//            String subTweet = twt.getTweet();
-//            subTweet = subTweet.substring((lcdStart + i))
-//            lcd.print()
-//            lcd.print(Row2Array[lcdStart + i]);
-//            lcd.print(Row2Array[lcdStart + i]);
-//        }
+        subTweet = subTweet.substring(lcdPos, (lcdPos + LCDWIDTH));             //create a substring from the current position to LCDWIDTH chars ahead
+        lcd.print(subTweet);                                                    //printed the shifted substring
+        lcdPos++;                                                               //increase lcdPos by one
     }
-    if(lcdPos == lcdcount) {                                                  //are we at the end of the text?
-        section++;
-        
-//        if (unFroze == 1) {
-//            displayBeginning(LCD_COLS);             //get the beginning of the text on the display again
-//            lcdStart = 0;    // prepare the scolling function for scrolling this new text
-//            unFroze = 0;
-//        }
-//        else if (frozen == 0) {
-//            frozen = 1;
-//            unFroze = 0;
-//            previousMillis4 = millis();
-//        }      
+    if(lcdPos == (twt.getTweetLength() - LCDWIDTH)) {                           //check if we are at the end of the text to be shifted
+        section++;                                                              //we are done here, go to the next section
     }
-//    else {
-//        for(int i = 0; i < LCD_COLS; i++) {   //do this while there is still more text to scroll
-//            //print the text
-//            lcd.setCursor(i, 1);
-//            lcd.print(Row2Array[lcdStart + i]);
-//        }
-//    }  
 }
 
-//void checkfrozen() {
-//    if (frozen == 1) {
-//        currentMillis4 = millis();
-//        if(currentMillis4 - previousMillis4 > freezeTime) {   //do this if it's time to 
-//            frozen = 0;
-//            unFroze = 1;
-//            waitforbegin = 0;
-//        }
-//    }
-//}
-
-void LCDControl::setSpeed(int in) {
-    
+void LCDControl::setSpeed(int in) {                                             //used to set the text shifting speed
+    textSpeed = in;
 }
 
-
-
+//==============================================================================
 
 void LCDControl::CreateChar(byte code, PGM_P character) {                       //used to get custom characters out of progmem and into the lcd
     byte* buffer = (byte*)malloc(8);
@@ -196,8 +107,6 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
     lcd.createChar(code, buffer);
     free(buffer);
 }
-
-
 
 void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the customs chars are made
     setBacklight(r, g, b);
