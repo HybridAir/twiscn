@@ -1,79 +1,58 @@
 //Used for controlling the LCD
-//Handles text formatting, display, scrolling, and backlight control
+//Handles text formatting, display, and scrolling
 
 #include <Arduino.h>
 #include <LCD.h>      
-#include <avr/pgmspace.h>//too stubborn to move away from their nice library c:
+#include <avr/pgmspace.h>
+
+#include "TweetHandler.h"//too stubborn to move away from their nice library c:
 //#include <LiquidCrystal.h>
-//#include <PString.h>
 
-
-
-#define REDLITE 9    //used to be 3, which is now for usb
-#define GREENLITE 5
-#define BLUELITE 6
-byte lcdStart = 0;      //stores the current position of the scrolling lcd text
-byte lcdcount = 0;      //stores the Row2.length() offset
-byte count = 0;      //stores the connection animation thing
-
-static prog_char PROGMEM top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
-static prog_char PROGMEM top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
-static prog_char PROGMEM left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
-static prog_char PROGMEM left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
-static prog_char PROGMEM right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
-static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
-
-unsigned int finalSpeed = 0;   //converted speed value taken from the speed potentiometer
-unsigned int interval2 = 3000;   //how long the lcd is kept frozen for
-unsigned int freezeTime = 2000;
-
-
-boolean frozen = 0;   //stores if the lcd is currently frozen
-boolean beginning = 0;   //stores if the text on the lcd is at the beginning
-boolean waitforbegin = 0;   //stores if we are waiting for the beginning of the text
-boolean unFroze = 0;
-
-int howLongItsBeen;   //how long it has been since the color level was changed
-int rain = 0;   //used for changing the color level
-int color1 = 1;
-int color2 = 0;
-int color3 = 0;
-
-
-  pinMode(REDLITE, OUTPUT);
-  pinMode(GREENLITE, OUTPUT);
-  pinMode(BLUELITE, OUTPUT); 
-
-
-
-
-LCDControl::LCDControl() {                                            //Constructor, wants the options object probably created in main.cpp
-    //opt = optin;
-    //twt = twtin;
-    color = opt.getColor();                                                      //get the color var
-    brightness = opt.getBright();                                                //and brightness var from the options class (not yet made)
-    //digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
-    //turns out there are some things called noDisplay() and display(), never even needed the contrast pin (kill me c:)
-    lcd.begin(LCDWIDTH,2);                                                      //get that LCD going
-    //bootAnim();
+LCDControl::LCDControl(Options optin, TweetHandler twtin, byte widthIn) {       //default constructor, wants the options and tweethandler instance, and lcdwidth
+    opt = optin;
+    twt = twtin;
+    LCDWIDTH = widthIn;                                                         //character width of the LCD
+    digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
+    lcd.begin(LCDWIDTH, 2);                                                     //get that LCD going
 }
 
-void LCDControl::printUser(String in) {                                         //prints the tweet's username, wants a String
+void LCDControl::printNewTweet() {                                              //used to print a new tweet
     clearRow(0);                                                                //clear the username row to prepare it for an update
-    lcd.print(in);                                                              //print the username, don't need to do anything to it
+    lcd.print(twt.getUser());                                                   //print the username, don't need to do anything to it 
+    printBegin();                                                               //print the beginning of the tweet and do further processing
 }
 
-void LCDControl::printTweet() {                                                 //used to print a new tweet, and then handle scrolling
-    printBegin();
-//scrolling stuff here
+//void LCDControl::printNewTweet(String userin, String twtin) {                   //used to print a tweet less than LCDWIDTH (16) chars
+//    clearRow(0);                                                                //clear the username row to prepare it for an update
+//    lcd.print(userin);                                                          //print the username, don't need to do anything to it 
+//    printBegin(twtin);                                                          //since the tweet is shorter than LCDWIDTH, just print it and that's it
+//}
+//
+//void LCDControl::printNewTweet(String userin, String twtBeg, String twtin) {    //used to print a tweet longer than LCDWIDTH, needs a shortened LCDWIDTH                                                //used to print a new tweet, and then handle scrolling
+//    clearRow(0);                                                                //clear the username row to prepare it for an update
+//    lcd.print(userin);                                                          //print the username, don't need to do anything to it
+//    printBegin(twtBeg);                                                         //print the beginning of the tweet
+//    scroll = true;
+//}
 
+void LCDControl::printBegin() {                                                 //prints the beginning of a tweet, and then enable scrolling if necessary
+    if(twt.useScroll()) {                                                       //check if tweet scrolling is necessary
+        scroll = true;
+    }
+    else {                                                                      //if the tweet is greater than LCDWIDTH, it needs to be scrolled
+        scroll = false;
+    }
+    clearRow(1);                                                                //clear the bottom row first                                              //get the beginning on the tweet
+    lcd.print(twt.getTweetBegin());                                             //print the beginning of the tweet
+    //call tweet blink here or something
 }
 
-void LCDControl::printBegin() {                                                 //used to print the beginning of the tweet, wants the tweet
-    clearRow(1);                                                                //clear the bottom row first
-    String out = twt.getTwtBegin();                                               //get the beginning on the tweet
-    lcd.print(out);                                                             //since it's going to be LCDWIDTH or less, don't do anything to it and print it 
-}
+
+//void LCDControl::printBegin(String in) {                                                 //used to print the beginning of the tweet, wants the tweet
+//    clearRow(1);                                                                //clear the bottom row first                                              //get the beginning on the tweet
+//    lcd.print(in);                                                             //since it's going to be LCDWIDTH or less, don't do anything to it and print it 
+//    //call tweet blink here or something
+//}
 
 void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number
     lcd.setCursor(0, row);                                                      //set the row to start clearing
@@ -83,56 +62,47 @@ void LCDControl::clearRow(byte row) {                                           
     lcd.setCursor(0, row);                                                      //reset cursor position
 }
 
+//==============================================================================
 
-
-
-
-
-
-
-
-void LCDControl::CreateChar(byte code, PGM_P character) {                       //used to get customs characters out of progmem and into the lcd
-    byte* buffer = (byte*)malloc(8);
-    memcpy_P(buffer, character,  8);
-    lcd.createChar(code, buffer);
-    free(buffer);
-}
-
-
-
-
-
-
-
-
-
-void LCDControl::scrolltext() {                                                 //used to scroll the text on the bottom row
-    if (Row2.length() <= LCD_COLS) {                                            //check if tweet can fit in the bottom row without scrolling first
-        if (newTweet == 1) {                                                    //make sure there is actually a new tweet to display
-            lcd.clear();                                                        //clear the entire lcd, check if this function can clear individual rows
-            displayUser();
-            displayBeginning(Row2.length() - 1);
-            greaterThan16 = 0;
-            newTweet = 0; 
-            timeToBlink = 1;
-        }  
-    }
-    else if (Row2.length() > LCD_COLS) {                                        //jfc where did I go wrong    
-        greaterThan16 = 1;
-        if (newTweet == 0) {   //do this if the text is old, meaning we're scrolling it     
+void LCDControl::scrollTweet() {                                                //used to scroll the tweet text, must be continuously called
+    if(scroll) {
+        //check if we're at the beginning
+            //wait and block other methods here
+        //check if we're at the end
+            //wait and block other methods here
+        //if neither, scroll normally
+        
+        switch(section) {
+            case 0:                                                             //beginning
+                printBegin
+        }
+        
+////    if (Row2.length() <= LCD_COLS) {                                            //check if tweet can fit in the bottom row without scrolling first
+////        if (newTweet == 1) {                                                    //make sure there is actually a new tweet to display
+//            lcd.clear();                                                        //clear the entire lcd, check if this function can clear individual rows
+//            displayUser();
+//            displayBeginning(Row2.length() - 1);
+//            greaterThan16 = 0;
+//            newTweet = 0; 
+//            timeToBlink = 1;
+//        }  
+//    }
+//    else if (Row2.length() > LCD_COLS) {                                        //jfc where did I go wrong    
+//        greaterThan16 = 1;
+//        if (newTweet == 0) {   //do this if the text is old, meaning we're scrolling it     
             if (lcdStart == 0) {
-                if (waitforbegin == 0) {
-                    if (unFroze == 0) {
-                        frozen = 1;
-                        previousMillis4 = millis();
-                        waitforbegin = 1;
-                        firstTweet = 0;
-                    }
-                    else {
-                        unFroze = 0;
-                    }
-                }
-            }      
+////                if (waitforbegin == 0) {
+////                    if (unFroze == 0) {
+////                        frozen = 1;
+////                        previousMillis4 = millis();
+////                        waitforbegin = 1;
+////                        firstTweet = 0;
+////                    }
+//                    else {
+//                        unFroze = 0;
+//                    }
+//                }
+//            }      
             if (frozen == 0) {
                 if (lcdStart < lcdcount) {    //is there still stuff left to display?
                     unsigned long currentMillis = millis();
@@ -143,14 +113,14 @@ void LCDControl::scrolltext() {                                                 
                 }
             }
         }
-        else if (newTweet == 1) {      //display the beginning first, for both lengths 
-            lcd.clear();
-            displayUser();
-            displayBeginning(LCD_COLS); 
-            timeToBlink = 1;  
-            newTweet = 0; 
-            lcdStart = 0;
-        }
+//        else if (newTweet == 1) {      //display the beginning first, for both lengths 
+//            lcd.clear();
+//            displayUser();
+//            displayBeginning(LCD_COLS); 
+//            timeToBlink = 1;  
+//            newTweet = 0; 
+//            lcdStart = 0;
+//        }
     }
 }
 
@@ -187,8 +157,19 @@ void checkfrozen() {
     }
 }
 
+void LCDControl::setSpeed(int in) {
+    
+}
 
 
+
+
+void LCDControl::CreateChar(byte code, PGM_P character) {                       //used to get custom characters out of progmem and into the lcd
+    byte* buffer = (byte*)malloc(8);
+    memcpy_P(buffer, character,  8);
+    lcd.createChar(code, buffer);
+    free(buffer);
+}
 
 
 
@@ -286,26 +267,25 @@ void LCDControl::connected() {                                                  
     lcd.print("latest data...");
 }
 
-void LCDControl::sleepLCD(bool in) {
-    if(in) {                                                                    //lcd needs to go to sleep
-        lcd.clear();
+void LCDControl::sleepLCD(bool sleep) {                                         //used to control lcd power state
+    if(sleep) {                                                                 //lcd needs to go to sleep
+        lcd.clear();                                                            //display a warning message for 4 seconds
         lcd.setCursor(0, 0);
         lcd.print("Host is offline,");
         lcd.setCursor(0, 1);
         lcd.print("entering standby");
         delay(4000);
-        lcd.clear();
-        brightness = 0;
-        setBacklight(r, g, b);
-        digitalWrite(LCDPOWPIN, LOW);
-        lcd.noDisplay();
+        lcd.clear();                                                            //clear the display       
+        opt.setBrightness(0);                                                   //turn the backlight off
+        digitalWrite(LCDPOWPIN, LOW);                                           //turn the contrast off
+        lcd.noDisplay();                                                        //turn the rest "off"
     }
     else {                                                                      //lcd needs to wake up
-        digitalWrite(LCDPOWPIN, HIGH);
-        lcd.display();
-//        brightness = 0;
-//        setBacklight(r, g, b);
-        bootAnimation();
+        digitalWrite(LCDPOWPIN, HIGH);                                          //turn the contrast on
+        opt.setCol(0, 150, 255);                                                //reset the color
+        opt.setBrightness(255);                                                 //turn the backlight on
+        lcd.display();                                                          //turn the lcd "on"
+        bootAnimation();                                                        //play the boot animation
     }
 }
 
@@ -313,6 +293,3 @@ void LCDControl::sleepLCD(bool in) {
 
 
 
-void LCDControl::setSpeed(int in) {
-    
-}
