@@ -90,13 +90,13 @@ void Options::extractOption(String in) {                                        
     in = in.substring(1);                                                       //remove the the first character, it's no longer needed in there
     switch(type) {                                                              //check that char
         case 'b':                                                               //backlight brightness option
-            getBrightnessVal(in);                                                 //extract the necessary data, and apply the new setting
+            getBrightnessVal(in);                                               //extract the necessary data, and apply the new setting
             break;
         case 'c':                                                               //backlight color option
-            getColorVal(in);                                                        //extract the necessary data, and apply the new setting   
+            getColorVal(in);                                                    //extract the necessary data, and apply the new setting   
             break;
         case 'd':                                                               //tweet blink options, contains color, speed, and enable
-            getTweetBlink(in);                                                      //extract the necessary data, and apply the new setting
+            getTweetBlink(in);                                                  //extract the necessary data, and apply the new setting
             break;
         case 'e':                                                               //rainbow mode option, contains speed and enable
             getRainbow(in);
