@@ -1,12 +1,13 @@
+//used to communicate with the host computer/program over USB
 #include <Arduino.h>
 #include <HIDSerial.h>
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
-//#include "usbdrv.h"
 
-Comms::Comms(Options optin, IO ioin, TweetHandler twtin) {                      //default constructor
+Comms::Comms(Options optin, IO ioin, TweetHandler twtin, LCDControl lcdin) {    //onstructor
     opt = optin;
     io = ioin;
     twt = twtin;
+    lcd = lcdin;
     usb.begin();                                                                //start the hidserial connection
 }
 
@@ -30,7 +31,7 @@ void Comms::readComms() {                                                       
 void Comms::checkType() {                                                       //used to check the type of transfer
     char type = transferOut.charAt(0);                                          //get the first char out of the transfer output, it's the transfer type
     transferOut = transferOut.substring(1);                                     //remove the the first character, it's no longer needed in there
-    switch(type) {                                             //check the first char of the transferOut String
+    switch(type) {                                                              //check the first char of the transferOut String
         case '@':                                                               //username transfer, also signifies the start of a new tweet
             userOut = transferOut;                                              //put the transfer into a new String for the username
             transferOut = "";
@@ -46,18 +47,18 @@ void Comms::checkType() {                                                       
             transferOut = "";                                                   //empty the transferOut to make room for a new one
             break;   
     }
-    if (gotUser & gotTweet) {
+    if (gotUser & gotTweet) {                                                   //if we got both the tweet and the user
         twt.setUser(twtOut);                                                    //give the tweet handler a new user
         twt.setTweet(userOut);                                                  //give the tweet handler a new tweet
-        twt.sendTweet();                                                        //tell the tweet handler to send those tweets to the lcd
+        lcd.printNewTweet();                                                    //tell LCDControl to print the new tweet
         gotTweet = false;                                                       //already got the new tweet, so reset those vars
         gotUser = false;
     }   
 }
 
-void Comms::handshake() {                                                       //function used to establish a data connection with the host
+void Comms::handshake() {                                                       //used to establish a data connection with the host
     while (!connected) {                                                        //do this while we are not connected
-        connectingAnimation();                                                  //display the connecting animation on the LCD
+        lcd.connectAnim(true);                                                  //display the connecting animation on the LCD
         io.connectionLED(2);                                                    //blink the connection led to further signify that the device is connecting
         usbPoll();                                                              //keep polling the USB port for any new data
         usb.println("`");                                                       //continuously send this to the host so it knows the we are waiting for a handshake
@@ -69,7 +70,7 @@ void Comms::handshake() {                                                       
         }  
     }
     io.connectionLED(1);                                                        //turn the connection led solid on since we're connected now
-    connectedLCD();                                                             //something about showing a connection confirmation on the lcd 
+    lcd.connectAnim(false);                                                     //show the connected notice on the lcd
 }
 
 void Comms::sendBtn(byte in) {                                                  //used to send button presses to the host program for processing
