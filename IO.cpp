@@ -1,16 +1,15 @@
 //handles basic device IO
 #include <Arduino.h>
-#include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
-#include "usbdrv.h"                                                             //the usbSofCount variable requires this
 #include <Bounce.h>
 
-IO::IO() {                                       //default constructor, sets up all the inputs and outputs                                                
+IO::IO() {                                                                      //default constructor, sets up all the inputs and outputs                                                
+    digitalWrite(RESETPIN, HIGH);                                               //this needs to be set high before anything else so the device doesn't reset
     pinMode(RESETPIN, OUTPUT);
     pinMode(CONLED, OUTPUT);
     pinMode(LCDPOWPIN, OUTPUT);
     pinMode(FN1PIN, INPUT);
     pinMode(FN2PIN, INPUT);
-    dbFN1 = Bounce(); 
+    dbFN1 = Bounce();                                                           //set up the function button debouncing
     dbFN2 = Bounce(); 
     dbFN1.attach(FN1PIN);
     dbFN2.attach(FN2PIN);
@@ -46,13 +45,18 @@ byte IO::checkButtons() {                                                       
     if(dbFN1.update()) {
         if(!dbFN1.read()) {                                                     //if the button was just released
             return 1;
-            //comms.sendBtn(1);                                                   //tell the host the user pushed FN1
         }                              
     }
     else if(dbFN2.update()) {
         if(!dbFN2.read()) {                                                     //if the button was just released
             return 2;
-            //comms.sendBtn(2);                                                   //tell the host the user pushed FN1
         }
     }
+    else {
+        return 0;
+    }
+}
+
+int IO::checkPot() {
+    return analogRead(SPEEDPIN) / 2;
 }
