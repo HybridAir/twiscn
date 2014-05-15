@@ -1,16 +1,17 @@
 #include <Arduino.h>
 #include <HIDSerial.h>
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
-#include "usbdrv.h"
-#include "IO.h"                                                             //the usbSofCount variable requires this
+//#include "usbdrv.h"
 
-Comms::Comms(Options optin, IO ioin, TweetHandler twtin) {                                                                //default constructor
+Comms::Comms(Options optin, IO ioin, TweetHandler twtin) {                      //default constructor
     opt = optin;
     io = ioin;
     twt = twtin;
+    usb.begin();                                                                //start the hidserial connection
 }
 
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it
+    usbPoll();
     if (usb.available()) {                                                      //check if there's something in the usb buffer
         usb.read((uint8_t*)usbBuffer);                                          //put the data into a string (probably dont need the uint8_t*)
         char inByte = usbBuffer.charAt(0);                                      //first character is used to identify the data packet type
@@ -67,6 +68,11 @@ void Comms::handshake() {                                                       
             }
         }  
     }
-    io.connectionLED(1);
-    connectedLCD();  
+    io.connectionLED(1);                                                        //turn the connection led solid on since we're connected now
+    connectedLCD();                                                             //something about showing a connection confirmation on the lcd 
+}
+
+void Comms::sendBtn(byte in) {                                                  //used to send button presses to the host program for processing
+    usb.println(in);
+    usb.println("=");
 }
