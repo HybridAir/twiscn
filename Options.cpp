@@ -1,8 +1,6 @@
 //handles device options/settings
 #include <Arduino.h>
 
-#include "IO.h"
-
 Options::Options(IO ioin) {                                                     //default constructor, sets up default options
     inout = ioin;
     brightness = 255;                                                           //LCD brightness
@@ -70,7 +68,6 @@ void Options::setRainSpd(int in) {
 
 void Options::setBlink(bool in) {
     blink = in;
-    //inout.enableTweetBlink(blink);
 }
 
 void Options::setBlinkSpd(byte in) {
