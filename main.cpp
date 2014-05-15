@@ -9,11 +9,12 @@ void checkConnection();
 void goToSleep();
 void doButtons();
 void doSpeedPot();
-void doSleep();
+void checkForSleep();
+void prepare();
 
-volatile uchar usbSofCount;
+volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;
-const int SOFDELAY = 500;                                               //max time to wait in between SOF updates
+const int SOFDELAY = 500;                                                       //max time to wait in between SOF checks
 unsigned long lastSOF = 0;
 unsigned long previousMillis2 = 0;
     
@@ -28,60 +29,70 @@ Comms comms;
 void setup() {  
     inout = IO inout();                                                         //create the instance and set up all inputs and outputs
     opt = Options opt();                                                        //create the instance and set up default options
-    twt = TweetHandler twt();                                                   //new instance of TweetHandler, doesn't require anything
+    twt = TweetHandler twt();                                                   //create the instance for use by other classes
     lcd = LCDControl lcd(opt, twt);                                             //new instance, set up LCD and play the boot animation
     comms = Comms comms(opt, inout, twt);                                       //new instance, set up usb comms
     
-    comms.handshake();                                                          //establish a connection with the host program
+    prepare();                                                                  //prepare the device for operation
 }
 
 void loop() {
     comms.readComms();
     doButtons();
     doSpeedPot();
-    doSleep();
+    checkForSleep();
 }
 
 //==============================================================================
 
-void doButtons() {
+void prepare() {                                                                //used to prepare the device for operation
+    lcd.sleepLCD(false);                                                        //get the LCD going
+    comms.handshake();                                                          //establish a connection with the host program
+}
+
+void doButtons() {                                                              //used to check the function buttons, must be continuously ran
     byte btn = inout.checkButtons();
     if(btn != 0) {
         comms.sendBtn(btn);
     }
 }
 
-void doSpeedPot() {
-    lcd.setSpeed(inout.checkPot());
+void doSpeedPot() {                                                             //used to check the speed pot, must be continuously ran
+    lcd.setSpeed(inout.checkPot());                                             //send the lcd the current pot position that inout got
 }
 
-void checkConnection() {                                                    //check if the device's data connection was disconnected, always run this
-    unsigned long currentMillis = millis();
+//==============================================================================
+
+void checkForSleep() {                                                          //checks if the device was disconnected, must be continuously ran
+    unsigned long currentMillis = millis();                                     //get the current time
     unsigned long currentSOF = usbSofCount;                                     //get the current number of SOFs
     if(currentMillis - previousMillis2 > SOFDELAY) {                            //only check for new SOF counts every 500 ms (SOFDELAY)
-        previousMillis2 = currentMillis;  
+        previousMillis2 = currentMillis;                                        //save the current time to use as a reference
         if(currentSOF == lastSOF) {                                             //if the SOF counts match (meaning we lost usb connection)  
-            if(!sleeping) {
-                sleeping = true;
+            if(!sleeping) {                                                     //if we are not already sleeping
+                //need this if here since this function will be called while the device is asleep
+                //don't want it going into some crazy sleep limbo
+                sleeping = true;                                                //we will be now
                 goToSleep();
             }
         }
-        else {                                                                  //the SOF counts are different (still being updated, so it's still connected)
-            lastSOF = currentSOF;
-            sleeping = false;
+        else {                                                                  //the SOF counts are different (they're being updated, so it's connected)
+            lastSOF = currentSOF;                                               //save the current SOF to use as a reference
+            sleeping = false;                                                   //set this to true to wake up if necessary
         }
     }
 }
 
-void IO::goToSleep() {
-    lcd.sleepLCD(true);                                                         //turn the LCD off (sleep))
-    connectionLED(0);                                                           //turn the connection LED off, no longer connected
+void goToSleep() {                                                              //used to bring the device down for "sleep"
+    lcd.sleepLCD(true);                                                         //tell the lcd to sleep
+    inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
-        usbPoll();
-        sleepDetect();                                                          //check if we still need to be sleeping
+        usbPoll();                                                              //keep checking the usb
+        checkForSleep();                                                          //check if we still need to be sleeping
         if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                     
             lcd.sleepLCD(false);                                                //wake the LCD up                 
-            hostHandshake();                                                    //reconnect to the host
+            prepare();                                                          //prepare the device for operation again, sort of like resetting
+            //pins are still set, and options are still set
         }
     }
 }
