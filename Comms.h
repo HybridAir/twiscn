@@ -16,8 +16,8 @@ class Comms {
         IO io;
         TweetHandler twt;
         HIDSerial usb;                                                          //creates a new HIDSerial instance, named usb
+        LCDControl lcd;
         String usbBuffer;
-        bool newOutput = false;
         String transferOut;
         String userOut;
         String twtOut;
