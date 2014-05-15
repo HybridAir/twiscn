@@ -2,8 +2,8 @@
 
 #include <Arduino.h>
 
-TweetHandler::TweetHandler(LCDControl lcdin) { 
-    lcd = lcdin;
+TweetHandler::TweetHandler(byte widthIn) { 
+    LCDWIDTH = widthIn;
 }
 
 void TweetHandler::setUser(String in) {
@@ -34,14 +34,23 @@ String TweetHandler::getPrevTweet() {
     return prevTweet;
 }
 
+String TweetHandler::getTweetBegin() {                                          //returns the beginning of the tweet
+    if(tweet.length() <= LCDWIDTH) {                                            //check if the tweet is less than LCDWIDTH first
+        return tweet;                                                           //no need to shorten, just return the unchanged tweet
+    } 
+    else {                                                                      //needs to be shortened, longer than LCDWIDTH
+        beginning = tweet.substring(0, LCDWIDTH - 1);                           //create a substring containing the first LCDWIDTH characters                                  
+        return beginning;
+    }
+}
+
 //==============================================================================
 
-String TweetHandler::sendTweet() {
-    if(tweet.length() =< lcd.LCDWIDTH) {
-        lcd.printNewTweet(user, tweet);
+bool TweetHandler::useScroll() {                                                //returns if tweet scrolling is necessary (longer than LCDWIDTH)
+    if(tweet.length() <= LCDWIDTH) {
+        return false;
     }
     else {
-        String beginning = tweet.substring(0, 15);
-        lcd.printNewTweet(lcd, beginning, tweet); 
+        return true; 
     }
 }
