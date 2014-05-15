@@ -2,7 +2,8 @@
 //Handles text formatting, display, scrolling, and backlight control
 
 #include <Arduino.h>
-#include <LCD.h>                                                            //too stubborn to move away from their nice library c:
+#include <LCD.h>      
+#include <avr/pgmspace.h>//too stubborn to move away from their nice library c:
 //#include <LiquidCrystal.h>
 //#include <PString.h>
 
@@ -46,14 +47,15 @@ int color3 = 0;
 
 
 
-LCDControl::LCDControl(Options optin, TweetHandler twtin) {                                            //Constructor, wants the options object probably created in main.cpp
-    opt = optin;
-    twt = twtin;
+LCDControl::LCDControl() {                                            //Constructor, wants the options object probably created in main.cpp
+    //opt = optin;
+    //twt = twtin;
     color = opt.getColor();                                                      //get the color var
     brightness = opt.getBright();                                                //and brightness var from the options class (not yet made)
-    digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
+    //digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
     //turns out there are some things called noDisplay() and display(), never even needed the contrast pin (kill me c:)
     lcd.begin(LCDWIDTH,2);                                                      //get that LCD going
+    //bootAnim();
 }
 
 void LCDControl::printUser(String in) {                                         //prints the tweet's username, wants a String
@@ -185,20 +187,7 @@ void checkfrozen() {
     }
 }
 
-void setBacklight(uint8_t r, uint8_t g, uint8_t b) {
-    r = map(r, 0, 255, 0, brightness);
-    g = map(g, 0, 255, 0, brightness);
-    b = map(b, 0, 255, 0, brightness);
 
-    // common anode so invert!
-    r = map(r, 0, 255, 255, 0);
-    g = map(g, 0, 255, 255, 0);
-    b = map(b, 0, 255, 255, 0);
-
-    analogWrite(REDLITE, r);
-    analogWrite(GREENLITE, g);
-    analogWrite(BLUELITE, b);
-}
 
 
 
@@ -322,88 +311,8 @@ void LCDControl::sleepLCD(bool in) {
 
 
 
-void newTweetBlink() {
-    if (tweetBlinkEnabled == 1) {
-        if (timeToBlink == 1) {
-            currentMillis5 = millis();
-            if(currentMillis5 - previousMillis5 > blinkTime) {
-                previousMillis5 = currentMillis5;
-                if (blinkCount <= 4) {
-                    if (blinkStatus == 0) {
-                        brightness = 255;
-                        setBacklight(r, g, b);
-                        blinkStatus = 1;
-                    }
-                    else {
-                        brightness = 255;
-                        setBacklight(r2, g2, b2);
-                        blinkStatus = 0;
-                    }
-                    if (blinkCount == 4) {
-                        blinkCount = 0;
-                        timeToBlink = 0;
-                    }
-                    else {
-                        blinkCount++;
-                    }
-                }
-            }
-        }
-        else if (timeToBlink == 0) {
-            brightness = 255;
-            setBacklight(r, g, b);      
-        }
-    }
+
+
+void LCDControl::setSpeed(int in) {
+    
 }
-
-void checkRainbow() {
-    if (rainbow == 1) {   //do this if rainbow mode is on
-        howLongItsBeen = millis() - lastTimeItHappened;
-            if ( howLongItsBeen >= howLongToWait ) {   //if it's time, ycle through by one increment
-      
-        //Cycle through the rainbow
-                if (color1 == 1) {   //do this if we're at the first rainbow section
-                    if (rain < 255) {   //and only if we're below 255 increments already
-                        setBacklight(rain, 0, 255-rain);
-                        rain++;
-                    }
-                    else {   //if we're not in the first section, go to the next
-                        color1 = 0;
-                        color2 = 1;
-                        rain = 0;   //reset the increment amount
-                    }
-                } 
-                if (color2 == 1) {
-                    if (rain < 255) {
-                        setBacklight(255-rain, rain, 0);
-                        rain++;
-                    }
-                    else {
-                        color2 = 0;
-                        color3 = 1;
-                        rain = 0;
-                    }
-                } 
-                if (color3 == 1) {
-                    if (rain < 255) {
-                        setBacklight(0, 255-rain, rain);
-                        rain++;
-                    }
-                    else {
-                        color3 = 0;
-                        color1 = 1;
-                        rain = 0;
-                    }
-                }  
-   
-                lastTimeItHappened = millis();   //save the last time we cycled through the rainbow by one
-            }
-        }
-    }
-
-
-//void LCDControl::prepareLCD() { 
-//    brightness = 0;
-//    digitalWrite(LCDPOWPIN, HIGH);
-//    lcd.begin(16,2);
-//}
