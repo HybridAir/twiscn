@@ -10,15 +10,18 @@ class TweetHandler {
         setTweet(String in);
         getUser();
         getTweet();
+        getTweetBegin();
         getPrevUser();
         getPrevTweet();
-        sendTweet();
+        useScroll();
     private:
         LCDControl lcd;
+        const byte LCDWIDTH;
         String user;
         String tweet;
         String prevUser;
         String prevTweet;
+        String beginning;
 };
 
 #endif	/* TWEETHANDLER_H */
