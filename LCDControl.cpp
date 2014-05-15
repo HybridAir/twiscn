@@ -6,6 +6,7 @@
 #include <avr/pgmspace.h>
 
 #include "TweetHandler.h"
+#include "Options.h"
 
 //#include <LiquidCrystal.h>
 
@@ -75,7 +76,7 @@ void LCDControl::scrollTweet() {                                                
                 unsigned long currentMillis = millis();
                 if(currentMillis - previousMillis > readTime) {                 //wait for the user read time to elapse
                     previousMillis = currentMillis;
-                    section++;                                                  //done waiting, allow the program to go to the next section
+                    section = 0;                                                //done waiting, go back to section 0
                 }
                 break;
         }
@@ -108,23 +109,11 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
     free(buffer);
 }
 
-void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the customs chars are made
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 250;
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 0;
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 250;
-    setBacklight(r, g, b);
-    delay(25);
-    brightness = 0;
-    setBacklight(r, g, b);
-    delay(200);
-    brightness = 250;
-    setBacklight(r, g, b); 
+void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the custom chars are made
+    for(int i = 0; i <= 255; i = i*2) {
+        opt.getBrightness(i);
+        delay(25);
+    } 
 
     CreateChar(0, top1);
     CreateChar(1, top2);
@@ -157,49 +146,52 @@ void LCDControl::bootAnim() {                                                   
     lcd.print("for USB  ");
 }
 
-void LCDControl::connecting() {                                                 //animation displayed while the device is connecting
-    while(runOnce == 0) {
+void LCDControl::connectAnim(bool connecting) {                                                 //animation displayed while the device is connecting
+    if(connecting) {
+        while(!ranOnce) {
+            lcd.clear();
+            lcd.setCursor(6, 0);
+            lcd.print("Connecting");
+            lcd.setCursor(6, 1);
+            lcd.print("to Host");
+            ranOnce = true;
+            unsigned long previousMillis = 0; 
+            animCount = 0;
+        }
+        
+        switch(animCount) {
+            case 0:
+                lcd.setCursor(0, 1);
+                lcd.print("    ");
+                lcd.setCursor(1, 0);
+                lcd.print((char)0);
+                lcd.print((char)1);
+                animCount++;
+                break;
+            case 1:
+                lcd.setCursor(0, 0);
+                lcd.print("   ");
+                lcd.setCursor(0, 1);
+                lcd.print((char)2);
+                lcd.print((char)3);
+                animCount++;
+                break;
+            case 2:
+                lcd.setCursor(0, 1);
+                lcd.print("  ");
+                lcd.print((char)4);
+                lcd.print((char)5);
+                animCount = 0;
+                break;
+        }
+    }
+    else {
         lcd.clear();
-        lcd.setCursor(6, 0);
-        lcd.print("Connecting");
-        lcd.setCursor(6, 1);
-        lcd.print("to Host");
-        runOnce = 1;
-        unsigned long previousMillis = 0; 
-    }
-
-    if (count == 3) {
-        count = 0;
-    }
-    if (count == 0) {
-        lcd.setCursor(0, 1);
-        lcd.print("    ");
-        lcd.setCursor(1, 0);
-        lcd.print((char)0);
-        lcd.print((char)1);
-    }
-    else if (count == 1) {
         lcd.setCursor(0, 0);
-        lcd.print("   ");
+        lcd.print("Waiting for");
         lcd.setCursor(0, 1);
-        lcd.print((char)2);
-        lcd.print((char)3);
+        lcd.print("latest data...");
     }
-    else if (count == 2) {
-        lcd.setCursor(0, 1);
-        lcd.print("  ");
-        lcd.print((char)4);
-        lcd.print((char)5);
-    }
-    count++;
-}
-
-void LCDControl::connected() {                                                  //shows after the device is connected
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Waiting for");
-    lcd.setCursor(0, 1);
-    lcd.print("latest data...");
 }
 
 void LCDControl::sleepLCD(bool sleep) {                                         //used to control lcd power state
@@ -212,19 +204,14 @@ void LCDControl::sleepLCD(bool sleep) {                                         
         delay(4000);
         lcd.clear();                                                            //clear the display       
         opt.setBrightness(0);                                                   //turn the backlight off
-        digitalWrite(LCDPOWPIN, LOW);                                           //turn the contrast off
+        digitalWrite(CONTRASTPIN, LOW);                                           //turn the contrast off
         lcd.noDisplay();                                                        //turn the rest "off"
     }
     else {                                                                      //lcd needs to wake up
-        digitalWrite(LCDPOWPIN, HIGH);                                          //turn the contrast on
+        digitalWrite(CONTRASTPIN, HIGH);                                          //turn the contrast on
         opt.setCol(0, 150, 255);                                                //reset the color
         opt.setBrightness(255);                                                 //turn the backlight on
         lcd.display();                                                          //turn the lcd "on"
-        bootAnimation();                                                        //play the boot animation
+        bootAnim();                                                        //play the boot animation
     }
 }
-
-
-
-
-
