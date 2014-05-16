@@ -5,17 +5,17 @@
 
 class TweetHandler {
     public:
-        TweetHandler(LCDControl lcdin);
+        TweetHandler(byte widthIn);
         setUser(String in);
         setTweet(String in);
         getUser();
         getTweet();
+        getTweetLength();
         getTweetBegin();
         getPrevUser();
         getPrevTweet();
         useScroll();
     private:
-        LCDControl lcd;
         const byte LCDWIDTH;
         String user;
         String tweet;
