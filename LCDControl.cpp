@@ -1,16 +1,11 @@
 //Used for controlling the LCD
 //Handles text formatting, display, and scrolling
 
-#include <Arduino.h>
-#include <LCD.h>      
+#include <Arduino.h>    
 #include <avr/pgmspace.h>
+#include <LiquidCrystal.h>
 
-#include "TweetHandler.h"
-#include "Options.h"
-
-//#include <LiquidCrystal.h>
-
-void LCDControl::LCDControl(Options optin, TweetHandler twtin, byte widthIn) {       //default constructor, wants the options and tweethandler instance, and lcdwidth
+void LCDControl::LCDControl(Options optin, TweetHandler twtin, byte widthIn) {  //constructor, wants the options and tweethandler instances, and lcdwidth
     opt = optin;
     twt = twtin;
     LCDWIDTH = widthIn;                                                         //character width of the LCD
@@ -25,18 +20,18 @@ void LCDControl::printNewTweet() {                                              
 }
 
 void LCDControl::printBegin() {                                                 //prints the beginning of a tweet, and then enables scrolling if necessary
-    section = 0;
-    if(twt.useScroll()) {                                                       //check if tweet scrolling is necessary
-        scroll = true;
-        printedBegin = true;
-        previousMillis = millis();
+    section = 0;                                                                //let the scrolltext method know to start at section 0
+    if(twt.useScroll()) {                                                       //ask tweethandler if scrolling is necessary, true for this case
+        scroll = true;                                                          //enable scrolling
+        printedBegin = true;                                                    //let the program know the beginning was already printed
+        previousMillis = millis();                                              //set previousMillis to the current time, needed for new tweets made after this one
     }
-    else {                                                                      //if the tweet is greater than LCDWIDTH, it needs to be scrolled
-        scroll = false;
+    else {                                                                      //if scrolling is not necessary
+        scroll = false;                                                         //disable scrolling
     }
-    clearRow(1);                                                                //clear the bottom row first                                              //get the beginning on the tweet
+    clearRow(1);                                                                //clear the bottom row
     lcd.print(twt.getTweetBegin());                                             //print the beginning of the tweet
-    //call tweet blink here or something
+    opt.setReadyBlink(true);                                                    //tell options that we need to blink the backlight
 }
 
 void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number
