@@ -1,6 +1,12 @@
 #include <Arduino.h>
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
+#include "Comms.h"
+#include "IO.h"
+#include "LCDControl.h"
+#include "Options.h"
+#include "TweetHandler.h"
+//#include "classes.h"
 
 //maybe add a demo mode?
 
@@ -14,25 +20,37 @@ void prepare();
 
 volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;
-const int SOFDELAY = 500;                                                       //max time to wait in between SOF checks
+const unsigned int SOFDELAY = 500;                                                       //max time to wait in between SOF checks
 unsigned long lastSOF = 0;
 unsigned long previousMillis2 = 0;
 const int LCDWIDTH = 16;                                                        //character width of the LCD
     
-IO inout;
-Options opt;
-TweetHandler twt;
-LCDControl lcd;
-Comms comms;
+//Options opt;                                                        //create the instance and set up default options
+//IO inout;                                                      //create the instance and set up all inputs and outputs
+//TweetHandler twt;                                           //create the instance for use by other classes
+//LCDControl lcd;                                   //new instance, set up LCD and play the boot animation
+//Comms comms;                                  //new instance, set up usb comms
+
+Options* opt;
+IO* inout;
+TweetHandler* twt;
+LCDControl* lcd;
+Comms* comms;
 
 //==============================================================================
 
 void setup() {  
-    opt = Options opt();                                                        //create the instance and set up default options
-    inout = IO inout(opt);                                                      //create the instance and set up all inputs and outputs
-    twt = TweetHandler twt(LCDWIDTH);                                           //create the instance for use by other classes
-    lcd = LCDControl lcd(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
-    comms = Comms comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
+//    opt = Options();                                                        //create the instance and set up default options
+//    inout = IO(opt);                                                      //create the instance and set up all inputs and outputs
+//    twt = TweetHandler(LCDWIDTH);                                           //create the instance for use by other classes
+//    lcd = LCDControl(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
+//    comms = Comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
+    
+    opt = new Options();                                                        //create the instance and set up default options
+    inout = new IO(opt);                                                      //create the instance and set up all inputs and outputs
+    twt = new TweetHandler(LCDWIDTH);                                           //create the instance for use by other classes
+    lcd = new LCDControl(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
+    comms = new Comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
     
     prepare();                                                                  //prepare the device for operation
 }
