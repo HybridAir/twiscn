@@ -1,7 +1,5 @@
 #include <Arduino.h>
-#include "usbdrv.h"
-#include "Options.h"
-#include "IO.h"                                                             //needed for SOF counts
+#include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
 
 //maybe add a demo mode?
@@ -11,18 +9,15 @@ void loop();
 void checkConnection();
 void goToSleep();
 void doButtons();
-void doSpeedPot();
 void checkForSleep();
 void prepare();
-void doRainbow();
-void doScrolling();
 
 volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;
 const int SOFDELAY = 500;                                                       //max time to wait in between SOF checks
 unsigned long lastSOF = 0;
 unsigned long previousMillis2 = 0;
-const int LCDWIDTH = 16;                                                //character width of the LCD
+const int LCDWIDTH = 16;                                                        //character width of the LCD
     
 IO inout;
 Options opt;
@@ -33,13 +28,11 @@ Comms comms;
 //==============================================================================
 
 void setup() {  
-    inout = IO inout();                                                         //create the instance and set up all inputs and outputs
     opt = Options opt();                                                        //create the instance and set up default options
-//    lcd = LCDControl lcd(opt);                                                  //new instance, set up LCD and play the boot animation
-//    twt = TweetHandler twt(lcd);                                                //create the instance for use by other classes
-    twt = TweetHandler twt(LCDWIDTH);                                                //create the instance for use by other classes
-    lcd = LCDControl lcd(opt, twt, LCDWIDTH);                                                  //new instance, set up LCD and play the boot animation
-    comms = Comms comms(opt, inout, twt, lcd);                                       //new instance, set up usb comms
+    inout = IO inout(opt);                                                      //create the instance and set up all inputs and outputs
+    twt = TweetHandler twt(LCDWIDTH);                                           //create the instance for use by other classes
+    lcd = LCDControl lcd(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
+    comms = Comms comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
     
     prepare();                                                                  //prepare the device for operation
 }
@@ -47,9 +40,10 @@ void setup() {
 void loop() {
     comms.readComms();
     doButtons();
-    doSpeedPot();
-    doRainbow();
-    doScrolling();
+    lcd.setSpeed(inout.checkPot());
+    inout.rainbow();
+    lcd.scrollTweet();
+    inout.tweetBlink();
     checkForSleep();
 }
 
@@ -65,20 +59,6 @@ void doButtons() {                                                              
     if(btn != 0) {
         comms.sendBtn(btn);
     }
-}
-
-void doSpeedPot() {                                                             //used to check the speed pot, must be continuously ran
-    lcd.setSpeed(inout.checkPot());                                             //send the lcd the current pot position that inout got
-}
-
-void doRainbow() {                                                              //used to update the rainbow mode backlight color, must be continuously ran
-    if(opt.getRainbow()) {
-        inout.rainbow();
-    }
-}
-
-void doScrolling() {
-    lcd.scrollTweet();
 }
 
 //==============================================================================
