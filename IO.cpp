@@ -87,42 +87,35 @@ void IO::setBacklight(uint8_t r, uint8_t g, uint8_t b, byte brightness) {       
     analogWrite(BLUELITE, blue);
 }
 
-//void IO::setBlinkSpeed(byte in) {                                               //used to get the value from Options
-//    blinkSpeed = in;
-//}
-
-//void IO::enableTweetBlink(bool in) {                                            //used to get the value from Options
-//    blinkEnabled = in;
-//}
-
 void IO::tweetBlink() {                                                         //used to trigger a tweet blink, should be called while waiting in the tweet beginning
-//    if (blinkEnabled) {
-    if (opt.getBlink()) {
-        unsigned long currentMillis = millis();
-//        if(currentMillis - previousMillis5 > blinkSpeed) {
-        if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {
-            previousMillis5 = currentMillis;
-            if(count == 4) {
-                count = 0;
-                timeToBlink = false;
+    if (opt.getBlink()) {                                                       //check if tweetblink is enabled
+        if(blinking) {                                                          //check if we are currently blinking
+            unsigned long currentMillis = millis();
+            if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {           //if it's time to change the backlight color
+                previousMillis5 = currentMillis;
+                if(blinkCount == 4) {                                           //done blinking
+                    blinkCount = 0;                                             //reset blink count
+                    blinking = false;                                           //not blinking anymore
+                }
+                else if(blinkCount % 2 == 0) {                                  //on even numbered blinkcounts, set the backlight to the normal color
+                    opt.updateCol();
+                    blinkCount++;
+                }
+                else {                                                          //on odd numbered blinkcounts, set the backlight to the blink color
+                    opt.updateBlinkCol();
+                    blinkCount++;
+                } 
             }
-            else if(count % 0) {
-                opt.updateCol();
-            }
-            else {
-                opt.updateBlinkCol();
-            }
-            count++;
         }
     }
 }
 
-void IO::rainbow() {
+void IO::rainbow() {                                                            //controls the backlight's rainbow mode, must be ran continuously
     unsigned long currentMillis = millis();
-    if(currentMillis - previousMillis6 > rainSpeed) {
+    if(currentMillis - previousMillis6 > rainSpeed) {                           //if it's to advance colors
         previousMillis6 = currentMillis;
         if(rainLevel < 255) {
-            switch(currentColor) {
+            switch(currentColor) {                                              //fade through each different color
                 case 0:
                     opt.setCol(rain, 0, 255-rain);
                     break;
