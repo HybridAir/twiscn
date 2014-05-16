@@ -2,9 +2,8 @@
 #include <Arduino.h>
 #include <Bounce.h>
 
-#include "Options.h"
-
-IO::IO() {                                                                      //default constructor, sets up all the inputs and outputs                                                
+IO::IO(Options optin) {                                                         //constructor, sets up all the inputs and outputs  
+    opt = optin;
     digitalWrite(RESETPIN, HIGH);                                               //this needs to be set high before anything else so the device doesn't reset
     pinMode(RESETPIN, OUTPUT);
     pinMode(CONLED, OUTPUT);
@@ -89,13 +88,14 @@ void IO::setBacklight(uint8_t r, uint8_t g, uint8_t b, byte brightness) {       
 
 void IO::tweetBlink() {                                                         //used to trigger a tweet blink, should be called while waiting in the tweet beginning
     if (opt.getBlink()) {                                                       //check if tweetblink is enabled
-        if(blinking) {                                                          //check if we are currently blinking
+        if(opt.getReadyBlink()) {                                               //check if we are currently blinking
             unsigned long currentMillis = millis();
             if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {           //if it's time to change the backlight color
                 previousMillis5 = currentMillis;
                 if(blinkCount == 4) {                                           //done blinking
                     blinkCount = 0;                                             //reset blink count
-                    blinking = false;                                           //not blinking anymore
+                    opt.setReadyBlink(false);
+                    //blinking = false;                                           //not blinking anymore
                 }
                 else if(blinkCount % 2 == 0) {                                  //on even numbered blinkcounts, set the backlight to the normal color
                     opt.updateCol();
@@ -111,28 +111,30 @@ void IO::tweetBlink() {                                                         
 }
 
 void IO::rainbow() {                                                            //controls the backlight's rainbow mode, must be ran continuously
-    unsigned long currentMillis = millis();
-    if(currentMillis - previousMillis6 > rainSpeed) {                           //if it's to advance colors
-        previousMillis6 = currentMillis;
-        if(rainLevel < 255) {
-            switch(currentColor) {                                              //fade through each different color
-                case 0:
-                    opt.setCol(rain, 0, 255-rain);
-                    break;
-                case 1:
-                    opt.setCol(255-rain, rain, 0);
-                    break;
-                case 2:
-                    opt.setCol(0, 255-rain, rain);
-                    break;
+    if(opt.getRainbow()) {
+        unsigned long currentMillis = millis();
+        if(currentMillis - previousMillis6 > rainSpeed) {                           //if it's to advance colors
+            previousMillis6 = currentMillis;
+            if(rainLevel < 255) {
+                switch(currentColor) {                                              //fade through each different color
+                    case 0:
+                        opt.setCol(rain, 0, 255-rain);
+                        break;
+                    case 1:
+                        opt.setCol(255-rain, rain, 0);
+                        break;
+                    case 2:
+                        opt.setCol(0, 255-rain, rain);
+                        break;
+                }
+                rainLevel++;
             }
-            rainLevel++;
-        }
-        else {
-            rainLevel = 0;
-            currentColor++;
-            if(currentColor == 3) {
-                currentColor = 0;
+            else {
+                rainLevel = 0;
+                currentColor++;
+                if(currentColor == 3) {
+                    currentColor = 0;
+                }
             }
         }
     }
