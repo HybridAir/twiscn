@@ -2,6 +2,7 @@
 #define	LCDCONTROL_H
 
 #include <Arduino.h>
+#include <avr/pgmspace.h>
 #include <LiquidCrystal.h>
 
 class LCDControl {
