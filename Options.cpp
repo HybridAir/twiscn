@@ -42,6 +42,10 @@ byte Options::getBlinkSpd() {
     return blinkSpd;
 }
 
+bool Options::getReadyBlink() {
+    return readyBlink;
+}
+
 //==============================================================================
 
 void Options::setBrightness(byte in) {
@@ -73,6 +77,10 @@ void Options::setBlink(bool in) {
 void Options::setBlinkSpd(byte in) {
     blinkSpd = in;
     inout.setBlinkSpeed(blinkSpd);
+}
+
+void Options::setReadyBlink(bool in) {
+    readyBlink = in;
 }
 
 void Options::updateCol() {                                                     //force update the backlight color
