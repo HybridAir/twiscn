@@ -30,7 +30,7 @@ ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/variants/standard
 #BAUD_RATE = 57600
 
 # Include the libraries that you want. This are subfolders of "arduino-1.0.4/libraries" folder:
-INCLUDE_LIBS=EEPROM;
+INCLUDE_LIBS=EEPROM;LiquidCrystal;Bounce;HIDSerial;
 #INCLUDE_LIBS=EEPROM;Esplora;Ethernet;Ethernet/utility;Firmata;GSMSHIELD;\
 LiquidCrystal;MemoryFree;RTClib;SD;SD/utility;Servo;SoftwareSerial;SPI;\
 Stepper;WiFi;WiFi/utility;Wire;Wire/utility;\
