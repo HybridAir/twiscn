@@ -13,6 +13,7 @@ class Options {
         getRainSpd();
         getBlink();
         getBlinkSpd();
+        getReadyBlink();
         setBrightness(byte in);
         setCol(byte r, byte g, byte b);
         setBlinkCol(byte r, byte g, byte b);
@@ -20,6 +21,7 @@ class Options {
         setRainSpd(int in);
         setBlink(bool in);
         setBlinkSpd(byte in);
+        setReadyBlink(bool in);
         extractOption(String in);
         updateCol();
         updateBlinkCol();
@@ -36,6 +38,7 @@ class Options {
         int rainSpd;                                                            //int to support very long color changing times
         bool blink;
         byte blinkSpd;                                                          //byte since the blink speed should be fast, you know
+        bool readyBlink = false;
 };
 
 #endif	/* OPTIONS_H */
