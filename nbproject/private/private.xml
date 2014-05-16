@@ -5,4 +5,20 @@
         <activeConfIndexElem>0</activeConfIndexElem>
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group name="TwitterScreen">
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/Makefile</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/TweetHandler.h</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/LCDControl.cpp</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/Options.h</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/main.cpp</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/Options.cpp</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/TweetHandler.cpp</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/IO.cpp</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/Comms.cpp</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/LCDControl.h</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/Comms.h</file>
+            <file>file:/C:/Users/Blake/Projects/Electrical/NetBeans%20Projects/Arduino/TwitterScreenDevice/IO.h</file>
+        </group>
+    </open-files>
 </project-private>

@@ -5,10 +5,10 @@
 # For Arduino Duemilanove you must change the BAUD_RATE to 57600 bps.
 # Based on: http://playground.arduino.cc/Code/Netbeans
 
-COM_PORT = COM23
+COM_PORT = usb
 BAUD_RATE = 115200
 ARDUINO_VERSION = 105
-ARDUINO_BASE_DIR = c:/programs/arduino-1.0.5
+ARDUINO_BASE_DIR = c:/arduino/arduino-1.0.5
 ARDUINO_CORE_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/cores/arduino
 ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}/libraries
 LIB_CORE_DIR = lib/core
@@ -18,7 +18,7 @@ ARDUINO_LIB_LIBS = ${LIB_LIBS_DIR}/arduinolibs.a
 
 # Arduino Uno:
 ARDUINO_MODEL = atmega328p
-ARDUINO_PROGRAMMER = arduino
+ARDUINO_PROGRAMMER = usbasp
 ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/variants/standard
 
 # Arduino Mega 2560:
@@ -63,7 +63,8 @@ CORE_OBJECTS=$(subst ${ARDUINO_CORE_DIR},${LIB_CORE_DIR},${COBJECTS})
 
 LIB_CPP_SOURCES = $(wildcard $(patsubst %,${ARDUINO_LIB_DIR}/%/*.cpp,$(subst ;, ,$(INCLUDE_LIBS))))
 LIB_C_SOURCES = $(wildcard $(patsubst %,${ARDUINO_LIB_DIR}/%/*.c,$(subst ;, ,$(INCLUDE_LIBS))) )
-LOBJECTS=$(LIB_CPP_SOURCES:.cpp=.cpp.o) $(LIB_C_SOURCES:.c=.c.o)
+LIB_S_SOURCES = $(wildcard $(patsubst %,${ARDUINO_LIB_DIR}/%/*.S,$(subst ;, ,$(INCLUDE_LIBS))) )
+LOBJECTS=$(LIB_CPP_SOURCES:.cpp=.cpp.o) $(LIB_C_SOURCES:.c=.c.o) $(LIB_S_SOURCES:.S=.S.o)
 LIB_OBJECTS=$(subst ${ARDUINO_LIB_DIR},${LIB_LIBS_DIR},${LOBJECTS})
 
 # Environment 
@@ -97,12 +98,16 @@ ${LIB_LIBS_DIR}/%.c.o: ${ARDUINO_LIB_DIR}/%.c
 	mkdir -p $(dir $@)
 	${CMD_AVR_GCC} $< -o $@
 
+${LIB_LIBS_DIR}/%.S.o: ${ARDUINO_LIB_DIR}/%.S
+	mkdir -p $(dir $@)
+	${CMD_AVR_GCC} $< -o $@
+
 .build-pre: .build-pre-pre libraries
 
 #Unconditional Build
 .build-pre-pre:
 	
-.build-post: .build-impl	
+.build-post: .build-impl
 	avr-objcopy -O ihex ${CND_ARTIFACT_PATH_${CONF}} ${CND_ARTIFACT_PATH_${CONF}}.hex
 	avr-size --mcu=${ARDUINO_MODEL} -C ${CND_ARTIFACT_PATH_${CONF}}
 

@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=Arduino-Windows
 CND_ARTIFACT_DIR_Debug=dist/Debug/Arduino-Windows
-CND_ARTIFACT_NAME_Debug=arduinoproject
-CND_ARTIFACT_PATH_Debug=dist/Debug/Arduino-Windows/arduinoproject
+CND_ARTIFACT_NAME_Debug=twitterscreendevice
+CND_ARTIFACT_PATH_Debug=dist/Debug/Arduino-Windows/twitterscreendevice
 CND_PACKAGE_DIR_Debug=dist/Debug/Arduino-Windows/package
-CND_PACKAGE_NAME_Debug=arduinoproject.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/Arduino-Windows/package/arduinoproject.tar
+CND_PACKAGE_NAME_Debug=twitterscreendevice.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/Arduino-Windows/package/twitterscreendevice.tar
 # Release configuration
 CND_PLATFORM_Release=Arduino-Windows
 CND_ARTIFACT_DIR_Release=dist/Release/Arduino-Windows
-CND_ARTIFACT_NAME_Release=arduinoproject
-CND_ARTIFACT_PATH_Release=dist/Release/Arduino-Windows/arduinoproject
+CND_ARTIFACT_NAME_Release=twitterscreendevice
+CND_ARTIFACT_PATH_Release=dist/Release/Arduino-Windows/twitterscreendevice
 CND_PACKAGE_DIR_Release=dist/Release/Arduino-Windows/package
-CND_PACKAGE_NAME_Release=arduinoproject.tar
-CND_PACKAGE_PATH_Release=dist/Release/Arduino-Windows/package/arduinoproject.tar
+CND_PACKAGE_NAME_Release=twitterscreendevice.tar
+CND_PACKAGE_PATH_Release=dist/Release/Arduino-Windows/package/twitterscreendevice.tar
 #
 # include compiler specific variables
 #

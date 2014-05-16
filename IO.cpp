@@ -1,8 +1,9 @@
 //handles basic device IO
-#include <Arduino.h>
-#include <Bounce.h>
+#include "IO.h"
 
-IO::IO(Options optin) {                                                         //constructor, sets up all the inputs and outputs  
+//IO inout;
+
+IO::IO(Options& optin) {                                                         //constructor, sets up all the inputs and outputs  
     opt = optin;
     digitalWrite(RESETPIN, HIGH);                                               //this needs to be set high before anything else so the device doesn't reset
     pinMode(RESETPIN, OUTPUT);
@@ -17,6 +18,28 @@ IO::IO(Options optin) {                                                         
     dbFN2 = Bounce(); 
     dbFN1.attach(FN1PIN);
     dbFN2.attach(FN2PIN);
+    
+    CONLED = A4;                                                  //connection led pin
+    FN1PIN = 4;
+    FN2PIN = A3;
+    SPEEDPIN = A0;                                               //pin the speed pot is
+    RESETPIN = A1;                                               //never needed to be implemented, but we're stuck with it now
+    LCDPOWPIN = 16;                                              //pin used to control power to the contrast pot, turns contrast on/off
+    REDLITE = 9;
+    GREENLITE = 5;
+    BLUELITE = 6;
+    previousMillis = 0;
+    previousMillis5 = 0;
+    previousMillis6 = 0;
+    BLINKTIME = 500;                                              //time between connection led state changes
+    blinkState = false;                                                //controls whether the connection led needs to change states
+    blinkEnabled = false;
+    
+    currentColor = 0;                                                  //current color section that is being faded though
+    rainLevel = 0;
+    rain = 0;
+    blinkCount = 0;
+    blinking = false;
 }
 
 void IO::connectionLED(byte mode) {                                             //controls the connection LED, needs a mode byte

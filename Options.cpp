@@ -1,8 +1,8 @@
 //handles device options/settings
-#include <Arduino.h>
+#include "Options.h"
 
-Options::Options(IO ioin) {                                                     //default constructor, sets up default options
-    inout = ioin;
+Options::Options() {                                                     //default constructor, sets up default options
+    //inout = ioin;
     brightness = 255;                                                           //LCD brightness
     color = {0, 150, 255};                                                      //LCD Color
     blinkColor = {255, 0, 0};                                                   //color the LCD blinks when it gets a new tweet
@@ -10,6 +10,7 @@ Options::Options(IO ioin) {                                                     
     rainSpd = 200;                                                              //rainbow color transition speed
     blink = false;                                                              //new tweet blink mode
     blinkSpd = 100;                                                             //tweet blink speed
+    readyBlink = false;
 }
 
 //==============================================================================
@@ -50,12 +51,12 @@ bool Options::getReadyBlink() {
 
 void Options::setBrightness(byte in) {
     brightness = in;
-    inout.setBacklight(color[0], color[1], color[2], brightness);
+    //inout.setBacklight(color[0], color[1], color[2], brightness);
 }
 
 void Options::setCol(byte r, byte g, byte b) {
     color = {r, g, b};
-    inout.setBacklight(color[0], color[1], color[2], brightness);
+    //inout.setBacklight(color[0], color[1], color[2], brightness);
 }
 
 void Options::setBlinkCol(byte r, byte g, byte b) {                                  
@@ -76,7 +77,7 @@ void Options::setBlink(bool in) {
 
 void Options::setBlinkSpd(byte in) {
     blinkSpd = in;
-    inout.setBlinkSpeed(blinkSpd);
+    //inout.setBlinkSpeed(blinkSpd);
 }
 
 void Options::setReadyBlink(bool in) {
@@ -84,11 +85,11 @@ void Options::setReadyBlink(bool in) {
 }
 
 void Options::updateCol() {                                                     //force update the backlight color
-    inout.setBacklight(color[0], color[1], color[2], brightness);
+    //inout.setBacklight(color[0], color[1], color[2], brightness);
 }
 
 void Options::updateBlinkCol() {                                                //force update the tweet blink backlight color
-    inout.setBacklight(blinkColor[0], blinkColor[1], blinkColor[2], brightness);
+    //inout.setBacklight(blinkColor[0], blinkColor[1], blinkColor[2], brightness);
 }
 
 //==============================================================================

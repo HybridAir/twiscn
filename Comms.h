@@ -3,15 +3,19 @@
 
 #include <Arduino.h>
 #include <HIDSerial.h>
+#include "Options.h"
+#include "IO.h"
+#include "TweetHandler.h"
+#include "LCDControl.h"
 
 class Comms {
     public:
-        Comms(Options optin, IO ioin);
-        readComms();
-        handshake();
-        sendBtn(byte in);
+        Comms();
+        void readComms();
+        void handshake();
+        void sendBtn(byte in);
     private:
-        checkType();
+        void checkType();
         Options opt;
         IO io;
         TweetHandler twt;
@@ -21,9 +25,9 @@ class Comms {
         String transferOut;
         String userOut;
         String twtOut;
-        bool gotUser = false;
-        bool gotTweet = false;
-        bool connected = false;
+        bool gotUser;
+        bool gotTweet;
+        bool connected;
 };
 
 #endif	/* COMMS_H */

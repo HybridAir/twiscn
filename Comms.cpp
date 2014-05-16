@@ -2,13 +2,17 @@
 #include <Arduino.h>
 #include <HIDSerial.h>
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
+#include "Comms.h"
 
-Comms::Comms(Options optin, IO ioin, TweetHandler twtin, LCDControl lcdin) {    //onstructor
-    opt = optin;
-    io = ioin;
-    twt = twtin;
-    lcd = lcdin;
-    usb.begin();                                                                //start the hidserial connection
+Comms::Comms() {    //onstructor
+//    opt = optin;
+//    io = ioin;
+//    twt = twtin;
+//    lcd = lcdin;
+    usb.begin(); 
+    gotUser = false;
+    gotTweet = false;
+    connected = false;//start the hidserial connection
 }
 
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it

@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-TweetHandler::TweetHandler(byte widthIn) { 
-    LCDWIDTH = widthIn;
+TweetHandler::TweetHandler() { 
+//    LCDWIDTH = widthIn;
 }
 
 void TweetHandler::setUser(String in) {
