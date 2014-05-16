@@ -41,8 +41,11 @@ class IO {
         byte bRed;
         byte bGreen;
         byte bBlue;
+        byte rain = 0;
         Bounce dbFN1;
         Bounce dbFN2;
+        byte blinkCount = 0;
+                bool blinking = false;
 };
 
 #endif	/* IO_H */
