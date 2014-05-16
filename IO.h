@@ -6,7 +6,7 @@
 
 class IO {
     public:
-        IO();
+        IO(Options optin);
         connectionLED(byte mode);
         checkButtons();
         checkPot();
@@ -16,6 +16,7 @@ class IO {
         setBlinkSpeed(byte in);
         rainbow();
     private:
+        Options opt;
         const int CONLED = A4;                                                  //connection led pin
         const char FN1PIN = 4;
         const char FN2PIN = A3;
