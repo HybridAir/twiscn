@@ -1,10 +1,20 @@
 //handles basic device IO
 #include "IO.h"
 
-//IO inout;
+extern Options opt;
 
-IO::IO(Options& optin) {                                                         //constructor, sets up all the inputs and outputs  
-    opt = optin;
+IO::IO() {                                                         //constructor, sets up all the inputs and outputs  
+        CONLED = A4;                                                  //connection led pin
+    FN1PIN = 4;
+    FN2PIN = A3;
+    SPEEDPIN = A0;                                               //pin the speed pot is
+    RESETPIN = A1;                                               //never needed to be implemented, but we're stuck with it now
+    LCDPOWPIN = 16;                                              //pin used to control power to the contrast pot, turns contrast on/off
+    REDLITE = 9;
+    GREENLITE = 5;
+    BLUELITE = 6;
+    
+    //opt = optin;
     digitalWrite(RESETPIN, HIGH);                                               //this needs to be set high before anything else so the device doesn't reset
     pinMode(RESETPIN, OUTPUT);
     pinMode(CONLED, OUTPUT);
@@ -19,15 +29,7 @@ IO::IO(Options& optin) {                                                        
     dbFN1.attach(FN1PIN);
     dbFN2.attach(FN2PIN);
     
-    CONLED = A4;                                                  //connection led pin
-    FN1PIN = 4;
-    FN2PIN = A3;
-    SPEEDPIN = A0;                                               //pin the speed pot is
-    RESETPIN = A1;                                               //never needed to be implemented, but we're stuck with it now
-    LCDPOWPIN = 16;                                              //pin used to control power to the contrast pot, turns contrast on/off
-    REDLITE = 9;
-    GREENLITE = 5;
-    BLUELITE = 6;
+
     previousMillis = 0;
     previousMillis5 = 0;
     previousMillis6 = 0;
@@ -63,8 +65,8 @@ void IO::connectionLED(byte mode) {                                             
                 connectionLED(blinkState);
             }
             break;
-        default:
-            break;
+//        default:
+//            break;
     }
 }
 

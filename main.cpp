@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
+#include <LiquidCrystal.h>
 #include "Comms.h"
 #include "IO.h"
 #include "LCDControl.h"
@@ -31,11 +32,15 @@ const int LCDWIDTH = 16;                                                        
 //LCDControl lcd;                                   //new instance, set up LCD and play the boot animation
 //Comms comms;                                  //new instance, set up usb comms
 
-Options* opt;
-IO* inout;
-TweetHandler* twt;
-LCDControl* lcd;
-Comms* comms;
+LiquidCrystal lcdc(7, 8, 13, 10, 11, 12);
+
+Options opt;
+IO inout;
+TweetHandler twt(LCDWIDTH);
+LCDControl lcd(LCDWIDTH);
+Comms comms;
+
+
 
 //==============================================================================
 
@@ -46,11 +51,16 @@ void setup() {
 //    lcd = LCDControl(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
 //    comms = Comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
     
-    opt = new Options();                                                        //create the instance and set up default options
-    inout = new IO(opt);                                                      //create the instance and set up all inputs and outputs
-    twt = new TweetHandler(LCDWIDTH);                                           //create the instance for use by other classes
-    lcd = new LCDControl(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
-    comms = new Comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
+//    opt = new Options();                                                        //create the instance and set up default options
+//    inout = new IO(opt);                                                      //create the instance and set up all inputs and outputs
+//    twt = new TweetHandler(LCDWIDTH);                                           //create the instance for use by other classes
+//    lcd = new LCDControl(opt, twt, LCDWIDTH);                                   //new instance, set up LCD and play the boot animation
+//    comms = new Comms(opt, inout, twt, lcd);                                  //new instance, set up usb comms
+    
+//    opt.begin();
+//    inout.begin(opt);
+//    lcd.begin(opt, twt);
+//    comms.begin(opt, inout, twt, lcd);
     
     prepare();                                                                  //prepare the device for operation
 }

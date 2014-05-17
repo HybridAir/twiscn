@@ -1,4 +1,5 @@
-build/Debug/Arduino-Windows/LCDControl.o: LCDControl.cpp \
+build/Debug/Arduino-Windows/TweetHandler.o: TweetHandler.cpp \
+  TweetHandler.h \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Arduino.h \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/binary.h \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/WCharacter.h \
@@ -8,14 +9,9 @@ build/Debug/Arduino-Windows/LCDControl.o: LCDControl.cpp \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Print.h \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Printable.h \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/new.h \
-  c:/arduino/arduino-1.0.5/hardware/arduino/variants/standard/pins_arduino.h \
-  LCDControl.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LiquidCrystal.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h \
-  c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Print.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/FastIO.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h Options.h IO.h \
-  c:/arduino/arduino-1.0.5/libraries/Bounce/Bounce.h TweetHandler.h
+  c:/arduino/arduino-1.0.5/hardware/arduino/variants/standard/pins_arduino.h
+
+TweetHandler.h:
 
 c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Arduino.h:
 
@@ -36,23 +32,3 @@ c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Printable.h:
 c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/new.h:
 
 c:/arduino/arduino-1.0.5/hardware/arduino/variants/standard/pins_arduino.h:
-
-LCDControl.h:
-
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LiquidCrystal.h:
-
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h:
-
-c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Print.h:
-
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/FastIO.h:
-
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h:
-
-Options.h:
-
-IO.h:
-
-c:/arduino/arduino-1.0.5/libraries/Bounce/Bounce.h:
-
-TweetHandler.h:

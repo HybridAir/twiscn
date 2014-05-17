@@ -4,12 +4,16 @@
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include <LiquidCrystal.h>
+#include <LCD.h>
+#include "Options.h"
+#include "TweetHandler.h"
 
 class LCDControl {
     public:
-        LCDControl();
-        void printNewTweet(String userin, String twtBeg, String twtin);
-        void printNewTweet(String userin, String twtin);
+        LCDControl(int widthIn);
+        void printNewTweet();
+//        void printNewTweet(String userin, String twtBeg, String twtin);
+//        void printNewTweet(String userin, String twtin);
         void printUser();
         void printTweet();
         void scrollTweet();
@@ -18,18 +22,18 @@ class LCDControl {
         void connectAnim(bool connecting);
         void setSpeed(int in);
     private:
-        LiquidCrystal lcdc;                                    //create a new instance of LiquidCrystal, with these pins
+        //LiquidCrystal lcdc;                                    //create a new instance of LiquidCrystal, with these pins
                                                         //character width of the LCD
         void CreateChar(byte code, PGM_P character);
         void clearRow(byte row);
-        void printBegin(String in);
+        void printBegin();
         void shiftText();
         void bootAnim();
         //Options opt;
         //TweetHandler twt;
-        const int LCDWIDTH;
+         int LCDWIDTH;
         
-        const int readTime;
+         int readTime;
         byte section;
         bool printedBegin;
         bool scroll;
@@ -37,13 +41,13 @@ class LCDControl {
         byte animCount;
         unsigned long previousMillis;
         //int brightness= 0;
-        const int CONTRASTPIN;                                               //pin used to supply power to the contrast pot
-        static prog_char PROGMEM top1[];
-        static prog_char PROGMEM top2[];
-        static prog_char PROGMEM left2[];
-        static prog_char PROGMEM left1[];
-        static prog_char PROGMEM right2[];
-        static prog_char PROGMEM right1[];
+         int CONTRASTPIN;                                               //pin used to supply power to the contrast pot
+//        static prog_char PROGMEM top1[];
+//        static prog_char PROGMEM top2[];
+//        static prog_char PROGMEM left2[];
+//        static prog_char PROGMEM left1[];
+//        static prog_char PROGMEM right2[];
+//        static prog_char PROGMEM right1[];
         byte lcdPos;      //stores the current position of the scrolling lcd text
         byte lcdcount;      //stores the Row2.length() offset
         byte count;      //stores the connection animation thing

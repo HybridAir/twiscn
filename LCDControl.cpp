@@ -2,12 +2,21 @@
 //Handles text formatting, display, and scrolling
 
 #include <Arduino.h>    
-#include <avr/pgmspace.h>
-#include <LiquidCrystal.h>
 #include "LCDControl.h"
 
-void LCDControl::LCDControl() {  //constructor, wants the options and tweethandler instances, and lcdwidth
-    lcdc = lcdc(7, 8, 13, 10, 11, 12);
+extern Options opt;
+extern TweetHandler twt;
+extern LiquidCrystal lcdc;
+
+static prog_char PROGMEM top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
+ static prog_char PROGMEM top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
+ static prog_char PROGMEM left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
+ static prog_char PROGMEM left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
+ static prog_char PROGMEM right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
+ static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
+
+LCDControl::LCDControl(int widthIn) {  //constructor, wants the options and tweethandler instances, and lcdwidth
+//    lcdc = lcdc(7, 8, 13, 10, 11, 12);
     //opt = optin;
     //twt = twtin;
     LCDWIDTH = widthIn;                                                         //character width of the LCD
@@ -19,12 +28,12 @@ void LCDControl::LCDControl() {  //constructor, wants the options and tweethandl
     previousMillis = 0;
         //int brightness= 0;
     CONTRASTPIN = 16;                                               //pin used to supply power to the contrast pot
-    top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
-    top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
-    left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
-    left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
-    right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
-    right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
+//    top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
+//    top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
+//    left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
+//    left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
+//    right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
+//    right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
     lcdPos = 0;      //stores the current position of the scrolling lcd text
     lcdcount = 0;      //stores the Row2.length() offset
     count = 0;      //stores the connection animation thing
@@ -71,11 +80,11 @@ void LCDControl::clearRow(byte row) {                                           
 void LCDControl::scrollTweet() {                                                //used to scroll the tweet text, must be continuously called
     if(scroll) {
         switch(section) {
-            case 0:                                                             //beginning of tweet section
+            case 0: {                                                            //beginning of tweet section
                 if(printedBegin) {                                              //if we already printed the beginning
-                    unsigned long currentMillis = millis();
-                    if(currentMillis - previousMillis > readTime) {             //wait for the user read time to elapse
-                        previousMillis = currentMillis;
+                    unsigned long currentMillis1 = millis();
+                    if(currentMillis1 - previousMillis > readTime) {             //wait for the user read time to elapse
+                        previousMillis = currentMillis1;
                         section++;                                              //done waiting, allow the program to go to the next section
                         lcdPos = 0;                                             //reset the lcdPos var, needs to start at 0 after the beginning
                     }
@@ -84,20 +93,23 @@ void LCDControl::scrollTweet() {                                                
                     printBegin();
                 }
                 break;
-            case 1:                                                             //scrolling section
-                unsigned long currentMillis = millis();
-                if(currentMillis - previousMillis > textSpeed) {                //check if it's time to shift the text
-                    previousMillis = currentMillis;
+            }
+            case 1:  {                                                           //scrolling section
+                unsigned long currentMillis2 = millis();
+                if(currentMillis2 - previousMillis > textSpeed) {                //check if it's time to shift the text
+                    previousMillis = currentMillis2;
                     shiftText();                                                //shift the text by one                                                  
                 }
                 break;
-            case 2:                                                             //end of tweet section
-                unsigned long currentMillis = millis();
-                if(currentMillis - previousMillis > readTime) {                 //wait for the user read time to elapse
-                    previousMillis = currentMillis;
+            }
+            case 2:   {                                                          //end of tweet section
+                unsigned long currentMillis3 = millis();
+                if(currentMillis3 - previousMillis > readTime) {                 //wait for the user read time to elapse
+                    previousMillis = currentMillis3;
                     section = 0;                                                //done waiting, go back to section 0
                 }
                 break;
+            }
         }
     }
 }
@@ -130,7 +142,7 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
 
 void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the custom chars are made
     for(int i = 0; i <= 255; i = i*2) {
-        opt.getBrightness(i);
+        opt.setBrightness(i);
         delay(25);
     } 
 

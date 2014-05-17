@@ -7,6 +7,8 @@
 #include "IO.h"
 #include "TweetHandler.h"
 #include "LCDControl.h"
+#include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
+#include "usbdrv.h"          //the usbSofCount variable requires this
 
 class Comms {
     public:
@@ -16,12 +18,14 @@ class Comms {
         void sendBtn(byte in);
     private:
         void checkType();
-        Options opt;
-        IO io;
-        TweetHandler twt;
+        //Options opt;
+        //IO io;
+        //TweetHandler twt;
         HIDSerial usb;                                                          //creates a new HIDSerial instance, named usb
-        LCDControl lcd;
-        String usbBuffer;
+        //LCDControl lcd;
+        char usbBuffer[32];
+        String usbBufStr;
+        //String usbBuffer;
         String transferOut;
         String userOut;
         String twtOut;

@@ -2,14 +2,15 @@
 #define	OPTIONS_H
 
 #include <Arduino.h>
-//#include "IO.h"
+#include "IO.h"
 
 class Options {
     public:
         Options();
+        //void begin(IO& ioin);
         byte getBrightness();
-        byte getCol();
-        byte getBlinkCol();
+        byte *getCol();
+        byte *getBlinkCol();
         bool getRainbow();
         int getRainSpd();
         bool getBlink();
@@ -33,8 +34,6 @@ class Options {
         void getRainbow(String in);
         //IO inout;
         byte brightness;
-        byte color[3];
-        byte blinkColor[3];
         bool rainbow;
         int rainSpd;                                                            //int to support very long color changing times
         bool blink;
