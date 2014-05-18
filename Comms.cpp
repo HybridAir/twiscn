@@ -7,6 +7,7 @@ extern TweetHandler twt;
 extern LCDControl lcd;
 
 Comms::Comms() {    //onstructor
+    
 //    opt = optin;
 //    io = ioin;
 //    twt = twtin;
@@ -55,8 +56,8 @@ void Comms::checkType() {                                                       
             break;   
     }
     if (gotUser & gotTweet) {                                                   //if we got both the tweet and the user
-        twt.setUser(twtOut);                                                    //give the tweet handler a new user
-        twt.setTweet(userOut);                                                  //give the tweet handler a new tweet
+        twt.setUser(userOut);                                                    //give the tweet handler a new user
+        twt.setTweet(twtOut);                                                  //give the tweet handler a new tweet
         lcd.printNewTweet();                                                    //tell LCDControl to print the new tweet
         gotTweet = false;                                                       //already got the new tweet, so reset those vars
         gotUser = false;
@@ -65,7 +66,7 @@ void Comms::checkType() {                                                       
 
 void Comms::handshake() {                                                       //used to establish a data connection with the host
     while (!connected) {                                                        //do this while we are not connected
-        lcd.connectAnim(true);                                                  //display the connecting animation on the LCD
+        lcd.connectDisplay(true);                                                  //display the connecting animation on the LCD
         inout.connectionLED(2);                                                    //blink the connection led to further signify that the device is connecting
         usbPoll();                                                              //keep polling the USB port for any new data
         usb.println("`");                                                       //continuously send this to the host so it knows the we are waiting for a handshake
@@ -77,7 +78,7 @@ void Comms::handshake() {                                                       
         }  
     }
     inout.connectionLED(1);                                                        //turn the connection led solid on since we're connected now
-    lcd.connectAnim(false);                                                     //show the connected notice on the lcd
+    lcd.connectDisplay(false);                                                     //show the connected notice on the lcd
 }
 
 void Comms::sendBtn(byte in) {                                                  //used to send button presses to the host program for processing

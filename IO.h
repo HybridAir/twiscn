@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <Bounce.h>
 #include "Options.h"
+#include "LCDControl.h"
 
 
 
@@ -18,6 +19,7 @@ class IO {
         void tweetBlink();
         //void setBlinkSpeed(byte in);
         void rainbow();
+        void testLed();
     private:
         //Options opt;
          int CONLED;                                                  //connection led pin

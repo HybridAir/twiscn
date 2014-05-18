@@ -11,11 +11,9 @@ build/Debug/Arduino-Windows/LCDControl.o: LCDControl.cpp \
   c:/arduino/arduino-1.0.5/hardware/arduino/variants/standard/pins_arduino.h \
   LCDControl.h \
   c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LiquidCrystal.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h \
   c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Print.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/FastIO.h \
-  c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h Options.h IO.h \
-  c:/arduino/arduino-1.0.5/libraries/Bounce/Bounce.h TweetHandler.h
+  Options.h IO.h c:/arduino/arduino-1.0.5/libraries/Bounce/Bounce.h \
+  TweetHandler.h
 
 c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Arduino.h:
 
@@ -41,13 +39,7 @@ LCDControl.h:
 
 c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LiquidCrystal.h:
 
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h:
-
 c:/arduino/arduino-1.0.5/hardware/arduino/cores/arduino/Print.h:
-
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/FastIO.h:
-
-c:/arduino/arduino-1.0.5/libraries/LiquidCrystal/LCD.h:
 
 Options.h:
 

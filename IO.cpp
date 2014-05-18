@@ -2,6 +2,7 @@
 #include "IO.h"
 
 extern Options opt;
+extern LCDControl lcd;
 
 IO::IO() {                                                         //constructor, sets up all the inputs and outputs  
         CONLED = A4;                                                  //connection led pin
@@ -24,6 +25,11 @@ IO::IO() {                                                         //constructor
     pinMode(REDLITE, OUTPUT);
     pinMode(GREENLITE, OUTPUT);
     pinMode(BLUELITE, OUTPUT);
+    
+    digitalWrite(REDLITE, HIGH);
+    digitalWrite(GREENLITE, HIGH);
+    digitalWrite(BLUELITE, HIGH);
+    //digitalWrite(CONLED, HIGH);
     dbFN1 = Bounce();                                                           //set up the function button debouncing
     dbFN2 = Bounce(); 
     dbFN1.attach(FN1PIN);
@@ -42,6 +48,7 @@ IO::IO() {                                                         //constructor
     rain = 0;
     blinkCount = 0;
     blinking = false;
+    
 }
 
 void IO::connectionLED(byte mode) {                                             //controls the connection LED, needs a mode byte
@@ -56,6 +63,7 @@ void IO::connectionLED(byte mode) {                                             
             unsigned long currentMillis = millis();
             if(currentMillis - previousMillis > BLINKTIME) {
                 previousMillis = currentMillis;
+                lcd.connectAnim();
                 if (blinkState) {
                     blinkState = 0;
                 }
@@ -163,4 +171,8 @@ void IO::rainbow() {                                                            
             }
         }
     }
+}
+
+void IO::testLed() {
+    connectionLED(1);
 }

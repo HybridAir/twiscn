@@ -7,6 +7,7 @@
 extern Options opt;
 extern TweetHandler twt;
 extern LiquidCrystal lcdc;
+extern IO inout;            //temp
 
 static prog_char PROGMEM top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
  static prog_char PROGMEM top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
@@ -16,12 +17,10 @@ static prog_char PROGMEM top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
  static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
 
 LCDControl::LCDControl(int widthIn) {  //constructor, wants the options and tweethandler instances, and lcdwidth
-//    lcdc = lcdc(7, 8, 13, 10, 11, 12);
-    //opt = optin;
-    //twt = twtin;
     LCDWIDTH = widthIn;                                                         //character width of the LCD
-    digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
+    //digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
     lcdc.begin(LCDWIDTH, 2);                                                     //get that LCD going
+    
     readTime = 4000;
     ranOnce = false;
     animCount = 0;
@@ -107,6 +106,7 @@ void LCDControl::scrollTweet() {                                                
                 if(currentMillis3 - previousMillis > readTime) {                 //wait for the user read time to elapse
                     previousMillis = currentMillis3;
                     section = 0;                                                //done waiting, go back to section 0
+                    printedBegin = false;
                 }
                 break;
             }
@@ -115,14 +115,15 @@ void LCDControl::scrollTweet() {                                                
 }
 
 void LCDControl::shiftText() {                                                  //used to shift the tweet text by one column
-    if (lcdPos < (twt.getTweetLength() - LCDWIDTH)) {                            
+    if (lcdPos <= (twt.getTweetLength() - LCDWIDTH)) {                            
         //(subtracted LCDWIDTH since we want the ending to use all the lcd width)
         String subTweet = twt.getTweet();
         subTweet = subTweet.substring(lcdPos, (lcdPos + LCDWIDTH));             //create a substring from the current position to LCDWIDTH chars ahead
+        lcdc.setCursor(0, 1);
         lcdc.print(subTweet);                                                    //printed the shifted substring
         lcdPos++;                                                               //increase lcdPos by one
     }
-    if(lcdPos == (twt.getTweetLength() - LCDWIDTH)) {                           //check if we are at the end of the text to be shifted
+    if(lcdPos == ((twt.getTweetLength() - LCDWIDTH)+1)) {                           //check if we are at the end of the text to be shifted
         section++;                                                              //we are done here, go to the next section
     }
 }
@@ -141,9 +142,9 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
 }
 
 void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the custom chars are made
-    for(int i = 0; i <= 255; i = i*2) {
+    for(int i = 0; i <= 255; i = i + 2) {
         opt.setBrightness(i);
-        delay(25);
+        delay(10);
     } 
 
     CreateChar(0, top1);
@@ -177,27 +178,22 @@ void LCDControl::bootAnim() {                                                   
     lcdc.print("for USB  ");
 }
 
-void LCDControl::connectAnim(bool connecting) {                                                 //animation displayed while the device is connecting
-    if(connecting) {
-        while(!ranOnce) {
-            lcdc.clear();
-            lcdc.setCursor(6, 0);
-            lcdc.print("Connecting");
-            lcdc.setCursor(6, 1);
-            lcdc.print("to Host");
-            ranOnce = true;
-            unsigned long previousMillis = 0; 
-            animCount = 0;
-        }
-        
-        switch(animCount) {
+void LCDControl::connectAnim() {
+    if(animCount == 2) {
+                    animCount = 0;
+                }
+                else {
+                    animCount++;
+                }
+    
+            switch(animCount) {
             case 0:
                 lcdc.setCursor(0, 1);
                 lcdc.print("    ");
                 lcdc.setCursor(1, 0);
                 lcdc.print((char)0);
                 lcdc.print((char)1);
-                animCount++;
+                //animCount++;
                 break;
             case 1:
                 lcdc.setCursor(0, 0);
@@ -205,16 +201,72 @@ void LCDControl::connectAnim(bool connecting) {                                 
                 lcdc.setCursor(0, 1);
                 lcdc.print((char)2);
                 lcdc.print((char)3);
-                animCount++;
+                //animCount++;
                 break;
             case 2:
                 lcdc.setCursor(0, 1);
                 lcdc.print("  ");
                 lcdc.print((char)4);
                 lcdc.print((char)5);
-                animCount = 0;
+                //animCount = 0;
                 break;
         }
+}
+
+void LCDControl::connectDisplay(bool connecting) {                                                 //animation displayed while the device is connecting
+    if(connecting) {
+        
+//                unsigned long currentMillis = millis();
+//        if(currentMillis - previousMillis5 > 1000) {           //if it's time to change the backlight color
+//                previousMillis5 = currentMillis;
+//                
+//                if(animCount == 2) {
+//                    animCount = 0;
+//                }
+//                else {
+//                    animCount++;
+//                }
+//        }
+        
+        while(!ranOnce) {
+            lcdc.clear();
+            lcdc.setCursor(6, 0);
+            lcdc.print("Connecting");
+            lcdc.setCursor(6, 1);
+            lcdc.print("to Host");
+            ranOnce = true;
+            animCount = 0;
+            
+            unsigned long previousMillis = 0; 
+            animCount = 0;
+        }
+        
+        
+//        switch(animCount) {
+//            case 0:
+//                lcdc.setCursor(0, 1);
+//                lcdc.print("    ");
+//                lcdc.setCursor(1, 0);
+//                lcdc.print((char)0);
+//                lcdc.print((char)1);
+//                //animCount++;
+//                break;
+//            case 1:
+//                lcdc.setCursor(0, 0);
+//                lcdc.print("   ");
+//                lcdc.setCursor(0, 1);
+//                lcdc.print((char)2);
+//                lcdc.print((char)3);
+//                //animCount++;
+//                break;
+//            case 2:
+//                lcdc.setCursor(0, 1);
+//                lcdc.print("  ");
+//                lcdc.print((char)4);
+//                lcdc.print((char)5);
+//                //animCount = 0;
+//                break;
+//        }
     }
     else {
         lcdc.clear();
@@ -239,10 +291,15 @@ void LCDControl::sleepLCD(bool sleep) {                                         
         lcdc.noDisplay();                                                        //turn the rest "off"
     }
     else {                                                                      //lcd needs to wake up
+        
         digitalWrite(CONTRASTPIN, HIGH);                                          //turn the contrast on
+       opt.setBrightness(0);
         opt.setCol(0, 150, 255);                                                //reset the color
-        opt.setBrightness(255);                                                 //turn the backlight on
+        //opt.setBrightness(255);                                                 //turn the backlight on
         lcdc.display();                                                          //turn the lcd "on"
+        
         bootAnim();                                                        //play the boot animation
+               
+
     }
 }

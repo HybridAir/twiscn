@@ -4,9 +4,9 @@
 #include <Arduino.h>
 #include <avr/pgmspace.h>
 #include <LiquidCrystal.h>
-#include <LCD.h>
 #include "Options.h"
 #include "TweetHandler.h"
+#include "IO.h" //temp
 
 class LCDControl {
     public:
@@ -19,7 +19,8 @@ class LCDControl {
         void scrollTweet();
         void sleepLCD(bool in);
         void prepareLCD();
-        void connectAnim(bool connecting);
+        void connectAnim();
+        void connectDisplay(bool connecting);
         void setSpeed(int in);
     private:
         //LiquidCrystal lcdc;                                    //create a new instance of LiquidCrystal, with these pins
@@ -54,6 +55,7 @@ class LCDControl {
         unsigned int textSpeed;   //converted speed value taken from the speed potentiometer
         unsigned int interval2;   //how long the lcd is kept frozen for
         unsigned int freezeTime;
+        unsigned int previousMillis5;
         boolean frozen;   //stores if the lcd is currently frozen
         boolean beginning;   //stores if the text on the lcd is at the beginning
         boolean waitforbegin;   //stores if we are waiting for the beginning of the text

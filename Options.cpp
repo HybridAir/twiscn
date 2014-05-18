@@ -8,7 +8,8 @@ extern IO inout;
 
 Options::Options() {                                                     //default constructor, sets up default options
     //
-    brightness = 255;                                                           //LCD brightness
+//digitalWrite(A4, HIGH);
+    brightness = 0;                                                           //LCD brightness
     //color[] 
     //blinkColor[] = {255, 0, 0};                                                   //color the LCD blinks when it gets a new tweet
     rainbow = false;                                                            //rainbow LCD mode

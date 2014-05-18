@@ -13,6 +13,7 @@
 #include "TweetHandler.h"
 
 //prototype declaration
+
 void setup();
 void loop();
 void checkConnection();
@@ -30,9 +31,9 @@ unsigned long previousMillis2 = 0;                                              
 const int LCDWIDTH = 16;                                                        //character width of the LCD
     
 //global class initialization
+IO inout;  
 LiquidCrystal lcdc(7, 8, 13, 10, 11, 12);                                       //new instance of the LiquidCrystal class, give it the pins
-Options opt;                                                                    //new instance of options
-IO inout;                                                                       //new instance of io
+Options opt;                                                                    //new instance of options                                                                     //new instance of io
 TweetHandler twt(LCDWIDTH);                                                     //new instance of TweetHandler, needs the LCDWIDTH
 LCDControl lcd(LCDWIDTH);                                                       //new instance of LCDControl, needs the LCDWIDTH
 Comms comms;                                                                    //new instance of comms
@@ -40,6 +41,7 @@ Comms comms;                                                                    
 //==============================================================================
 
 void setup() {  
+    
     prepare();                                                                  //prepare the device for operation
 }
 
