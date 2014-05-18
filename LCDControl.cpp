@@ -47,6 +47,7 @@ LCDControl::LCDControl(int widthIn) {  //constructor, wants the options and twee
 
 void LCDControl::printNewTweet() {                                              //used to print a new tweet
     clearRow(0);                                                                //clear the username row to prepare it for an update
+    opt.setReadyBlink(true);                                                    //tell options that we need to blink the backlight
     lcdc.print(twt.getUser());                                                   //print the username, don't need to do anything to it 
     printBegin();                                                               //print the beginning of the tweet and do further processing
 }
@@ -63,7 +64,7 @@ void LCDControl::printBegin() {                                                 
     }
     clearRow(1);                                                                //clear the bottom row
     lcdc.print(twt.getTweetBegin());                                             //print the beginning of the tweet
-    opt.setReadyBlink(true);                                                    //tell options that we need to blink the backlight
+    
 }
 
 void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number

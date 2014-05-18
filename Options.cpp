@@ -115,9 +115,11 @@ void Options::extractOption(String in) {                                        
     in = in.substring(1);                                                       //remove the the first character, it's no longer needed in there
     switch(type) {                                                              //check that char
         case 'b':                                                               //backlight brightness option
+            digitalWrite(A4, LOW);
             getBrightnessVal(in);                                               //extract the necessary data, and apply the new setting
             break;
         case 'c':                                                               //backlight color option
+            
             getColorVal(in);                                                    //extract the necessary data, and apply the new setting   
             break;
         case 'd':                                                               //tweet blink options, contains color, speed, and enable
@@ -130,20 +132,20 @@ void Options::extractOption(String in) {                                        
 }
 
 void Options::getBrightnessVal(String in) {                                     //used to get the brightness value out of a transfer, and apply it
-    String bright = in.substring(0, 2);                                            //get a substring containing the brightness value out
+    String bright = in.substring(0, 3);                                            //get a substring containing the brightness value out
     setBrightness((byte)bright.toInt());                                        //set the brightness to that value converted to a byte
 }
 
 void Options::getColorVal(String in) {                                          //used to get the color value out of a transfer, and apply it
     //get substrings of each color value out
-    String red = in.substring(0, 2);
-    String green = in.substring(3, 5);
-    String blue = in.substring(6, 8);
+    String red = in.substring(0, 3);
+    String green = in.substring(3, 6);
+    String blue = in.substring(6, 9);
     setCol((byte)red.toInt(), (byte)green.toInt(), (byte)blue.toInt());         //convert each value to a byte, and send it to get applied
 }
 
 void Options::getTweetBlink(String in) {                                        //used to get the tweet blink values out of a transfer, and apply them
-    String enable = in.substring(0);                                               //first get the enable setting out
+    String enable = in.substring(0, 1);                                               //first get the enable setting out
     if(enable.toInt() == 0) {                                                   //"convert" the setting to a boolean, and apply it
         setBlink(false);
     }
@@ -151,13 +153,13 @@ void Options::getTweetBlink(String in) {                                        
         setBlink(true);
     }
     
-    String spd = in.substring(1, 3);                                               //get a substring containing the blink speed value out
+    String spd = in.substring(1, 4);                                               //get a substring containing the blink speed value out
     setBlinkSpd((byte)spd.toInt());                                             //set the speed to that value converted to a byte
     
     //get the blink color values out
-    String red = in.substring(4, 6);
-    String green = in.substring(7, 9);
-    String blue = in.substring(10, 12);
+    String red = in.substring(4, 7);
+    String green = in.substring(7, 10);
+    String blue = in.substring(10, 13);
     setBlinkCol((byte)red.toInt(), (byte)green.toInt(), (byte)blue.toInt());    //convert each value to a byte, and send it to get applied
 }
 
@@ -170,6 +172,6 @@ void Options::getRainbow(String in) {                                           
         setRainbow(true);
     }
     
-    String spd = in.substring(1, 3);                                               //get a substring containing the blink speed value out
+    String spd = in.substring(1, 4);                                               //get a substring containing the blink speed value out
     setRainSpd(spd.toInt());                                                    //set the speed to that value converted to an int
 }

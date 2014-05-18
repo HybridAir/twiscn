@@ -125,7 +125,7 @@ void IO::tweetBlink() {                                                         
             unsigned long currentMillis = millis();
             if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {           //if it's time to change the backlight color
                 previousMillis5 = currentMillis;
-                if(blinkCount == 4) {                                           //done blinking
+                if(blinkCount == 5) {                                           //done blinking
                     blinkCount = 0;                                             //reset blink count
                     opt.setReadyBlink(false);
                     //blinking = false;                                           //not blinking anymore
