@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//testing this
+//test2
 //TODO: demo mode maybe, previous tweets
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
