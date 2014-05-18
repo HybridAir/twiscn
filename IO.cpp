@@ -1,9 +1,21 @@
 //handles basic device IO
-#include <Arduino.h>
-#include <Bounce.h>
+#include "IO.h"
 
-IO::IO(Options optin) {                                                         //constructor, sets up all the inputs and outputs  
-    opt = optin;
+extern Options opt;
+extern LCDControl lcd;
+
+IO::IO() {                                                         //constructor, sets up all the inputs and outputs  
+        CONLED = A4;                                                  //connection led pin
+    FN1PIN = 4;
+    FN2PIN = A3;
+    SPEEDPIN = A0;                                               //pin the speed pot is
+    RESETPIN = A1;                                               //never needed to be implemented, but we're stuck with it now
+    LCDPOWPIN = 16;                                              //pin used to control power to the contrast pot, turns contrast on/off
+    REDLITE = 9;
+    GREENLITE = 5;
+    BLUELITE = 6;
+    
+    //opt = optin;
     digitalWrite(RESETPIN, HIGH);                                               //this needs to be set high before anything else so the device doesn't reset
     pinMode(RESETPIN, OUTPUT);
     pinMode(CONLED, OUTPUT);
@@ -13,10 +25,30 @@ IO::IO(Options optin) {                                                         
     pinMode(REDLITE, OUTPUT);
     pinMode(GREENLITE, OUTPUT);
     pinMode(BLUELITE, OUTPUT);
+    
+    digitalWrite(REDLITE, HIGH);
+    digitalWrite(GREENLITE, HIGH);
+    digitalWrite(BLUELITE, HIGH);
+    //digitalWrite(CONLED, HIGH);
     dbFN1 = Bounce();                                                           //set up the function button debouncing
     dbFN2 = Bounce(); 
     dbFN1.attach(FN1PIN);
     dbFN2.attach(FN2PIN);
+    
+
+    previousMillis = 0;
+    previousMillis5 = 0;
+    previousMillis6 = 0;
+    BLINKTIME = 500;                                              //time between connection led state changes
+    blinkState = false;                                                //controls whether the connection led needs to change states
+    blinkEnabled = false;
+    
+    currentColor = 0;                                                  //current color section that is being faded though
+    rainLevel = 0;
+    rain = 0;
+    blinkCount = 0;
+    blinking = false;
+    
 }
 
 void IO::connectionLED(byte mode) {                                             //controls the connection LED, needs a mode byte
@@ -31,6 +63,7 @@ void IO::connectionLED(byte mode) {                                             
             unsigned long currentMillis = millis();
             if(currentMillis - previousMillis > BLINKTIME) {
                 previousMillis = currentMillis;
+                lcd.connectAnim();
                 if (blinkState) {
                     blinkState = 0;
                 }
@@ -40,8 +73,8 @@ void IO::connectionLED(byte mode) {                                             
                 connectionLED(blinkState);
             }
             break;
-        default:
-            break;
+//        default:
+//            break;
     }
 }
 
@@ -92,7 +125,7 @@ void IO::tweetBlink() {                                                         
             unsigned long currentMillis = millis();
             if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {           //if it's time to change the backlight color
                 previousMillis5 = currentMillis;
-                if(blinkCount == 4) {                                           //done blinking
+                if(blinkCount == 5) {                                           //done blinking
                     blinkCount = 0;                                             //reset blink count
                     opt.setReadyBlink(false);
                     //blinking = false;                                           //not blinking anymore
@@ -138,4 +171,8 @@ void IO::rainbow() {                                                            
             }
         }
     }
+}
+
+void IO::testLed() {
+    connectionLED(1);
 }

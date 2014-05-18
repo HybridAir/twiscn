@@ -35,6 +35,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Comms.o \
+	${OBJECTDIR}/IO.o \
+	${OBJECTDIR}/LCDControl.o \
+	${OBJECTDIR}/Options.o \
+	${OBJECTDIR}/TweetHandler.o \
 	${OBJECTDIR}/main.o
 
 
@@ -56,16 +61,41 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/arduinoproject.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/twitterscreendevice.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/arduinoproject.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/twitterscreendevice.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	avr-gcc -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/arduinoproject ${OBJECTFILES} ${LDLIBSOPTIONS} ${FLAGS_LINKER}
+	avr-gcc -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/twitterscreendevice ${OBJECTFILES} ${LDLIBSOPTIONS} ${FLAGS_LINKER}
+
+${OBJECTDIR}/Comms.o: Comms.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I${INCLUDE} -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Comms.o Comms.cpp
+
+${OBJECTDIR}/IO.o: IO.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I${INCLUDE} -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/IO.o IO.cpp
+
+${OBJECTDIR}/LCDControl.o: LCDControl.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I${INCLUDE} -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/LCDControl.o LCDControl.cpp
+
+${OBJECTDIR}/Options.o: Options.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I${INCLUDE} -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Options.o Options.cpp
+
+${OBJECTDIR}/TweetHandler.o: TweetHandler.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I${INCLUDE} -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TweetHandler.o TweetHandler.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} $@.d
-	$(COMPILE.cc) -g -I${INCLUDE} ${FLAGS_GPP} -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I${INCLUDE} -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:
@@ -73,7 +103,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/arduinoproject.exe
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/twitterscreendevice.exe
 
 # Subprojects
 .clean-subprojects:

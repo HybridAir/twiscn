@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="88">
+<configurationDescriptor version="90">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>Comms.h</itemPath>
+      <itemPath>IO.h</itemPath>
+      <itemPath>LCDControl.h</itemPath>
+      <itemPath>Options.h</itemPath>
+      <itemPath>TweetHandler.h</itemPath>
+      <itemPath>classes.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -12,6 +18,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>Comms.cpp</itemPath>
+      <itemPath>IO.cpp</itemPath>
+      <itemPath>LCDControl.cpp</itemPath>
+      <itemPath>Options.cpp</itemPath>
+      <itemPath>TweetHandler.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -24,14 +35,16 @@
                    projectFiles="false"
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
+      <itemPath>README.md</itemPath>
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>Arduino|WinAVR</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -51,13 +64,36 @@
           <commandLine>${FLAGS_LINKER}</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Comms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Comms.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="IO.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="IO.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LCDControl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LCDControl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Options.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Options.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TweetHandler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TweetHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="classes.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
-        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -73,6 +109,28 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Comms.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Comms.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="IO.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="IO.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="LCDControl.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="LCDControl.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Options.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Options.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TweetHandler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TweetHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="classes.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>

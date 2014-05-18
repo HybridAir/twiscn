@@ -1,10 +1,12 @@
 //used for holding and handling tweets
 //eventually add in the ability to reprint a previous tweet
 
-#include <Arduino.h>
+#include "TweetHandler.h"
 
-TweetHandler::TweetHandler(byte widthIn) { 
+TweetHandler::TweetHandler(int widthIn) { 
+    
     LCDWIDTH = widthIn;
+    
 }
 
 void TweetHandler::setUser(String in) {
@@ -44,7 +46,7 @@ String TweetHandler::getTweetBegin() {                                          
         return tweet;                                                           //no need to shorten, just return the unchanged tweet
     } 
     else {                                                                      //needs to be shortened, longer than LCDWIDTH
-        beginning = tweet.substring(0, LCDWIDTH - 1);                           //create a substring containing the first LCDWIDTH characters                                  
+        beginning = tweet.substring(0, LCDWIDTH);                           //create a substring containing the first LCDWIDTH characters                                  
         return beginning;
     }
 }
