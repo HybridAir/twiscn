@@ -2,6 +2,7 @@
 #include "IO.h"
 
 extern Options opt;                                                             //needed for Options class access
+extern Comms comms;
 extern LCDControl lcd;                                                          //needed for LCDControl class access
 
 IO::IO() {                                                                      //default constructor 
@@ -61,19 +62,16 @@ void IO::connectionLED(byte mode) {                                             
     }
 }
 
-byte IO::checkButtons() {                                                       //checks the debounced buttons for any changes, needs to be called continuously
+void IO::checkButtons() {                                                       //checks the debounced buttons for any changes, needs to be called continuously
     if(dbFN1.update()) {                                                        //if fn1's state changed
-        if(!dbFN1.read()) {                                                     //if the button was just released
-            return 1;
-        }                              
-    }
-    else if(dbFN2.update()) {                                                   //if fn2's state changed
-        if(!dbFN2.read()) {                                                     //if the button was just released
-            return 2;
+        if(!dbFN1.read()) {                                                     //if the button is now LOW
+            comms.sendBtn('1');                                                 //tell comms to send button transfer '1' 
         }
     }
-    else {
-        return 0;                                                               //no button state changes
+    if(dbFN2.update()) {                                                        //if fn1's state changed
+        if(!dbFN2.read()) {                                                     //if the button is now LOW
+            comms.sendBtn('2');                                                 //tell comms to send button transfer '2'
+        }
     }
 }
 
