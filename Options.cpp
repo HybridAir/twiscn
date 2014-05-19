@@ -1,27 +1,26 @@
 //handles device options/settings
 #include "Options.h"
+extern LiquidCrystal lcdc;
 
 extern IO inout;
 
-        byte color[3] = {0, 150, 255};                                                      //LCD Color
-        byte blinkColor[3] = {255, 0, 0}; 
+//        byte color[3] = {0, 150, 255};                                                      //LCD Color
+//        byte blinkColor[3] = {255, 0, 0}; 
 
-Options::Options() {                                                     //default constructor, sets up default options
-    //
-//digitalWrite(A4, HIGH);
-    brightness = 0;                                                           //LCD brightness
-    //color[] 
-    //blinkColor[] = {255, 0, 0};                                                   //color the LCD blinks when it gets a new tweet
+Options::Options() {                                                            //default constructor, sets up default options
+    defaults();
+}
+
+void Options::defaults() {
+    brightness = 0;                                                             //LCD backlight brightness
+    setCol(0, 150, 255);                                                        //LCD backlight color
+    setBlinkCol(255, 0, 0);                                                     //LCD backlight blink color
     rainbow = false;                                                            //rainbow LCD mode
     rainSpd = 200;                                                              //rainbow color transition speed
     blink = false;                                                              //new tweet blink mode
     blinkSpd = 100;                                                             //tweet blink speed
     readyBlink = false;
 }
-
-//void Options::begin(IO& ioin) {
-//    inout = ioin;
-//}
 
 //==============================================================================
 
@@ -68,7 +67,6 @@ void Options::setCol(byte r, byte g, byte b) {
     color[0] = r;
     color[1] = g;
     color[2] = b;
-//    color[] = {r, g, b};
     inout.setBacklight(color[0], color[1], color[2], brightness);
 }
 
@@ -76,7 +74,6 @@ void Options::setBlinkCol(byte r, byte g, byte b) {
     blinkColor[0] = r;
     blinkColor[1] = g;
     blinkColor[2] = b;
-    //blinkColor[] = {r, g, b};
 }
 
 void Options::setRainbow(bool in) {
@@ -93,7 +90,6 @@ void Options::setBlink(bool in) {
 
 void Options::setBlinkSpd(byte in) {
     blinkSpd = in;
-    //inout.setBlinkSpeed(blinkSpd);
 }
 
 void Options::setReadyBlink(bool in) {
@@ -111,28 +107,28 @@ void Options::updateBlinkCol() {                                                
 //==============================================================================
 
 void Options::extractOption(String in) {                                        //used to extract the received option String from comms
-    byte type = in.charAt(0);                                                   //get the first char out of the input, this is the option type
+    char type = in.charAt(0);                                                   //get the first char out of the input, this is the option type
     in = in.substring(1);                                                       //remove the the first character, it's no longer needed in there
     switch(type) {                                                              //check that char
         case 'b':                                                               //backlight brightness option
-            digitalWrite(A4, LOW);
             getBrightnessVal(in);                                               //extract the necessary data, and apply the new setting
             break;
-        case 'c':                                                               //backlight color option
-            
+        case 'c':                                                               //backlight color option           
             getColorVal(in);                                                    //extract the necessary data, and apply the new setting   
             break;
-        case 'd':                                                               //tweet blink options, contains color, speed, and enable
-            getTweetBlink(in);                                                  //extract the necessary data, and apply the new setting
+        case 'd':                                                               //tweet blink options, contains color, speed, and enable    
+            getTweetBlink(in);                                                  //extract the necessary data, and apply the new settings
             break;
         case 'e':                                                               //rainbow mode option, contains speed and enable
-            getRainbow(in);
+            getRainbow(in);                                                     //extract the necessary data, and apply the new settings
+            break;
+        default:
             break;
     } 
 }
 
 void Options::getBrightnessVal(String in) {                                     //used to get the brightness value out of a transfer, and apply it
-    String bright = in.substring(0, 3);                                            //get a substring containing the brightness value out
+    String bright = in.substring(0, 3);                                         //get a substring containing the brightness value out
     setBrightness((byte)bright.toInt());                                        //set the brightness to that value converted to a byte
 }
 
@@ -144,19 +140,19 @@ void Options::getColorVal(String in) {                                          
     setCol((byte)red.toInt(), (byte)green.toInt(), (byte)blue.toInt());         //convert each value to a byte, and send it to get applied
 }
 
-void Options::getTweetBlink(String in) {                                        //used to get the tweet blink values out of a transfer, and apply them
-    String enable = in.substring(0, 1);                                               //first get the enable setting out
-    if(enable.toInt() == 0) {                                                   //"convert" the setting to a boolean, and apply it
+void Options::getTweetBlink(String in) {                                        //used to get the tweet blink values out of a transfer, and apply them  
+    String enable = in.substring(0, 1);                                         //first get the enable setting out
+    if(enable.toInt() == 0) {                                                   //check if the host enabled tweetblink, and then enable/disable 
         setBlink(false);
     }
     else {
         setBlink(true);
     }
     
-    String spd = in.substring(1, 4);                                               //get a substring containing the blink speed value out
+    String spd = in.substring(1, 4);                                            //get a substring containing the blink speed value out
     setBlinkSpd((byte)spd.toInt());                                             //set the speed to that value converted to a byte
     
-    //get the blink color values out
+    //get the blink color values out in substrings
     String red = in.substring(4, 7);
     String green = in.substring(7, 10);
     String blue = in.substring(10, 13);
@@ -164,14 +160,14 @@ void Options::getTweetBlink(String in) {                                        
 }
 
 void Options::getRainbow(String in) {                                           //used to get the rainbow settings out of a transfer, and apply them
-    String enable = in.substring(0);                                               //first get the enable setting out
-    if(enable.toInt() == 0) {                                                   //"convert" the setting to a boolean, and apply it
+    String enable = in.substring(0, 1);                                         //first get the enable setting out
+    if(enable.toInt() == 0) {                                                   //check if the host enabled rainbow mode, and then enable/disable 
         setRainbow(false);
     }
     else {
         setRainbow(true);
     }
     
-    String spd = in.substring(1, 4);                                               //get a substring containing the blink speed value out
+    String spd = in.substring(1, 4);                                            //get a substring containing the blink speed value out
     setRainSpd(spd.toInt());                                                    //set the speed to that value converted to an int
 }
