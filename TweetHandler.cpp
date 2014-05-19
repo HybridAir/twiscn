@@ -1,20 +1,17 @@
-//used for holding and handling tweets
-//eventually add in the ability to reprint a previous tweet
+//used for storing and handling tweets
 
 #include "TweetHandler.h"
 
-TweetHandler::TweetHandler(int widthIn) { 
-    
-    LCDWIDTH = widthIn;
-    
+TweetHandler::TweetHandler(int widthIn) {                                       //constructor, needs the LCDWIDTH   
+    LCDWIDTH = widthIn;    
 }
 
-void TweetHandler::setUser(String in) {
+void TweetHandler::setUser(String in) {                                         //sets the username
     prevUser = user;                                                            //save a copy of the current (now previous) user
     user = in;                                                                  //set the new user
 }
 
-void TweetHandler::setTweet(String in) {
+void TweetHandler::setTweet(String in) {                                        //sets the tweet text
     prevTweet = tweet;                                                          //save a copy of the current (now previous) tweet
     tweet = in;                                                                 //set the new tweet
 }
@@ -46,7 +43,7 @@ String TweetHandler::getTweetBegin() {                                          
         return tweet;                                                           //no need to shorten, just return the unchanged tweet
     } 
     else {                                                                      //needs to be shortened, longer than LCDWIDTH
-        beginning = tweet.substring(0, LCDWIDTH);                           //create a substring containing the first LCDWIDTH characters                                  
+        beginning = tweet.substring(0, LCDWIDTH);                               //create a substring containing the first LCDWIDTH characters                                  
         return beginning;
     }
 }
