@@ -5,7 +5,7 @@
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
 #include <LiquidCrystal.h>                                                      //used to control the LCD
 
-//included class headers:
+//included class headers: 
 #include "Comms.h"
 #include "IO.h"
 #include "LCDControl.h"
