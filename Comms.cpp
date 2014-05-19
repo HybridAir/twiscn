@@ -83,7 +83,7 @@ void Comms::setConnected(bool in) {                                             
     connected = in;
 }
 
-void Comms::sendBtn(byte in) {                                                  //used to send button presses to the host program for processing
+void Comms::sendBtn(char in) {                                                  //used to send button presses to the host program for processing
     usb.println(in);
     usb.println("=");
 }
