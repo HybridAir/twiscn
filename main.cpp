@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//TODO: buttons, demo mode maybe, previous tweets, change rainbow mode time to int (in comms), detection for host handshake while running, readTime in options/comms   
+//TODO: previous tweets, change rainbow mode time to int (in comms), detection for host handshake while running, readTime in options/comms   
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
@@ -18,7 +18,6 @@ void setup();
 void loop();
 void checkConnection();
 void goToSleep();
-void doButtons();
 void checkForSleep();
 void prepare();
 
@@ -46,7 +45,7 @@ void setup() {
 
 void loop() {
     comms.readComms();                                                          //checks for any new comms data and processes it
-    doButtons();                                                                //monitors button changes and processes them
+    inout.checkButtons();                                                       //monitors button changes and processes them
     lcd.setSpeed(inout.checkPot());                                             //applies any changes made to the speed pot
     inout.rainbow();                                                            //control the rainbow backlight changes                                                        
     lcd.scrollTweet();                                                          //scrolls the tweet
@@ -54,19 +53,10 @@ void loop() {
     checkForSleep();                                                            //checks if the device needs to be sleeping
 }
 
-//==============================================================================
-
 void prepare() {                                                                //used to prepare the device for operation
     opt.defaults();                                                             //go back to all default options
     lcd.sleepLCD(false);                                                        //get the LCD going
     comms.handshake();                                                          //establish a connection with the host program
-}
-
-void doButtons() {                                                              //used to check the function buttons, must be continuously ran
-    byte btn = inout.checkButtons();                                            //check for any button changes, get the button that was changed out
-    if(btn != 0) {                                                              //if there was a change
-        comms.sendBtn(btn);                                                     //send the button that changed to the host program
-    }
 }
 
 //==============================================================================
