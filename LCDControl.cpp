@@ -1,48 +1,29 @@
-//Used for controlling the LCD
 //Handles text formatting, display, and scrolling
-
-#include <Arduino.h>    
+ 
 #include "LCDControl.h"
 
 extern Options opt;
 extern TweetHandler twt;
 extern LiquidCrystal lcdc;
-extern IO inout;            //temp
 
+//custom lcd characters for the logo
 static prog_char PROGMEM top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
- static prog_char PROGMEM top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
- static prog_char PROGMEM left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
- static prog_char PROGMEM left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
- static prog_char PROGMEM right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
- static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
+static prog_char PROGMEM top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
+static prog_char PROGMEM left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
+static prog_char PROGMEM left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
+static prog_char PROGMEM right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
+static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
 
-LCDControl::LCDControl(int widthIn) {  //constructor, wants the options and tweethandler instances, and lcdwidth
+LCDControl::LCDControl(int widthIn) {                                           //constructor, wants the lcdwidth  
     LCDWIDTH = widthIn;                                                         //character width of the LCD
-    //digitalWrite(CONTRASTPIN, HIGH);                                            //enable the LCD's pot contrast power pin, essentially "turning it on"
-    lcdc.begin(LCDWIDTH, 2);                                                     //get that LCD going
-    
-    readTime = 4000;
-    ranOnce = false;
-    animCount = 0;
-    previousMillis = 0;
-        //int brightness= 0;
-    CONTRASTPIN = 16;                                               //pin used to supply power to the contrast pot
-//    top1[] = {0x1,0x1,0x3,0x3,0x7,0x7,0x3,0x1};
-//    top2[] = {0x10,0x10,0x18,0x18,0x1c,0x1c,0x18,0x10};
-//    left2[] = {0x8,0x1c,0x1e,0x1e,0x1e,0x18,0x0,0x0};
-//    left1[] = {0x0,0x0,0x0,0x1,0x3,0x7,0xf,0x18};
-//    right2[] = {0x2,0x7,0xf,0xf,0xf,0x3,0x0,0x0};
-//    right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
-    lcdPos = 0;      //stores the current position of the scrolling lcd text
-    lcdcount = 0;      //stores the Row2.length() offset
-    count = 0;      //stores the connection animation thing
-    textSpeed = 0;   //converted speed value taken from the speed potentiometer
-    interval2 = 3000;   //how long the lcd is kept frozen for
-    freezeTime = 2000;
-    frozen = 0;   //stores if the lcd is currently frozen
-    beginning = 0;   //stores if the text on the lcd is at the beginning
-    waitforbegin = 0;   //stores if we are waiting for the beginning of the text
-    unFroze = 0;
+    lcdc.begin(LCDWIDTH, 2);                                                    //get that LCD going  
+    readTime = 3000;                                                            //set the time for the user to read the beginning and end of a tweet, put this in options later
+    ranOnce = false;                                                            //used in connectDisplay
+    animCount = 0;                                                              //used in connectAnim
+    previousMillis = 0;                                                         //used in printBegin
+    lcdPos = 0;                                                                 //stores the current position of the scrolling lcd text
+    textSpeed = 0;                                                              //final speed value taken from the speed potentiometer
+    waitforbegin = 0;                                                           //stores if we are waiting for the beginning of the text
 }
 
 void LCDControl::printNewTweet() {                                              //used to print a new tweet
@@ -63,16 +44,16 @@ void LCDControl::printBegin() {                                                 
         scroll = false;                                                         //disable scrolling
     }
     clearRow(1);                                                                //clear the bottom row
-    lcdc.print(twt.getTweetBegin());                                             //print the beginning of the tweet
+    lcdc.print(twt.getTweetBegin());                                            //print the beginning of the tweet
     
 }
 
 void LCDControl::clearRow(byte row) {                                           //used to clear individual rows, give it the row number
-    lcdc.setCursor(0, row);                                                      //set the row to start clearing
+    lcdc.setCursor(0, row);                                                     //set the row to start clearing
     for(int i = 0;i <= LCDWIDTH; i++) {                                         //for each column in the row
-        lcdc.print(" ");                                                         //print a space over it, essentially clearing it
+        lcdc.print(" ");                                                        //print a space over it, essentially clearing it
     }
-    lcdc.setCursor(0, row);                                                      //reset cursor position
+    lcdc.setCursor(0, row);                                                     //reset cursor position
 }
 
 //==============================================================================
@@ -80,31 +61,31 @@ void LCDControl::clearRow(byte row) {                                           
 void LCDControl::scrollTweet() {                                                //used to scroll the tweet text, must be continuously called
     if(scroll) {
         switch(section) {
-            case 0: {                                                            //beginning of tweet section
+            case 0: {                                                           //beginning of tweet section
                 if(printedBegin) {                                              //if we already printed the beginning
                     unsigned long currentMillis1 = millis();
-                    if(currentMillis1 - previousMillis > readTime) {             //wait for the user read time to elapse
+                    if(currentMillis1 - previousMillis > readTime) {            //wait for the user read time to elapse
                         previousMillis = currentMillis1;
                         section++;                                              //done waiting, allow the program to go to the next section
                         lcdPos = 0;                                             //reset the lcdPos var, needs to start at 0 after the beginning
                     }
                 }
                 else {                                                          //did not print the beginning yet
-                    printBegin();
+                    printBegin();                                               //print the beginning already
                 }
                 break;
             }
-            case 1:  {                                                           //scrolling section
+            case 1:  {                                                          //scrolling section
                 unsigned long currentMillis2 = millis();
-                if(currentMillis2 - previousMillis > textSpeed) {                //check if it's time to shift the text
+                if(currentMillis2 - previousMillis > textSpeed) {               //check if it's time to shift the text
                     previousMillis = currentMillis2;
                     shiftText();                                                //shift the text by one                                                  
                 }
                 break;
             }
-            case 2:   {                                                          //end of tweet section
+            case 2:   {                                                         //end of tweet section
                 unsigned long currentMillis3 = millis();
-                if(currentMillis3 - previousMillis > readTime) {                 //wait for the user read time to elapse
+                if(currentMillis3 - previousMillis > readTime) {                //wait for the user read time to elapse
                     previousMillis = currentMillis3;
                     section = 0;                                                //done waiting, go back to section 0
                     printedBegin = false;
@@ -117,14 +98,14 @@ void LCDControl::scrollTweet() {                                                
 
 void LCDControl::shiftText() {                                                  //used to shift the tweet text by one column
     if (lcdPos <= (twt.getTweetLength() - LCDWIDTH)) {                            
-        //(subtracted LCDWIDTH since we want the ending to use all the lcd width)
+        //(subtracted LCDWIDTH since we want the ending to use all of LCDWIDTH)
         String subTweet = twt.getTweet();
         subTweet = subTweet.substring(lcdPos, (lcdPos + LCDWIDTH));             //create a substring from the current position to LCDWIDTH chars ahead
-        lcdc.setCursor(0, 1);
-        lcdc.print(subTweet);                                                    //printed the shifted substring
+        lcdc.setCursor(0, 1);                                                   //make sure we print on the bottom row
+        lcdc.print(subTweet);                                                   //printed the shifted substring
         lcdPos++;                                                               //increase lcdPos by one
     }
-    if(lcdPos == ((twt.getTweetLength() - LCDWIDTH)+1)) {                           //check if we are at the end of the text to be shifted
+    if(lcdPos == ((twt.getTweetLength() - LCDWIDTH)+1)) {                       //check if we are at the end of the text to be shifted
         section++;                                                              //we are done here, go to the next section
     }
 }
@@ -143,11 +124,11 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
 }
 
 void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the custom chars are made
-    for(int i = 0; i <= 255; i = i + 2) {
+    for(int i = 0; i <= 255; i++) {                                             //fades the backlight on
         opt.setBrightness(i);
-        delay(10);
+        delay(5);
     } 
-
+    //create each custom character for use
     CreateChar(0, top1);
     CreateChar(1, top2);
     CreateChar(2, left1);
@@ -172,104 +153,57 @@ void LCDControl::bootAnim() {                                                   
     lcdc.print("Twitter");
     lcdc.setCursor(6, 1);
     lcdc.print("Screen v1"); 
-    delay(1000);
+    delay(2000);
     lcdc.setCursor(6, 0);
     lcdc.print("Waiting");
     lcdc.setCursor(6, 1);
     lcdc.print("for USB  ");
 }
 
-void LCDControl::connectAnim() {
+void LCDControl::connectAnim() {                                                //displays a connecting animation on the lcd, must be called to advance "frames"
     if(animCount == 2) {
-                    animCount = 0;
-                }
-                else {
-                    animCount++;
-                }
-    
-            switch(animCount) {
-            case 0:
-                lcdc.setCursor(0, 1);
-                lcdc.print("    ");
-                lcdc.setCursor(1, 0);
-                lcdc.print((char)0);
-                lcdc.print((char)1);
-                //animCount++;
-                break;
-            case 1:
-                lcdc.setCursor(0, 0);
-                lcdc.print("   ");
-                lcdc.setCursor(0, 1);
-                lcdc.print((char)2);
-                lcdc.print((char)3);
-                //animCount++;
-                break;
-            case 2:
-                lcdc.setCursor(0, 1);
-                lcdc.print("  ");
-                lcdc.print((char)4);
-                lcdc.print((char)5);
-                //animCount = 0;
-                break;
-        }
+        animCount = 0;
+    }
+    else {
+        animCount++;
+    }
+    switch(animCount) {
+    case 0:
+        lcdc.setCursor(0, 1);
+        lcdc.print("    ");
+        lcdc.setCursor(1, 0);
+        lcdc.print((char)0);
+        lcdc.print((char)1);
+        break;
+    case 1:
+        lcdc.setCursor(0, 0);
+        lcdc.print("   ");
+        lcdc.setCursor(0, 1);
+        lcdc.print((char)2);
+        lcdc.print((char)3);
+        break;
+    case 2:
+        lcdc.setCursor(0, 1);
+        lcdc.print("  ");
+        lcdc.print((char)4);
+        lcdc.print((char)5);
+        break;
+    }
 }
 
-void LCDControl::connectDisplay(bool connecting) {                                                 //animation displayed while the device is connecting
-    if(connecting) {
-        
-//                unsigned long currentMillis = millis();
-//        if(currentMillis - previousMillis5 > 1000) {           //if it's time to change the backlight color
-//                previousMillis5 = currentMillis;
-//                
-//                if(animCount == 2) {
-//                    animCount = 0;
-//                }
-//                else {
-//                    animCount++;
-//                }
-//        }
-        
-        while(!ranOnce) {
+void LCDControl::connectDisplay(bool connecting) {                              //displays a different message depending on if the device is connected or not
+    if(connecting) {                                                            //if we are connecting, display the following message only once
+        if(!ranOnce) {
             lcdc.clear();
             lcdc.setCursor(6, 0);
             lcdc.print("Connecting");
             lcdc.setCursor(6, 1);
             lcdc.print("to Host");
-            ranOnce = true;
-            animCount = 0;
-            
-            unsigned long previousMillis = 0; 
-            animCount = 0;
+            ranOnce = true;                                                     //don't run this again
+            animCount = 0;                                                      //reset the animCount in connectAnim
         }
-        
-        
-//        switch(animCount) {
-//            case 0:
-//                lcdc.setCursor(0, 1);
-//                lcdc.print("    ");
-//                lcdc.setCursor(1, 0);
-//                lcdc.print((char)0);
-//                lcdc.print((char)1);
-//                //animCount++;
-//                break;
-//            case 1:
-//                lcdc.setCursor(0, 0);
-//                lcdc.print("   ");
-//                lcdc.setCursor(0, 1);
-//                lcdc.print((char)2);
-//                lcdc.print((char)3);
-//                //animCount++;
-//                break;
-//            case 2:
-//                lcdc.setCursor(0, 1);
-//                lcdc.print("  ");
-//                lcdc.print((char)4);
-//                lcdc.print((char)5);
-//                //animCount = 0;
-//                break;
-//        }
     }
-    else {
+    else {                                                                      //if we just finished connecting:
         lcdc.clear();
         lcdc.setCursor(0, 0);
         lcdc.print("Waiting for");
@@ -279,28 +213,24 @@ void LCDControl::connectDisplay(bool connecting) {                              
 }
 
 void LCDControl::sleepLCD(bool sleep) {                                         //used to control lcd power state
-    if(sleep) {                                                                 //lcd needs to go to sleep
-        lcdc.clear();                                                            //display a warning message for 4 seconds
+    if(sleep) {                                                                 //if the lcd needs to go to sleep
+        lcdc.clear();                                                           //display a warning message for 4 seconds
         lcdc.setCursor(0, 0);
         lcdc.print("Host is offline,");
         lcdc.setCursor(0, 1);
         lcdc.print("entering standby");
-        delay(4000);
-        lcdc.clear();                                                            //clear the display       
-        opt.setBrightness(0);                                                   //turn the backlight off
-        digitalWrite(CONTRASTPIN, LOW);                                           //turn the contrast off
-        lcdc.noDisplay();                                                        //turn the rest "off"
+        delay(4000);  
+        scroll = false;                                                         //no longer need to scroll
+        byte b = opt.getBrightness();                                           //get the current brightness to reference later
+        for(int i = b; i >= 0; i--) {                                           //fade out the backlight
+            opt.setBrightness(i);
+            delay(5);
+        }
+        lcdc.clear();                                                           //clear the display       
+        lcdc.noDisplay();                                                       //turn the lcd "off"
     }
     else {                                                                      //lcd needs to wake up
-        
-        digitalWrite(CONTRASTPIN, HIGH);                                          //turn the contrast on
-       opt.setBrightness(0);
-        opt.setCol(0, 150, 255);                                                //reset the color
-        //opt.setBrightness(255);                                                 //turn the backlight on
-        lcdc.display();                                                          //turn the lcd "on"
-        
-        bootAnim();                                                        //play the boot animation
-               
-
+        lcdc.display();                                                         //turn the lcd "on"     
+        bootAnim();                                                             //play the boot animation
     }
 }
