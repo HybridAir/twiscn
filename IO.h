@@ -5,6 +5,7 @@
 #include <Bounce.h>                                                             //required for debouncing
 #include "Options.h"
 #include "LCDControl.h"
+#include "Comms.h"
 
 #define CONLED A4                                                               //connection led pin
 #define FN1PIN 4                                                                //FN1 button
@@ -20,7 +21,7 @@
 class IO {
     public:
         IO();
-        byte checkButtons();
+        void checkButtons();
         int checkPot();
         void connectionLED(byte mode);
         void setBacklight(uint8_t r, uint8_t g, uint8_t b, byte brightness);
@@ -30,11 +31,11 @@ class IO {
         unsigned long previousMillis;
         unsigned long previousMillis5;
         unsigned long previousMillis6;
-        int blinkTime;                                              //time between connection led state changes
-        bool blinkState;                                                //controls whether the connection led needs to change states
+        int blinkTime;                                           
+        bool blinkState;                                             
         bool blinkEnabled;
-        byte blinkSpeed;                                                        //time between tweet blinks
-        byte currentColor;                                                  //current color section that is being faded though
+        byte blinkSpeed;                                                        
+        byte currentColor;                                                  
         byte rainLevel;
         byte red;
         byte green;
