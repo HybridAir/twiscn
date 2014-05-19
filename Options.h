@@ -3,19 +3,20 @@
 
 #include <Arduino.h>
 #include "IO.h"
+#include <LiquidCrystal.h>  
 
 class Options {
     public:
-        Options();
-        //void begin(IO& ioin);
+        Options();   
         byte getBrightness();
         byte *getCol();
         byte *getBlinkCol();
-        bool getRainbow();
-        int getRainSpd();
-        bool getBlink();
         byte getBlinkSpd();
+        bool getRainbow();
+        bool getBlink(); 
         bool getReadyBlink();
+        int getRainSpd();
+        void defaults();
         void setBrightness(byte in);
         void setCol(byte r, byte g, byte b);
         void setBlinkCol(byte r, byte g, byte b);
@@ -32,13 +33,14 @@ class Options {
         void getColorVal(String in);
         void getTweetBlink(String in);
         void getRainbow(String in);
-        //IO inout;
+        byte color[3];                                                    
+        byte blinkColor[3]; 
         byte brightness;
+        byte blinkSpd;                                                         
         bool rainbow;
-        int rainSpd;                                                            //int to support very long color changing times
         bool blink;
-        byte blinkSpd;                                                          //byte since the blink speed should be fast, you know
         bool readyBlink;
+        int rainSpd;                                                            //int to support color changing times up to 999
 };
 
 #endif	/* OPTIONS_H */
