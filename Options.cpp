@@ -1,8 +1,7 @@
 //handles device options/settings
 #include "Options.h"
-extern LiquidCrystal lcdc;
 
-extern IO inout;
+extern IO inout;                                                                //needed for IO class access
 
 //        byte color[3] = {0, 150, 255};                                                      //LCD Color
 //        byte blinkColor[3] = {255, 0, 0}; 
