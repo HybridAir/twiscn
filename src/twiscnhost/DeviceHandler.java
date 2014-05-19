@@ -9,7 +9,8 @@ public class DeviceHandler {
     
     public DeviceHandler(int[] deviceIDs, DeviceOptions options) {
         this.options = options;
-        comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //establish a data connection with the twitterscreen
+        System.out.println("Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
+        comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //try connecting to the device over usb, program will not continue until successful
         applyAllOptions();   
        // options.setLCDColor(Color.GREEN);
         //options.setBrightness(100);

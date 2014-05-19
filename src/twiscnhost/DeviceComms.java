@@ -6,27 +6,35 @@ import java.util.*;
 import java.text.*;
 
 public class DeviceComms {
+    boolean connected = false;
     
-    private UsbHidComms twitterScnHID;
+    private UsbHidComms twiScnHID;
     
     public DeviceComms(UsbHidComms device) {   
-        twitterScnHID = device; 
-        twitterScnHID.connectDevice();
+        twiScnHID = device; 
+        tryConnecting();
         handshake();
     }
     
+    private void tryConnecting() {
+        while(!connected) {
+            connected = twiScnHID.connectDevice();
+        }
+        System.out.println("Connection successful");
+    }
+    
     public void sendRaw(String in) {
-        twitterScnHID.send(in);
+        twiScnHID.send(in);
     }
       
     private void handshake() {
         boolean connected = false;
         System.out.println("Attempting handshake");
         while(!connected) {
-            String in = twitterScnHID.getData();                                //try to get data from the device
+            String in = twiScnHID.getData();                                //try to get data from the device
             if(in != null) {                                                    //if we actually got data
                 if(in.equals("`")) {                                            //check if the device is currently trying to connect
-                    twitterScnHID.send("~");                                    //send the response
+                    twiScnHID.send("~");                                    //send the response
                     connected = true;                                           //time to break out of this loop
                     
                     try {
@@ -39,16 +47,16 @@ public class DeviceComms {
     }
     
     public void row0(String in) {
-        twitterScnHID.send("@" + in.substring(0, Math.min(in.length(), 15)));
-        twitterScnHID.send("=");
+        twiScnHID.send("@" + in.substring(0, Math.min(in.length(), 15)));
+        twiScnHID.send("=");
     }
     
     public void row1(String in) {
         String[] textOut = formatText(in);
         for(int i = 0; i < textOut.length; i++) {
-            twitterScnHID.send(textOut[i]);
+            twiScnHID.send(textOut[i]);
             if(i == (textOut.length-1)) {
-                twitterScnHID.send("=");
+                twiScnHID.send("=");
             }
 //            else {
 //                twitterScnHID.send("+");
@@ -79,7 +87,7 @@ public class DeviceComms {
     }
         
     public String monitor() {
-        String input = twitterScnHID.getData();
+        String input = twiScnHID.getData();
         if (input != null) {
             return input;
         }
@@ -126,27 +134,27 @@ public class DeviceComms {
             switch(i) {
                 case 0:
                     System.out.println("$b" + values[0]);
-                    twitterScnHID.send("$b" + values[0]);
+                    twiScnHID.send("$b" + values[0]);
                     break;
                 case 1:
                     System.out.println("$c" + values[1]);
-                    twitterScnHID.send("$c" + values[1]);
+                    twiScnHID.send("$c" + values[1]);
                     break;
                 case 2:
                     System.out.println("$d" + values[2] + values[3] + values[4]);
-                    twitterScnHID.send("$d" + values[2] + values[3] + values[4]);
+                    twiScnHID.send("$d" + values[2] + values[3] + values[4]);
 //                    try {
 //                        Thread.sleep(1000L);                                    //2 seconds should be enough time for the device to get ready
 //                    } catch (Exception e) {}
                     break;
                 case 3:
                     System.out.println("$e" + values[5] + values[6]);
-                    twitterScnHID.send("$e" + values[5] + values[6]);
+                    twiScnHID.send("$e" + values[5] + values[6]);
                     break;
                 default:
                     break;
             }
-            twitterScnHID.send("=");
+            twiScnHID.send("=");
                     
         }
     }

@@ -21,14 +21,19 @@ public class UsbHidComms {
         this.pdct = pdct;
     }
     
-    public void connectDevice() {                                               //used to connect to the device
-        System.out.println("Connecting to device " + vndr + ", " + pdct);
+//==============================================================================
+    
+    public boolean connectDevice() {                                               //used to connect to the device
         deviceFindFirst();                                                      //find the device and connect if possible
         if(device == null) {                                                    //if the device was not connected
-            System.out.println("Cannot find device");
-        } else {
-            System.out.println("Connected to device");                          //device was connected successfully
+            return false;
         }
+        else {
+            return true;
+        }
+//        } else {
+//            System.out.println("Connected to device");                          //device was connected successfully
+//        }
     }
     
     private void deviceFindFirst() {                                            //look for the device, and then connect to it
@@ -38,8 +43,9 @@ public class UsbHidComms {
         if (devices.length > 0) {                                               //check if we found a device (there will be something in that array)
             try {                                                                       
                 device = devices[0].open();                                     //try to open the first device in the array, and set that to the active device var
-            } catch (Exception e) {
-                device = null;                                                  //device cannot be found error
+            } 
+            catch (Exception e) {
+                device = null;                                                  //device cannot be found error, device is null
             }
         }  
     }
@@ -52,16 +58,6 @@ public class UsbHidComms {
         }
     }
     
-    public String getData() {                                                   //used to get data from the device, returns a string
-        if( device != null) {                                                   //make sure we are connected to a device, cant read from nothing
-            String result = deviceRead();                                       //try to get data from deviceRead and put it into a string  
-            if( result != null ) {                                              //if deviceRead returned something
-                return result;                                                  //return what we got
-            }
-        }
-        return null;                                                            //return nothing if we couldn't do anything
-    }
-        
     private HIDDeviceInfo[] deviceFindAllDescriptors() {                        //returns an HIDDeviceInfo array of device descriptors, usualy only one thing in there
         deviceInitialize();                                                     //remove?
         List<HIDDeviceInfo> devlist = new ArrayList<HIDDeviceInfo>();           //create a new arraylist to store a list of devices in, put a list of devices into it
@@ -76,13 +72,26 @@ public class UsbHidComms {
                     devlist.add(info);                                          //add this device to that arraylist
                 }
             }
-        } catch (Exception e) {                                                 //catch any dumb errors
+        } 
+        catch (Exception e) {                                                   //catch any errors
         }
 
         return devlist.toArray(new HIDDeviceInfo[devlist.size()]);              //convert that arraylist to a normal array, have the array size be the size of the arraylist, and return it
         //basically, return the single device within an array
     }
-        
+    
+//==============================================================================
+    
+    public String getData() {                                                   //used to get data from the device, returns a string
+        if( device != null) {                                                   //make sure we are connected to a device, cant read from nothing
+            String result = deviceRead();                                       //try to get data from deviceRead and put it into a string  
+            if( result != null ) {                                              //if deviceRead returned something
+                return result;                                                  //return what we got
+            }
+        }
+        return null;                                                            //return nothing if we couldn't do anything
+    }
+             
     private String deviceRead() {                                               //reads from the device, returns a string
         try {
             device.disableBlocking();                                           //disables read blocking for this device, you never know
@@ -101,6 +110,7 @@ public class UsbHidComms {
             }
         } catch(IOException ioe) {
             System.err.println("deviceRead error");
+            System.exit(0); 
         }
         return null;
     }
