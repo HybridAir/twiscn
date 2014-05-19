@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//TODO: demo mode maybe, previous tweets, change rainbow mode time to int (in comms), detection for host handshake while running
+//TODO: buttons, demo mode maybe, previous tweets, change rainbow mode time to int (in comms), detection for host handshake while running
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
@@ -25,7 +25,7 @@ void prepare();
 //global variables, shouldn't hurt anything
 volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;                                                          //stores the sleep status
-const unsigned int SOFDELAY = 500;                                              //max time to wait in between SOF checks
+const unsigned int SOFDELAY = 1000;                                             //max time to wait in between SOF checks
 unsigned long lastSOF = 0;                                                      //last time an SOF happened in ms
 unsigned long previousMillis2 = 0;                                              //used for keeping track of SOF checking times
 const int LCDWIDTH = 16;                                                        //character width of the LCD
