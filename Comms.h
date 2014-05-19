@@ -15,7 +15,7 @@ class Comms {
         Comms();
         void readComms();
         void handshake();
-        void sendBtn(byte in);
+        void sendBtn(char in);
         void setConnected(bool in);
     private:
         void checkType();
