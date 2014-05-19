@@ -1,15 +1,15 @@
 //Used to communicate with the twitterscreen
 
-package twiscnconsole;
+package twiscnhost;
 
 import java.util.*;
 import java.text.*;
 
-public class TwiScnComms {
+public class DeviceComms {
     
-    private DeviceComms twitterScnHID;
+    private UsbHidComms twitterScnHID;
     
-    public TwiScnComms(DeviceComms device) {   
+    public DeviceComms(UsbHidComms device) {   
         twitterScnHID = device; 
         twitterScnHID.connectDevice();
         handshake();

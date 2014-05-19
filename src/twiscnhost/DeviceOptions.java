@@ -1,10 +1,10 @@
 //used to process and manage the twitterscreen settings and stuff
 
-package twiscnconsole;
+package twiscnhost;
 
 import java.awt.Color;
 
-public class TwiScnOptions {
+public class DeviceOptions {
     
     private int brightness = 255;
     private Color lcdCol = new Color(0, 150, 255);
@@ -15,16 +15,16 @@ public class TwiScnOptions {
     private int rnbwSpd = 100;
     private byte b = 0;
 
-    public TwiScnOptions() {                                                  //default constructor, all default settings
+    public DeviceOptions() {                                                  //default constructor, all default settings
     
     }
     
-    public TwiScnOptions(String fn1, String fn2, int brightness, Color lcdCol) {                      //standard constructor, basic settings
+    public DeviceOptions(String fn1, String fn2, int brightness, Color lcdCol) {                      //standard constructor, basic settings
         this.brightness = brightness;
         this.lcdCol = lcdCol;   
     }
     
-    public TwiScnOptions(String fn1, String fn2, int brightness, Color lcdCol, boolean blink, 
+    public DeviceOptions(String fn1, String fn2, int brightness, Color lcdCol, boolean blink, 
       Color blinkCol, int blinkSpd, boolean rainbow, int rnbwSpd) {             //extended constructor, all settings
         this.brightness = brightness;
         this.lcdCol = lcdCol;

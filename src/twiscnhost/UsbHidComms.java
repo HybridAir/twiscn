@@ -1,6 +1,6 @@
 //Used for handling USB HID comms, pretty generic
 
-package twiscnconsole;
+package twiscnhost;
 
 import com.codeminders.hidapi.HIDDeviceInfo;
 import com.codeminders.hidapi.HIDManager;
@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
-public class DeviceComms {
+public class UsbHidComms {
     
     private int vndr;
     private int pdct;
     private static HIDDevice device = null;                                      
     private static Boolean device_initialized = false;
     
-    public DeviceComms(int vndr, int pdct) {                                    //constructor, accepts the vendor ID, and the product ID
+    public UsbHidComms(int vndr, int pdct) {                                    //constructor, accepts the vendor ID, and the product ID
         this.vndr = vndr;
         this.pdct = pdct;
     }

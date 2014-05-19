@@ -1,15 +1,15 @@
-package twiscnconsole;
+package twiscnhost;
 
 import java.awt.Color;
 
-public class TwiScnHandler {
+public class DeviceHandler {
     
-    private TwiScnOptions options;
-    private TwiScnComms comms;
+    private DeviceOptions options;
+    private DeviceComms comms;
     
-    public TwiScnHandler(int[] deviceIDs, TwiScnOptions options) {
+    public DeviceHandler(int[] deviceIDs, DeviceOptions options) {
         this.options = options;
-        comms = new TwiScnComms(new DeviceComms(deviceIDs[0], deviceIDs[1]));   //establish a data connection with the twitterscreen
+        comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //establish a data connection with the twitterscreen
         applyAllOptions();   
        // options.setLCDColor(Color.GREEN);
         //options.setBrightness(100);
