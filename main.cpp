@@ -1,10 +1,9 @@
 //TwitterScreen Device code
-//fxghdfghdfg
 //TODO: demo mode maybe, previous tweets
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
-#include <LiquidCrystal.h>                                                      //used to operate the LCD
+#include <LiquidCrystal.h>                                                      //used to control the LCD
 
 //included class headers:
 #include "Comms.h"
@@ -32,17 +31,16 @@ unsigned long previousMillis2 = 0;                                              
 const int LCDWIDTH = 16;                                                        //character width of the LCD
     
 //global class initialization
-IO inout;  
-LiquidCrystal lcdc(7, 8, 13, 10, 11, 12);                                       //new instance of the LiquidCrystal class, give it the pins
-Options opt;                                                                    //new instance of options                                                                     //new instance of io
+IO inout;                                                                       //new instance of IO
+LiquidCrystal lcdc(7, 8, 13, 10, 11, 12);                                       //new instance of the LiquidCrystal class, needs pins to use
+Options opt;                                                                    //new instance of options
 TweetHandler twt(LCDWIDTH);                                                     //new instance of TweetHandler, needs the LCDWIDTH
 LCDControl lcd(LCDWIDTH);                                                       //new instance of LCDControl, needs the LCDWIDTH
 Comms comms;                                                                    //new instance of comms
 
 //==============================================================================
 
-void setup() {  
-    
+void setup() {   
     prepare();                                                                  //prepare the device for operation
 }
 
@@ -59,6 +57,7 @@ void loop() {
 //==============================================================================
 
 void prepare() {                                                                //used to prepare the device for operation
+    opt.defaults();                                                             //go back to all default options
     lcd.sleepLCD(false);                                                        //get the LCD going
     comms.handshake();                                                          //establish a connection with the host program
 }
@@ -79,8 +78,6 @@ void checkForSleep() {                                                          
         previousMillis2 = currentMillis;                                        //save the current time to use as a reference
         if(currentSOF == lastSOF) {                                             //if the SOF counts match (meaning we lost usb connection)  
             if(!sleeping) {                                                     //if we are not already sleeping
-                //need this if here since this function will be called while the device is asleep
-                //don't want it going into some crazy sleep limbo
                 sleeping = true;                                                //we will be now
                 goToSleep();
             }
@@ -94,14 +91,13 @@ void checkForSleep() {                                                          
 
 void goToSleep() {                                                              //used to bring the device down for "sleep"
     lcd.sleepLCD(true);                                                         //tell the lcd to sleep
+    comms.setConnected(false);                                                  //tell comms that we are no longer connected to the host (so it will know to reconnect)
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
         usbPoll();                                                              //keep checking the usb
         checkForSleep();                                                        //check if we still need to be sleeping
-        if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                     
-            lcd.sleepLCD(false);                                                //wake the LCD up                 
+        if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                                    
             prepare();                                                          //prepare the device for operation again, sort of like resetting
-            //pins are still set, and options are still set
         }
     }
 }
