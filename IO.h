@@ -10,7 +10,7 @@
 #define FN1PIN 4                                                                //FN1 button
 #define FN2PIN A3                                                               //FN2 button
 #define SPEEDPIN A0                                                             //pin the scroll speed pot is on
-#define LCDPOWPIN 16                                                            //pin used to control power to the contrast pot, no longer needs to be used (just keep HIGH)
+#define CONTRASTPIN 16                                                          //pin used to control power to the contrast pot, no longer needs to be used (just keep HIGH)
 //#define RESETPIN A1                                                           //never needed to be implemented, but might as well keep it in here
 //pins for each of the lcd's backlight leds
 #define REDLITE 9
