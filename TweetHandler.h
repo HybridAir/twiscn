@@ -7,16 +7,16 @@ class TweetHandler {
     public:
         TweetHandler(int widthIn);
         void setUser(String in);
-        void setTweet(String in);
-        String getUser();
-        String getTweet();
+        void setTweet(String in);     
         int getTweetLength();
         String getTweetBegin();
         String getPrevUser();
         String getPrevTweet();
+        String getUser();
+        String getTweet();
         bool useScroll();
     private:
-         byte LCDWIDTH;
+        byte LCDWIDTH;
         String user;
         String tweet;
         String prevUser;
