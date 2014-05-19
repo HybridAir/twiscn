@@ -6,7 +6,7 @@ extern LCDControl lcd;                                                          
 
 IO::IO() {                                                                      //default constructor 
     pinMode(CONLED, OUTPUT);
-    pinMode(LCDPOWPIN, OUTPUT);
+    pinMode(CONTRASTPIN, OUTPUT);
     pinMode(FN1PIN, INPUT);
     pinMode(FN2PIN, INPUT);
     pinMode(REDLITE, OUTPUT);
@@ -16,6 +16,8 @@ IO::IO() {                                                                      
     digitalWrite(REDLITE, HIGH);
     digitalWrite(GREENLITE, HIGH);
     digitalWrite(BLUELITE, HIGH);
+    
+    digitalWrite(CONTRASTPIN, HIGH);                                            //required to enable lcd contrast
     //set up the function button debouncing
     dbFN1 = Bounce();                                                           
     dbFN2 = Bounce(); 
