@@ -1,44 +1,42 @@
-//Used to communicate with the twitterscreen
+//Used to communicate with the device over its own protocol
 
 package twiscnhost;
 
 import java.util.*;
 import java.text.*;
 
-public class DeviceComms {
-    boolean connected = false;
-    
+public class DeviceComms {  
     private UsbHidComms twiScnHID;
     
-    public DeviceComms(UsbHidComms device) {   
-        twiScnHID = device; 
-        tryConnecting();
-        handshake();
+    public DeviceComms(UsbHidComms device) {                                    //constructor, needs the usbhid device   
+        twiScnHID = device;                                                      
+        tryConnecting();                                                        //try connecting to the device
+        handshake();                                                            //try to send a handshake to the device
     }
     
-    private void tryConnecting() {
-        while(!connected) {
-            connected = twiScnHID.connectDevice();
+    private void tryConnecting() {                                              //tries to connect to the device, will block the program flow until connected
+        boolean connected = false;
+        while(!connected) {                                                     //while we are not connected
+            connected = twiScnHID.connectDevice();                              //try connecting and get the connection result
         }
-        System.out.println("Connection successful");
+        System.out.println("Connection successful");                            //connection was successful at this point
     }
     
-    public void sendRaw(String in) {
+    public void sendRaw(String in) {                                            //used to send raw commands/data to the device
         twiScnHID.send(in);
     }
       
-    private void handshake() {
+    private void handshake() {                                                  //used to establish a data connection with the device
         boolean connected = false;
         System.out.println("Attempting handshake");
         while(!connected) {
-            String in = twiScnHID.getData();                                //try to get data from the device
+            String in = twiScnHID.getData();                                    //try to get data from the device
             if(in != null) {                                                    //if we actually got data
-                if(in.equals("`")) {                                            //check if the device is currently trying to connect
-                    twiScnHID.send("~");                                    //send the response
-                    connected = true;                                           //time to break out of this loop
-                    
+                if(in.equals("`")) {                                            //check if the device is currently trying to connect (spamming "`"'s)
+                    twiScnHID.send("~");                                        //send the response
+                    connected = true;                                           //we are connected now                    
                     try {
-                        Thread.sleep(2000L);                                    //2 seconds should be enough time for the device to get ready
+                        Thread.sleep(100L);                                     //let the device catch up before sending it data
                     } catch (Exception e) {}                                    //you never know
                     System.out.println("Handshake successful");
                 }
@@ -46,116 +44,75 @@ public class DeviceComms {
         }
     }
     
-    public void row0(String in) {
-        twiScnHID.send("@" + in.substring(0, Math.min(in.length(), 15)));
+    public void row0(String in) {                                               //used to send text to row 0, the username row
+        twiScnHID.send("@" + in.substring(0, Math.min(in.length(), 15)));       //send the new username to the device, with a 15 char cutoff
         twiScnHID.send("=");
     }
     
-    public void row1(String in) {
-        String[] textOut = formatText(in);
-        for(int i = 0; i < textOut.length; i++) {
-            twiScnHID.send(textOut[i]);
-            if(i == (textOut.length-1)) {
-                twiScnHID.send("=");
+    public void row1(String in) {                                               //used to send text to row 1, the tweet text row
+        String[] textOut = formatText(in);                                      //get the formatted string array from formatText
+        for(int i = 0; i < textOut.length; i++) {                               //for each item in the array
+            twiScnHID.send(textOut[i]);                                         //send it to the device
+            if(i == (textOut.length-1)) {                                       //if we just sent the last string
+                twiScnHID.send("=");                                            //send the end of transfer notification
             }
-//            else {
-//                twitterScnHID.send("+");
-//            }
         }
     }
     
     public String[] formatText(String in) {
-        if (in.length() > 140) {
-                System.err.println("That tweet is greater than 140 chars?");
-                return null;
+        if (in.length() > 140) {                                                //make sure the tweet is not greater than 140 chars (you never know)
+            System.err.println("That tweet is greater than 140 chars?");
+            return null;
         }
-        else {
+        else {                                                                  //if it's a kosher tweet
             Date time = new Date();
             SimpleDateFormat ft = new SimpleDateFormat (" hh:mm a");
-            in += ft.format(time);
-            if (in.length() < 30) {
-                String[] out = new String[0];
-                out[0] = "!" + in;
-                return out;
+            in += ft.format(time);                                              //add the current time to the end of the tweet, host computer specific
+            if (in.length() < 30) {                                             //if the output will fit in one transfer
+                String[] out = new String[0];                                   //just need the first string out of the array
+                out[0] = "!" + in;                                              //add the tweet text notifier to the beginning
+                return out;                                                     //send the formatted string array out to get sent probably
             }
-            else {
-                in = "!" + in;
-                String[] out = (in.split("(?<=\\G.{30})"));;
-                return out;
+            else {                                                              //if the output will not fit in one transfer
+                in = "!" + in;                                                  //add the tweet text notifier to the beginning
+                String[] out = (in.split("(?<=\\G.{30})"));;                    //split the tweet text into strings no larger than 30 chars, put them into an array
+                return out;                                                     //send the formatted string array out to get sent probably
             }
         }
     }
         
-    public String monitor() {
+    public String monitor() {                                                   //monitor the device for any incoming data
         String input = twiScnHID.getData();
-        if (input != null) {
-            return input;
+        if (input != null) {                                                    //if we got data
+            return input;                                                       //return the data we got
         }
         else
             return null;
     }
     
-//    private void processFN(String btn) {
-//        if(btn.contains("FN1")) {
-//            brightness = switchBrightness();
-//        }
-//            b++;
-//            if(b == 5) {
-//                b = 0;
-//            }
-//            switch(b) {
-//                case 0:
-//                    brightness = "0";
-//                    break;
-//                case 1:
-//                    brightness = "64";
-//                    break;
-//                case 2:
-//                    brightness = "128";
-//                    break;
-//                case 3:
-//                    brightness = "192";
-//                    break;
-//                case 4:
-//                    brightness = "255";
-//                    break;
-//                default:
-//                    break;
-//            }
-//            try {
-//                        Thread.sleep(50L);                                    //2 seconds should be enough time for the device to get ready
-//                    } catch (Exception e) {}
-//            applySettings();
-//            
-//        }
-    
-    public void sendOptions(String[] values) {
-        for(int i = 0;i <= 3;i++) {
+    public void sendOptions(String[] values) {                                  //used to send options to the device
+        for(int i = 0;i <= 3;i++) {                                             //only 3 sendable option groups so far
             switch(i) {
-                case 0:
-                    System.out.println("$b" + values[0]);
+                case 0:                                                         //send the backlight brightness settings
+                    //System.out.println("$b" + values[0]);
                     twiScnHID.send("$b" + values[0]);
                     break;
-                case 1:
-                    System.out.println("$c" + values[1]);
+                case 1:                                                         //send the backlight color settings
+                    //System.out.println("$c" + values[1]);
                     twiScnHID.send("$c" + values[1]);
                     break;
-                case 2:
-                    System.out.println("$d" + values[2] + values[3] + values[4]);
+                case 2:                                                         //send the tweetblink settings
+                    //System.out.println("$d" + values[2] + values[3] + values[4]);
                     twiScnHID.send("$d" + values[2] + values[3] + values[4]);
-//                    try {
-//                        Thread.sleep(1000L);                                    //2 seconds should be enough time for the device to get ready
-//                    } catch (Exception e) {}
                     break;
-                case 3:
-                    System.out.println("$e" + values[5] + values[6]);
+                case 3:                                                         //send the rainbow mode settings
+                    //System.out.println("$e" + values[5] + values[6]);
                     twiScnHID.send("$e" + values[5] + values[6]);
                     break;
                 default:
                     break;
             }
-            twiScnHID.send("=");
-                    
+            twiScnHID.send("=");                                                //send the end of transfer notification after each option transfer                
         }
     }
 }
