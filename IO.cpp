@@ -1,53 +1,36 @@
-//handles basic device IO
+//handles device IO control
 #include "IO.h"
 
-extern Options opt;
-extern LCDControl lcd;
+extern Options opt;                                                             //needed for Options class access
+extern LCDControl lcd;                                                          //needed for LCDControl class access
 
-IO::IO() {                                                         //constructor, sets up all the inputs and outputs  
-        CONLED = A4;                                                  //connection led pin
-    FN1PIN = 4;
-    FN2PIN = A3;
-    SPEEDPIN = A0;                                               //pin the speed pot is
-    RESETPIN = A1;                                               //never needed to be implemented, but we're stuck with it now
-    LCDPOWPIN = 16;                                              //pin used to control power to the contrast pot, turns contrast on/off
-    REDLITE = 9;
-    GREENLITE = 5;
-    BLUELITE = 6;
-    
-    //opt = optin;
-    digitalWrite(RESETPIN, HIGH);                                               //this needs to be set high before anything else so the device doesn't reset
-    pinMode(RESETPIN, OUTPUT);
+IO::IO() {                                                                      //default constructor 
     pinMode(CONLED, OUTPUT);
     pinMode(LCDPOWPIN, OUTPUT);
     pinMode(FN1PIN, INPUT);
     pinMode(FN2PIN, INPUT);
     pinMode(REDLITE, OUTPUT);
     pinMode(GREENLITE, OUTPUT);
-    pinMode(BLUELITE, OUTPUT);
-    
+    pinMode(BLUELITE, OUTPUT);   
+    //following is needed to prevent backlight from flashing on when device is powered
     digitalWrite(REDLITE, HIGH);
     digitalWrite(GREENLITE, HIGH);
     digitalWrite(BLUELITE, HIGH);
-    //digitalWrite(CONLED, HIGH);
-    dbFN1 = Bounce();                                                           //set up the function button debouncing
+    //set up the function button debouncing
+    dbFN1 = Bounce();                                                           
     dbFN2 = Bounce(); 
     dbFN1.attach(FN1PIN);
     dbFN2.attach(FN2PIN);
-    
-
-    previousMillis = 0;
-    previousMillis5 = 0;
-    previousMillis6 = 0;
-    BLINKTIME = 500;                                              //time between connection led state changes
-    blinkState = false;                                                //controls whether the connection led needs to change states
-    blinkEnabled = false;
-    
-    currentColor = 0;                                                  //current color section that is being faded though
-    rainLevel = 0;
-    rain = 0;
-    blinkCount = 0;
-    blinking = false;
+    //set necessary variable values
+    previousMillis = 0;                                                         //used within connectionLED for non-blocking delay
+    previousMillis5 = 0;                                                        //used within tweetBlink for non-blocking delay
+    previousMillis6 = 0;                                                        //used within rainbow for non-blocking delay
+    blinkTime = 500;                                                            //time between connection animation state changes
+    blinkState = false;                                                         //controls whether the connection led needs to change states
+    blinkEnabled = false;                                                       
+    currentColor = 0;                                                           //current color section of the rainbow that is being faded though
+    rainLevel = 0;                                                              //current brightness level of the backlight leds being faded
+    blinkCount = 0;                                                             //amount of times the backlight changed colors during a tweet blink                                                          
     
 }
 
@@ -61,20 +44,18 @@ void IO::connectionLED(byte mode) {                                             
             break;
         case 2:                                                                 //blink the LED (non-blocking, must be continuously called to blink)
             unsigned long currentMillis = millis();
-            if(currentMillis - previousMillis > BLINKTIME) {
+            if(currentMillis - previousMillis > blinkTime) {                    //if it is time to advance the blinkState
                 previousMillis = currentMillis;
-                lcd.connectAnim();
+                lcd.connectAnim();                                              //also advance the connecting animation on the lcd
                 if (blinkState) {
                     blinkState = 0;
                 }
                 else {
                     blinkState = 1;
                 }
-                connectionLED(blinkState);
+                connectionLED(blinkState);                                      //update the connection led with the new power value
             }
             break;
-//        default:
-//            break;
     }
 }
 
@@ -123,12 +104,11 @@ void IO::tweetBlink() {                                                         
     if (opt.getBlink()) {                                                       //check if tweetblink is enabled
         if(opt.getReadyBlink()) {                                               //check if we are currently blinking
             unsigned long currentMillis = millis();
-            if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {           //if it's time to change the backlight color
+            if(currentMillis - previousMillis5 > opt.getBlinkSpd()) {           //if it's time to change the backlight color (blink)
                 previousMillis5 = currentMillis;
                 if(blinkCount == 5) {                                           //done blinking
                     blinkCount = 0;                                             //reset blink count
-                    opt.setReadyBlink(false);
-                    //blinking = false;                                           //not blinking anymore
+                    opt.setReadyBlink(false);                                   //no longer blinking
                 }
                 else if(blinkCount % 2 == 0) {                                  //on even numbered blinkcounts, set the backlight to the normal color
                     opt.updateCol();
@@ -146,33 +126,29 @@ void IO::tweetBlink() {                                                         
 void IO::rainbow() {                                                            //controls the backlight's rainbow mode, must be ran continuously
     if(opt.getRainbow()) {
         unsigned long currentMillis = millis();
-        if(currentMillis - previousMillis6 > rainSpeed) {                           //if it's to advance colors
+        if(currentMillis - previousMillis6 > opt.getRainSpd()) {                //if it's time to advance colors
             previousMillis6 = currentMillis;
-            if(rainLevel < 255) {
-                switch(currentColor) {                                              //fade through each different color
+            if(rainLevel <= 255) {                                              //fade through each color section 255 times
+                switch(currentColor) {                                          //fade through each different color section
                     case 0:
-                        opt.setCol(rain, 0, 255-rain);
+                        opt.setCol(rainLevel, 0, 255-rainLevel);
                         break;
                     case 1:
-                        opt.setCol(255-rain, rain, 0);
+                        opt.setCol(255-rainLevel, rainLevel, 0);
                         break;
                     case 2:
-                        opt.setCol(0, 255-rain, rain);
+                        opt.setCol(0, 255-rainLevel, rainLevel);
                         break;
                 }
                 rainLevel++;
             }
             else {
-                rainLevel = 0;
-                currentColor++;
-                if(currentColor == 3) {
+                rainLevel = 0;                                                  //reset the rainlevel
+                currentColor++;                                                 //move to the next color section
+                if(currentColor == 3) {                                         //go to the beginning if needed
                     currentColor = 0;
                 }
             }
         }
     }
-}
-
-void IO::testLed() {
-    connectionLED(1);
 }
