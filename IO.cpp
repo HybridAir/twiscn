@@ -64,12 +64,12 @@ void IO::connectionLED(byte mode) {                                             
 
 void IO::checkButtons() {                                                       //checks the debounced buttons for any changes, needs to be called continuously
     if(dbFN1.update()) {                                                        //if fn1's state changed
-        if(!dbFN1.read()) {                                                     //if the button is now LOW
+        if(dbFN1.read()) {                                                      //if the button is now HIGH
             comms.sendBtn('1');                                                 //tell comms to send button transfer '1' 
         }
     }
     if(dbFN2.update()) {                                                        //if fn1's state changed
-        if(!dbFN2.read()) {                                                     //if the button is now LOW
+        if(dbFN2.read()) {                                                      //if the button is now HIGH
             comms.sendBtn('2');                                                 //tell comms to send button transfer '2'
         }
     }
