@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: add exception catching for usb exceptions, options saving/loading, twitter implementation, gui (tray application maybe?)
+//TODO: add exception catching for usb exceptions, options saving/loading, twitter implementation, gui (tray application maybe?) 
 package twiscnhost;
 
 import java.awt.Color;
