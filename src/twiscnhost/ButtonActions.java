@@ -64,8 +64,13 @@ public class ButtonActions {
         }     
     }
     
-    private void toggleRainbow() {
-        
+    private void toggleRainbow() {                                              //used to toggle the rainbow state
+        if(opt.getRnbwStateBool()) {                                            //if rainbow mode is currently on
+            opt.setRnbwState(false);                                            //turn it off
+        }
+        else {                                                                  //if it's already off, turn it on
+            opt.setRnbwState(true);
+        }
     }
     
     private void prevTweet() {
