@@ -37,7 +37,7 @@ class Options {
         void getTweetBlink(String in);
         void getRainbow(String in);
         void getReadTimeVal(String in);
-        void getPrevTweet();
+        void getPrevTweet(String in);
         byte color[3];                                                    
         byte blinkColor[3]; 
         byte brightness;
