@@ -2,9 +2,8 @@
 #include "Options.h"
 
 extern IO inout;                                                                //needed for IO class access
-
-//        byte color[3] = {0, 150, 255};                                                      //LCD Color
-//        byte blinkColor[3] = {255, 0, 0}; 
+extern LCDControl lcd;
+extern TweetHandler twt;
 
 Options::Options() {                                                            //default constructor, sets up default options
     defaults();
@@ -20,6 +19,7 @@ void Options::defaults() {
     blinkSpd = 100;                                                             //tweet blink speed
     readyBlink = false;                                                         //stores if we are ready to blink
     readTime = 4000;                                                            //time to wait for the user to read the beginning/end of a tweet
+    onPrevious = false;
 }
 
 //==============================================================================
@@ -130,8 +130,12 @@ void Options::extractOption(String in) {                                        
         case 'e':                                                               //rainbow mode option, contains speed and enable
             getRainbow(in);                                                     //extract the necessary data, and apply the new settings
             break;
-        case 'f':
-            getReadTimeVal(in);
+        case 'f':                                                               //read time option, contains read time value
+            getReadTimeVal(in);                                                 //extract the necessary data, and apply the new settings
+            break;
+        case 'g':                                                               //previous/current tweet option, just a toggle
+            getPrevTweet();                                                     //toggle the previous/current tweet
+            break;
         default:
             break;
     } 
@@ -185,4 +189,19 @@ void Options::getRainbow(String in) {                                           
 void Options::getReadTimeVal(String in) {
     String time = in.substring(0, 5);                                           //get a substring containing the read time value out
     setReadTime(time.toInt());     
+}
+
+void Options::getPrevTweet() {                                                  //toggles the current/previous tweet
+    if(onPrevious) {                                                            //if we are on the previous tweet already
+        //set the tweet to the current one
+        onPrevious = false;
+        lcd.printNewTweet(true); 
+    }
+    else {                                                                      //if we are on the current tweet already
+        if(twt.getPrevTweet() != "") {                                          //make sure there is a previous tweet first
+            //set the tweet to the previous one
+            onPrevious = true;
+            lcd.printNewTweet(false);
+        }
+    }
 }
