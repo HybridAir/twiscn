@@ -16,6 +16,8 @@ class Options {
         bool getRainbow();
         bool getBlink(); 
         bool getReadyBlink();
+        bool getPrevTweet();
+        bool getScroll();
         int getRainSpd();
         int getReadTime();
         void defaults();
@@ -38,6 +40,7 @@ class Options {
         void getRainbow(String in);
         void getReadTimeVal(String in);
         void getPrevTweet(String in);
+        void getScrollVal(String in);
         byte color[3];                                                    
         byte blinkColor[3]; 
         byte brightness;
@@ -46,6 +49,7 @@ class Options {
         bool blink;
         bool readyBlink;
         bool onPrevious;
+        bool scroll;
         unsigned int readTime;
         unsigned int rainSpd;                                                   
 };
