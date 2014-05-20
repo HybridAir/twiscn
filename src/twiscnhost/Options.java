@@ -24,12 +24,14 @@ public class Options {
     public Options() {                                                          //default constructor, use all default settings  
     }
     
-    public Options(String fn1, String fn2, int brightness, Color lcdCol) {      //standard constructor, basic settings
+    public Options(byte fn1, byte fn2, int brightness, Color lcdCol) {          //standard constructor, basic settings
         this.brightness = brightness;
-        this.lcdCol = lcdCol;   
+        this.lcdCol = lcdCol;
+        fn1Action = fn1;
+        fn1Action = fn2;
     }
     
-    public Options(String fn1, String fn2, int brightness, Color lcdCol, boolean blink, 
+    public Options(byte fn1, byte fn2, int brightness, Color lcdCol, boolean blink, 
         Color blinkCol, int blinkSpd, boolean rainbow, int rnbwSpd) {           //extended constructor, all settings
         this.brightness = brightness;
         this.lcdCol = lcdCol;
