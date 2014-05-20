@@ -167,6 +167,6 @@ void Options::getRainbow(String in) {                                           
         setRainbow(true);
     }
     
-    String spd = in.substring(1, 4);                                            //get a substring containing the blink speed value out
+    String spd = in.substring(1, 6);                                            //get a substring containing the rainbow speed value out
     setRainSpd(spd.toInt());                                                    //set the speed to that value converted to an int
 }
