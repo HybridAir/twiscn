@@ -18,7 +18,8 @@ void Options::defaults() {
     rainSpd = 200;                                                              //rainbow color transition speed
     blink = false;                                                              //new tweet blink mode
     blinkSpd = 100;                                                             //tweet blink speed
-    readyBlink = false;
+    readyBlink = false;                                                         //stores if we are ready to blink
+    readTime = 4000;                                                            //time to wait for the user to read the beginning/end of a tweet
 }
 
 //==============================================================================
@@ -49,6 +50,10 @@ bool Options::getBlink() {
 
 byte Options::getBlinkSpd() {
     return blinkSpd;
+}
+
+int Options::getReadTime() {
+    return readTime;
 }
 
 bool Options::getReadyBlink() {
@@ -95,6 +100,10 @@ void Options::setReadyBlink(bool in) {
     readyBlink = in;
 }
 
+void Options::setReadTime(int in) {
+    readTime = in;
+}
+
 void Options::updateCol() {                                                     //force update the backlight color
     inout.setBacklight(color[0], color[1], color[2], brightness);
 }
@@ -121,6 +130,8 @@ void Options::extractOption(String in) {                                        
         case 'e':                                                               //rainbow mode option, contains speed and enable
             getRainbow(in);                                                     //extract the necessary data, and apply the new settings
             break;
+        case 'f':
+            getReadTimeVal(in);
         default:
             break;
     } 
@@ -169,4 +180,9 @@ void Options::getRainbow(String in) {                                           
     
     String spd = in.substring(1, 6);                                            //get a substring containing the rainbow speed value out
     setRainSpd(spd.toInt());                                                    //set the speed to that value converted to an int
+}
+
+void Options::getReadTimeVal(String in) {
+    String time = in.substring(0, 5);                                           //get a substring containing the read time value out
+    setReadTime(time.toInt());     
 }
