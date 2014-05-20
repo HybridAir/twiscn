@@ -34,6 +34,7 @@ class IO {
         int blinkTime;                                           
         bool blinkState;                                             
         bool blinkEnabled;
+        bool runOnce;
         byte blinkSpeed;                                                        
         byte currentColor;                                                  
         byte rainLevel;
