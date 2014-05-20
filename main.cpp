@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//TODO: previous tweets, change rainbow mode time to int (in comms), detection for host handshake while running, readTime in options/comms   
+//TODO: previous tweets   
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
