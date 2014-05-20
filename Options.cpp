@@ -134,7 +134,7 @@ void Options::extractOption(String in) {                                        
             getReadTimeVal(in);                                                 //extract the necessary data, and apply the new settings
             break;
         case 'g':                                                               //previous/current tweet option, just a toggle
-            getPrevTweet();                                                     //toggle the previous/current tweet
+            getPrevTweet(in);                                                   //toggle the previous/current tweet
             break;
         default:
             break;
@@ -191,8 +191,9 @@ void Options::getReadTimeVal(String in) {
     setReadTime(time.toInt());     
 }
 
-void Options::getPrevTweet() {                                                  //toggles the current/previous tweet
-    if(onPrevious) {                                                            //if we are on the previous tweet already
+void Options::getPrevTweet(String in) {                                         //toggles the current/previous tweet
+    String enable = in.substring(0, 1);                                         //get the enable setting out
+    if(enable.toInt() == 0) {                                                   //if we are on the previous tweet already
         //set the tweet to the current one
         onPrevious = false;
         lcd.printNewTweet(true); 
