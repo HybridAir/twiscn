@@ -17,8 +17,9 @@ public class Options {
     private boolean rainbow = false;
     private boolean blink = true;
     private boolean prevTweet = false;
+    private boolean scroll = true;
     //private byte b = 0;
-    private byte fn1Action = 2;
+    private byte fn1Action = 3;
     private byte fn2Action = 0;
 
     public Options() {                                                          //default constructor, use all default settings  
@@ -56,7 +57,7 @@ public class Options {
     public String[] formatAll() {
         String[] out = {getBrightness(), getLCDColor(), getBlinkState(), 
             getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), 
-            getReadTime(), getPrevTweet()};
+            getReadTime(), getPrevTweet(), getScroll()};
         return out;
     }
      
@@ -117,6 +118,15 @@ public class Options {
         return prevTweet;
     }
     
+    public String getScroll() {
+        int out = scroll ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
+    public boolean getScrollBool() {
+        return scroll;
+    }
+    
     public byte getFn1Action() {
         return fn1Action;
     }
@@ -161,6 +171,10 @@ public class Options {
     
     public void setPrevTweet(boolean in) {
         prevTweet = in;
+    }
+    
+    public void setScroll(boolean in) {
+        scroll = in;
     }
     
     public void setFn1Action(byte in) {
