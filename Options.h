@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 #include "IO.h"
-#include <LiquidCrystal.h>  
+#include "LCDControl.h"
+#include "TweetHandler.h"
 
 class Options {
     public:
@@ -36,6 +37,7 @@ class Options {
         void getTweetBlink(String in);
         void getRainbow(String in);
         void getReadTimeVal(String in);
+        void getPrevTweet();
         byte color[3];                                                    
         byte blinkColor[3]; 
         byte brightness;
@@ -43,6 +45,7 @@ class Options {
         bool rainbow;
         bool blink;
         bool readyBlink;
+        bool onPrevious;
         unsigned int readTime;
         unsigned int rainSpd;                                                   
 };
