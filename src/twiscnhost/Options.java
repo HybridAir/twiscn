@@ -1,4 +1,5 @@
 //used to process and manage the twitterscreen settings and stuff
+//TODO: add in fn button action settings
 
 package twiscnhost;
 
@@ -6,27 +7,30 @@ import java.awt.Color;
 
 public class Options {
     
-    private int brightness = 255;
-    private Color lcdCol = new Color(0, 150, 255);
-    private boolean blink = true;
-    private Color blinkCol = Color.YELLOW;
-    private int blinkSpd = 100;
-    private boolean rainbow = false;
-    private int rnbwSpd = 10000;
-    private byte b = 0;
+    //set default option variables   
+    private Color lcdCol = new Color(0, 150, 255);  
+    private Color blinkCol = Color.YELLOW; 
+    private int rnbwSpd = 10000;   
     private int readTime = 1000;
+    private int blinkSpd = 100;
+    private int brightness = 255;
+    private boolean rainbow = false;
+    private boolean blink = true;
+    private byte b = 0;
+    //these will correspond to different actions that the buttons can do soon
+    private byte fn1Action = 0;
+    private byte fn2Action = 1;
 
-    public Options() {                                                  //default constructor, all default settings
-    
+    public Options() {                                                          //default constructor, use all default settings  
     }
     
-    public Options(String fn1, String fn2, int brightness, Color lcdCol) {                      //standard constructor, basic settings
+    public Options(String fn1, String fn2, int brightness, Color lcdCol) {      //standard constructor, basic settings
         this.brightness = brightness;
         this.lcdCol = lcdCol;   
     }
     
     public Options(String fn1, String fn2, int brightness, Color lcdCol, boolean blink, 
-      Color blinkCol, int blinkSpd, boolean rainbow, int rnbwSpd) {             //extended constructor, all settings
+        Color blinkCol, int blinkSpd, boolean rainbow, int rnbwSpd) {           //extended constructor, all settings
         this.brightness = brightness;
         this.lcdCol = lcdCol;
         this.blink = blink;
@@ -35,45 +39,6 @@ public class Options {
         this.rainbow = rainbow;
         this.rnbwSpd = rnbwSpd;
     }
-    
-//    public void fnHandler(int in) {
-//        if(in == 1) {
-//            switchBrightness();
-//        }
-//        else if(in == 2) {
-//            
-//        }
-//    }
-//    
-//    private void switchBrightness() {
-//        
-//        b++;
-//        if(b == 6) {
-//            b = 0;
-//        }
-//        switch(b) {
-//            case 0:
-//                brightness = 255;
-//                break;
-//            case 1:
-//                brightness = 128;
-//                break;
-//            case 2:
-//                brightness = 64;
-//                break;
-//            case 3:
-//                brightness = 32;
-//                break;
-//            case 4:
-//                brightness = 16;
-//                break;
-//            case 5:
-//                brightness = 0;
-//                break;
-//            default:
-//                break;
-//            }
-//    }
     
     private String formatColor(Color in) {                                              //extracts each color value, and combine them all into a string with leading zeroes
         String out = "";
@@ -87,16 +52,13 @@ public class Options {
     }
     
     public String[] formatAll() {
-        String[] out = {getBrightness(), getLCDColor(), getBlinkState(), getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), getReadTime()};
+        String[] out = {getBrightness(), getLCDColor(), getBlinkState(), 
+            getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), getReadTime()};
         return out;
     }
+     
+//==============================================================================    
     
-//    public String[] getBrightness() {
-//        String b = String.valueOf(brightness);
-//        String[] out = {"0", ("000" + b).substring(b.length())};
-//        return out;
-//    }
-        
     public String getBrightness() {
         String out = String.valueOf(brightness);
         return ("000" + out).substring(out.length());
@@ -135,7 +97,7 @@ public class Options {
         return ("00000" + out).substring(out.length());
     }
     
-    
+//==============================================================================    
     
     public void setBrightness(int in) {
         brightness = in;
