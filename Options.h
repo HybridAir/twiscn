@@ -40,7 +40,7 @@ class Options {
         bool rainbow;
         bool blink;
         bool readyBlink;
-        int rainSpd;                                                            //int to support color changing times up to 999
+        unsigned int rainSpd;                                                            //int to support color changing times up to 999
 };
 
 #endif	/* OPTIONS_H */
