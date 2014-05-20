@@ -10,16 +10,16 @@ public class Options {
     //set default option variables   
     private Color lcdCol = new Color(0, 150, 255);  
     private Color blinkCol = Color.YELLOW; 
-    private int rnbwSpd = 10000;   
+    private int rnbwSpd = 100;   
     private int readTime = 1000;
     private int blinkSpd = 100;
     private int brightness = 255;
     private boolean rainbow = false;
     private boolean blink = true;
-    private byte b = 0;
-    //these will correspond to different actions that the buttons can do soon
-    private byte fn1Action = 0;
-    private byte fn2Action = 1;
+    private boolean prevTweet = false;
+    //private byte b = 0;
+    private byte fn1Action = 2;
+    private byte fn2Action = 0;
 
     public Options() {                                                          //default constructor, use all default settings  
     }
@@ -42,7 +42,7 @@ public class Options {
         this.rnbwSpd = rnbwSpd;
     }
     
-    private String formatColor(Color in) {                                              //extracts each color value, and combine them all into a string with leading zeroes
+    private String formatColor(Color in) {                                      //extracts each color value, and combines them all into a string with leading zeroes
         String out = "";
         String r = String.valueOf(in.getRed());
         String g = String.valueOf(in.getGreen());
@@ -55,7 +55,8 @@ public class Options {
     
     public String[] formatAll() {
         String[] out = {getBrightness(), getLCDColor(), getBlinkState(), 
-            getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), getReadTime()};
+            getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), 
+            getReadTime(), getPrevTweet()};
         return out;
     }
      
@@ -64,6 +65,10 @@ public class Options {
     public String getBrightness() {
         String out = String.valueOf(brightness);
         return ("000" + out).substring(out.length());
+    }
+    
+    public int getBrightnessInt() {
+        return brightness;
     }
     
     public String getLCDColor() {
@@ -89,6 +94,10 @@ public class Options {
         return String.valueOf(out);
     }
     
+    public boolean getRnbwStateBool() {
+        return rainbow;
+    }
+    
     public String getRnbwSpd() {
         String out = String.valueOf(rnbwSpd);
         return ("00000" + out).substring(out.length());
@@ -97,6 +106,23 @@ public class Options {
     public String getReadTime() {
         String out = String.valueOf(readTime);
         return ("00000" + out).substring(out.length());
+    }
+    
+    public String getPrevTweet() {
+        int out = prevTweet ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
+    public boolean getPrevTweetBool() {
+        return prevTweet;
+    }
+    
+    public byte getFn1Action() {
+        return fn1Action;
+    }
+    
+    public byte getFn2Action() {
+        return fn2Action;
     }
     
 //==============================================================================    
@@ -132,4 +158,16 @@ public class Options {
     public void setReadTime(int in) {
         readTime = in;
     }
+    
+    public void setPrevTweet(boolean in) {
+        prevTweet = in;
+    }
+    
+    public void setFn1Action(byte in) {
+        fn1Action = in;
+    }
+    
+    public void setFn2Action(byte in) {
+        fn2Action = in;
+    } 
 }
