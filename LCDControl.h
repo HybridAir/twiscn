@@ -25,8 +25,7 @@ class LCDControl {
         void printBegin();
         void shiftText();
         void bootAnim();
-        int LCDWIDTH;    
-        int readTime;
+        byte LCDWIDTH;    
         unsigned int textSpeed;
         bool printedBegin;
         bool scroll;
