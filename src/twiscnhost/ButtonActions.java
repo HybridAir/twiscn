@@ -30,9 +30,6 @@ public class ButtonActions {
             case 3:
                 toggleScroll();
                 break;
-            case 4:
-                switchColor();
-                break;
             default:
                 break;                            
         }
@@ -81,7 +78,7 @@ public class ButtonActions {
         }
     }
     
-    private void toggleScroll() {                                                //used to pause the text scrolling (if applicable)
+    private void toggleScroll() {                                               //used to pause the text scrolling (if applicable)
         if(opt.getScrollBool()) {                                               //if scrolling is currently enabled
             opt.setScroll(false);                                               //disable scrolling
         }
@@ -89,12 +86,4 @@ public class ButtonActions {
             opt.setScroll(true);
         }
     }
-    
-    private void switchColor() {
-        
-    }
-    
-    
-
-
 }
