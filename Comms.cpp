@@ -5,7 +5,6 @@ extern Options opt;
 extern IO inout;
 extern TweetHandler twt;
 extern LCDControl lcd;
-extern LiquidCrystal lcdc;
 
 Comms::Comms() {                                                                //default constructor
     usb.begin();                                                                //start up the usb hidserial connection
@@ -55,7 +54,7 @@ void Comms::checkType() {                                                       
     if (gotUser & gotTweet) {                                                   //if we got both the tweet and the user
         twt.setUser(userOut);                                                   //give the tweet handler a new user
         twt.setTweet(twtOut);                                                   //give the tweet handler a new tweet
-        lcd.printNewTweet();                                                    //tell LCDControl to print the new tweet
+        lcd.printNewTweet(true);                                                //tell LCDControl to print the new tweet
         //already got the new tweet, so reset those vars
         gotTweet = false;                                                       
         gotUser = false;
