@@ -9,12 +9,14 @@ class TweetHandler {
         void setUser(String in);
         void setTweet(String in);     
         int getTweetLength();
+        int getPrevLength();
         String getTweetBegin();
+        String getPrevBegin();
         String getPrevUser();
         String getPrevTweet();
         String getUser();
         String getTweet();
-        bool useScroll();
+        bool useScroll(bool current);
     private:
         byte LCDWIDTH;
         String user;
