@@ -12,8 +12,9 @@ public class DeviceOptions {
     private Color blinkCol = Color.YELLOW;
     private int blinkSpd = 100;
     private boolean rainbow = false;
-    private int rnbwSpd = 100;
+    private int rnbwSpd = 10000;
     private byte b = 0;
+    private int readTime = 1000;
 
     public DeviceOptions() {                                                  //default constructor, all default settings
     
@@ -35,44 +36,44 @@ public class DeviceOptions {
         this.rnbwSpd = rnbwSpd;
     }
     
-    public void fnHandler(int in) {
-        if(in == 1) {
-            switchBrightness();
-        }
-        else if(in == 2) {
-            
-        }
-    }
-    
-    private void switchBrightness() {
-        
-        b++;
-        if(b == 6) {
-            b = 0;
-        }
-        switch(b) {
-            case 0:
-                brightness = 255;
-                break;
-            case 1:
-                brightness = 128;
-                break;
-            case 2:
-                brightness = 64;
-                break;
-            case 3:
-                brightness = 32;
-                break;
-            case 4:
-                brightness = 16;
-                break;
-            case 5:
-                brightness = 0;
-                break;
-            default:
-                break;
-            }
-    }
+//    public void fnHandler(int in) {
+//        if(in == 1) {
+//            switchBrightness();
+//        }
+//        else if(in == 2) {
+//            
+//        }
+//    }
+//    
+//    private void switchBrightness() {
+//        
+//        b++;
+//        if(b == 6) {
+//            b = 0;
+//        }
+//        switch(b) {
+//            case 0:
+//                brightness = 255;
+//                break;
+//            case 1:
+//                brightness = 128;
+//                break;
+//            case 2:
+//                brightness = 64;
+//                break;
+//            case 3:
+//                brightness = 32;
+//                break;
+//            case 4:
+//                brightness = 16;
+//                break;
+//            case 5:
+//                brightness = 0;
+//                break;
+//            default:
+//                break;
+//            }
+//    }
     
     private String formatColor(Color in) {                                              //extracts each color value, and combine them all into a string with leading zeroes
         String out = "";
@@ -86,7 +87,7 @@ public class DeviceOptions {
     }
     
     public String[] formatAll() {
-        String[] out = {getBrightness(), getLCDColor(), getBlinkState(), getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd()};
+        String[] out = {getBrightness(), getLCDColor(), getBlinkState(), getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), getReadTime()};
         return out;
     }
     
@@ -126,7 +127,12 @@ public class DeviceOptions {
     
     public String getRnbwSpd() {
         String out = String.valueOf(rnbwSpd);
-        return ("000" + out).substring(out.length());
+        return ("00000" + out).substring(out.length());
+    }
+    
+    public String getReadTime() {
+        String out = String.valueOf(readTime);
+        return ("00000" + out).substring(out.length());
     }
     
     
@@ -157,5 +163,9 @@ public class DeviceOptions {
     
     public void setRnbwSpd(int in) {
         rnbwSpd = in;
+    }
+    
+    public void setReadTime(int in) {
+        readTime = in;
     }
 }
