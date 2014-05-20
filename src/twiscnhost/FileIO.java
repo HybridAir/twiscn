@@ -2,10 +2,6 @@
 
 package twiscnhost;
 
-/**
- *
- * @author Blake
- */
 public class FileIO {
     
 }
