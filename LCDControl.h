@@ -10,7 +10,7 @@
 class LCDControl {
     public:
         LCDControl(int widthIn);
-        void printNewTweet();
+        void printNewTweet(bool current);
         void printUser();
         void printTweet();
         void scrollTweet();
@@ -22,19 +22,22 @@ class LCDControl {
     private:
         void CreateChar(byte code, PGM_P character);
         void clearRow(byte row);
-        void printBegin();
+        void printBegin(String begin);
         void shiftText();
         void bootAnim();
+        String subTweet;
         byte LCDWIDTH;    
         unsigned int textSpeed;
         bool printedBegin;
         bool scroll;
         bool ranOnce;
         bool waitforbegin;
+        bool currentTweet;
         byte animCount;
         byte section;     
         byte lcdPos;
-        unsigned long previousMillis;        
+        unsigned long previousMillis; 
+        int twtLength;
 };
 
 #endif	/* LCDCONTROL_H */
