@@ -3,7 +3,12 @@
 #include "TweetHandler.h"
 
 TweetHandler::TweetHandler(int widthIn) {                                       //constructor, needs the LCDWIDTH   
-    LCDWIDTH = widthIn;    
+    LCDWIDTH = widthIn;
+    //set all Strings to empty
+    user = "";
+    prevUser = "";
+    tweet = "";
+    prevTweet = "";
 }
 
 void TweetHandler::setUser(String in) {                                         //sets the username
@@ -30,6 +35,10 @@ int TweetHandler::getTweetLength() {
     return tweet.length();
 }
 
+int TweetHandler::getPrevLength() {
+    return prevTweet.length();
+}
+
 String TweetHandler::getPrevUser() {
     return prevUser;
 }
@@ -48,13 +57,28 @@ String TweetHandler::getTweetBegin() {                                          
     }
 }
 
+String TweetHandler::getPrevBegin() {                                           //returns the beginning of the previous tweet
+    if(prevTweet.length() <= LCDWIDTH) {                                        //check if the tweet is less than LCDWIDTH first
+        return tweet;                                                           //no need to shorten, just return the unchanged tweet
+    } 
+    else {                                                                      //needs to be shortened, longer than LCDWIDTH
+        beginning = prevTweet.substring(0, LCDWIDTH);                           //create a substring containing the first LCDWIDTH characters                                  
+        return beginning;
+    }
+}
+
 //==============================================================================
 
-bool TweetHandler::useScroll() {                                                //returns if tweet scrolling is necessary (longer than LCDWIDTH)
-    if(tweet.length() <= LCDWIDTH) {
-        return false;
+bool TweetHandler::useScroll(bool current) {                                    //returns if tweet scrolling is necessary (longer than LCDWIDTH)
+    if(current) {
+        if(tweet.length() <= LCDWIDTH) {
+            return false;
+        }
     }
     else {
-        return true; 
+        if(prevTweet.length() <= LCDWIDTH) {
+            return false;
+        }
     }
+    return true; 
 }
