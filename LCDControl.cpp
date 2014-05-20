@@ -88,10 +88,12 @@ void LCDControl::scrollTweet() {                                                
                 break;
             }
             case 1:  {                                                          //scrolling section
-                unsigned long currentMillis2 = millis();
-                if(currentMillis2 - previousMillis > textSpeed) {               //check if it's time to shift the text
-                    previousMillis = currentMillis2;
-                    shiftText();                                                //shift the text by one                                                  
+                if(opt.getScroll()) {
+                    unsigned long currentMillis2 = millis();
+                    if(currentMillis2 - previousMillis > textSpeed) {               //check if it's time to shift the text
+                        previousMillis = currentMillis2;
+                        shiftText();                                                //shift the text by one                                                  
+                    }
                 }
                 break;
             }
@@ -107,6 +109,9 @@ void LCDControl::scrollTweet() {                                                
         }
     }
 }
+
+
+//put a scroll option check in here
 
 void LCDControl::shiftText() {                                                  //used to shift the tweet text by one column
     if(currentTweet) {                                                          //if we are on the current tweet
