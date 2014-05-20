@@ -74,7 +74,12 @@ public class ButtonActions {
     }
     
     private void prevTweet() {
-        
+        if(opt.getPrevTweetBool()) {                                            //if rainbow mode is currently on
+            opt.setPrevTweet(false);                                            //turn it off
+        }
+        else {                                                                  //if it's already off, turn it on
+            opt.setPrevTweet(true);
+        }
     }
     
     private void pauseScroll() {
