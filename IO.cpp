@@ -33,7 +33,8 @@ IO::IO() {                                                                      
     blinkEnabled = false;                                                       
     currentColor = 0;                                                           //current color section of the rainbow that is being faded though
     rainLevel = 0;                                                              //current brightness level of the backlight leds being faded
-    blinkCount = 0;                                                             //amount of times the backlight changed colors during a tweet blink                                                          
+    blinkCount = 0;                                                             //amount of times the backlight changed colors during a tweet blink 
+    runOnce = false;
     
 }
 
@@ -125,6 +126,10 @@ void IO::tweetBlink() {                                                         
 
 void IO::rainbow() {                                                            //controls the backlight's rainbow mode, must be ran continuously
     if(opt.getRainbow()) {
+        if(!runOnce) {                                                          //set the first rainbow color if this is the first time
+            opt.setCol(rainLevel, 0, 255-rainLevel);
+            runOnce = true;
+        }
         unsigned long currentMillis = millis();
         if(currentMillis - previousMillis6 > opt.getRainSpd()) {                //if it's time to advance colors
             previousMillis6 = currentMillis;
@@ -150,5 +155,8 @@ void IO::rainbow() {                                                            
                 }
             }
         }
+    }
+    else {                                                                      //make sure runOnce is set to false when not rainbowing
+        runOnce = false;
     }
 }
