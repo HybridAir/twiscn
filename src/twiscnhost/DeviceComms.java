@@ -91,30 +91,28 @@ public class DeviceComms {
     }
     
     public void sendOptions(String[] values) {                                  //used to send options to the device
-        for(int i = 0;i <= 5;i++) {                                             //only 4 sendable option groups so far
+        for(int i = 0;i <= 6;i++) {                                             //only 4 sendable option groups so far
             switch(i) {
                 case 0:                                                         //send the backlight brightness settings
-                    //System.out.println("$b" + values[0]);
                     twiScnHID.send("$b" + values[0]);
                     break;
                 case 1:                                                         //send the backlight color settings
-                    //System.out.println("$c" + values[1]);
                     twiScnHID.send("$c" + values[1]);
                     break;
                 case 2:                                                         //send the tweetblink settings
-                    //System.out.println("$d" + values[2] + values[3] + values[4]);
                     twiScnHID.send("$d" + values[2] + values[3] + values[4]);
                     break;
                 case 3:                                                         //send the rainbow mode settings
-                    //System.out.println("$e" + values[5] + values[6]);
                     twiScnHID.send("$e" + values[5] + values[6]);
                     break;
-                case 4:
-                    //System.out.println("$f" + values[7]);
+                case 4:                                                         //send the read time setting
                     twiScnHID.send("$f" + values[7]);
                     break;
-                case 5:
+                case 5:                                                         //send the previous tweet setting
                     twiScnHID.send("$g" + values[8]);
+                    break;
+                case 6:                                                         //send the scroll toggle setting
+                    twiScnHID.send("$h" + values[9]);
                     break;
                 default:
                     break;
