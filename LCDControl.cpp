@@ -25,16 +25,24 @@ LCDControl::LCDControl(int widthIn) {                                           
     waitforbegin = 0;                                                           //stores if we are waiting for the beginning of the text
 }
 
-void LCDControl::printNewTweet() {                                              //used to print a new tweet
+void LCDControl::printNewTweet(bool current) {                                  //used to print a new tweet, needs to know if this is the current tweet or not
     clearRow(0);                                                                //clear the username row to prepare it for an update
-    opt.setReadyBlink(true);                                                    //tell options that we need to blink the backlight
-    lcdc.print(twt.getUser());                                                   //print the username, don't need to do anything to it 
-    printBegin();                                                               //print the beginning of the tweet and do further processing
+    opt.setReadyBlink(true);                                                    //trigger a tweetblink, if enabled
+    if(current) {                                                               //if we are on the current tweet
+        currentTweet = true;                                                    //let the rest of the class know
+        lcdc.print(twt.getUser());                                              //print the username, don't need to do anything to it 
+        printBegin(twt.getTweetBegin());                                        //print the beginning of the tweet and do further processing, give it the beginning
+    }
+    else {                                                                      //if we are on the previous tweet
+        currentTweet = false;                                                   //let the rest of the class know
+        lcdc.print(twt.getPrevUser());                                          //print the previous username, don't need to do anything to it
+        printBegin(twt.getPrevBegin());                                         //print the beginning of the tweet and do further processing, give it the previous beginning
+    }
 }
 
-void LCDControl::printBegin() {                                                 //prints the beginning of a tweet, and then enables scrolling if necessary
+void LCDControl::printBegin(String begin) {                                     //prints the beginning of a tweet, and then enables scrolling if necessary
     section = 0;                                                                //let the scrolltext method know to start at section 0
-    if(twt.useScroll()) {                                                       //ask tweethandler if scrolling is necessary, true for this case
+    if(twt.useScroll(currentTweet)) {                                           //ask tweethandler if scrolling is necessary
         scroll = true;                                                          //enable scrolling
         printedBegin = true;                                                    //let the program know the beginning was already printed
         previousMillis = millis();                                              //set previousMillis to the current time, needed for new tweets made after this one
@@ -43,7 +51,7 @@ void LCDControl::printBegin() {                                                 
         scroll = false;                                                         //disable scrolling
     }
     clearRow(1);                                                                //clear the bottom row
-    lcdc.print(twt.getTweetBegin());                                            //print the beginning of the tweet
+    lcdc.print(begin);                                            //print the beginning of the tweet
     
 }
 
@@ -63,14 +71,19 @@ void LCDControl::scrollTweet() {                                                
             case 0: {                                                           //beginning of tweet section
                 if(printedBegin) {                                              //if we already printed the beginning
                     unsigned long currentMillis1 = millis();
-                    if(currentMillis1 - previousMillis > opt.getReadTime()) {            //wait for the user read time to elapse
+                    if(currentMillis1 - previousMillis > opt.getReadTime()) {   //wait for the user read time to elapse
                         previousMillis = currentMillis1;
                         section++;                                              //done waiting, allow the program to go to the next section
                         lcdPos = 0;                                             //reset the lcdPos var, needs to start at 0 after the beginning
                     }
                 }
                 else {                                                          //did not print the beginning yet
-                    printBegin();                                               //print the beginning already
+                    if(currentTweet) {                                          //if we are on the current tweet
+                        printBegin(twt.getTweetBegin());                        //print the beginning
+                    }
+                    else {                                                      //if we are on the previous tweet
+                        printBegin(twt.getPrevBegin());                         //print the previous beginning
+                    }
                 }
                 break;
             }
@@ -84,7 +97,7 @@ void LCDControl::scrollTweet() {                                                
             }
             case 2:   {                                                         //end of tweet section
                 unsigned long currentMillis3 = millis();
-                if(currentMillis3 - previousMillis > opt.getReadTime()) {                //wait for the user read time to elapse
+                if(currentMillis3 - previousMillis > opt.getReadTime()) {       //wait for the user read time to elapse
                     previousMillis = currentMillis3;
                     section = 0;                                                //done waiting, go back to section 0
                     printedBegin = false;
@@ -96,15 +109,26 @@ void LCDControl::scrollTweet() {                                                
 }
 
 void LCDControl::shiftText() {                                                  //used to shift the tweet text by one column
-    if (lcdPos <= (twt.getTweetLength() - LCDWIDTH)) {                            
+    if(currentTweet) {                                                          //if we are on the current tweet
+        twtLength = twt.getTweetLength();                                       //save the tweet length
+    }
+    else {                                                                      //if we are on the previous tweet
+        twtLength = twt.getPrevLength();                                        //save the previous tweet length
+    }
+    if (lcdPos <= (twtLength - LCDWIDTH)) {                            
         //(subtracted LCDWIDTH since we want the ending to use all of LCDWIDTH)
-        String subTweet = twt.getTweet();
+        if(currentTweet) {                                                      //get the current tweet
+            subTweet = twt.getTweet();
+        }
+        else {                                                                  //or get the previous tweet
+            subTweet = twt.getPrevTweet();
+        }
         subTweet = subTweet.substring(lcdPos, (lcdPos + LCDWIDTH));             //create a substring from the current position to LCDWIDTH chars ahead
         lcdc.setCursor(0, 1);                                                   //make sure we print on the bottom row
         lcdc.print(subTweet);                                                   //printed the shifted substring
         lcdPos++;                                                               //increase lcdPos by one
     }
-    if(lcdPos == ((twt.getTweetLength() - LCDWIDTH)+1)) {                       //check if we are at the end of the text to be shifted
+    if(lcdPos == ((twtLength - LCDWIDTH)+1)) {                                  //check if we are at the end of the text to be shifted
         section++;                                                              //we are done here, go to the next section
     }
 }
