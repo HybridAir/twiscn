@@ -20,6 +20,7 @@ void Options::defaults() {
     readyBlink = false;                                                         //stores if we are ready to blink
     readTime = 4000;                                                            //time to wait for the user to read the beginning/end of a tweet
     onPrevious = false;
+    scroll = true;
 }
 
 //==============================================================================
@@ -58,6 +59,14 @@ int Options::getReadTime() {
 
 bool Options::getReadyBlink() {
     return readyBlink;
+}
+
+bool Options::getPrevTweet() {
+    return onPrevious;
+}
+
+bool Options::getScroll() {
+    return scroll;
 }
 
 //==============================================================================
@@ -136,6 +145,9 @@ void Options::extractOption(String in) {                                        
         case 'g':                                                               //previous/current tweet option, just a toggle
             getPrevTweet(in);                                                   //toggle the previous/current tweet
             break;
+        case 'h':
+            getScrollVal(in);
+            break;
         default:
             break;
     } 
@@ -193,16 +205,30 @@ void Options::getReadTimeVal(String in) {
 
 void Options::getPrevTweet(String in) {                                         //toggles the current/previous tweet
     String enable = in.substring(0, 1);                                         //get the enable setting out
+    if(enable.toInt() == 0) {                                                   //if the previous tweet was disabled
+        if(getPrevTweet()) {                                                      //only set it to the current tweet if we are on the previous one already
+            //set the tweet to the current one
+            onPrevious = false;
+            lcd.printNewTweet(true);
+        }
+    }
+    else {                                                                      //if the previous tweet was enabled
+        if(twt.getPrevTweet() != "") {                                          //make sure there is a previous tweet first
+            if(!getPrevTweet()) {                                                 //only set it to the previous tweet if we are on the current one already
+                //set the tweet to the previous one
+                onPrevious = true;
+                lcd.printNewTweet(false);
+            }
+        }
+    }
+}
+
+void Options::getScrollVal(String in) {
+    String enable = in.substring(0, 1);                                         //get the enable setting out
     if(enable.toInt() == 0) {                                                   //if we are on the previous tweet already
-        //set the tweet to the current one
-        onPrevious = false;
-        lcd.printNewTweet(true); 
+        scroll = false;
     }
     else {                                                                      //if we are on the current tweet already
-        if(twt.getPrevTweet() != "") {                                          //make sure there is a previous tweet first
-            //set the tweet to the previous one
-            onPrevious = true;
-            lcd.printNewTweet(false);
-        }
+        scroll = true;
     }
 }
