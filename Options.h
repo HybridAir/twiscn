@@ -16,6 +16,7 @@ class Options {
         bool getBlink(); 
         bool getReadyBlink();
         int getRainSpd();
+        int getReadTime();
         void defaults();
         void setBrightness(byte in);
         void setCol(byte r, byte g, byte b);
@@ -25,6 +26,7 @@ class Options {
         void setBlink(bool in);
         void setBlinkSpd(byte in);
         void setReadyBlink(bool in);
+        void setReadTime(int in);
         void extractOption(String in);
         void updateCol();
         void updateBlinkCol();
@@ -33,6 +35,7 @@ class Options {
         void getColorVal(String in);
         void getTweetBlink(String in);
         void getRainbow(String in);
+        void getReadTimeVal(String in);
         byte color[3];                                                    
         byte blinkColor[3]; 
         byte brightness;
@@ -40,7 +43,8 @@ class Options {
         bool rainbow;
         bool blink;
         bool readyBlink;
-        unsigned int rainSpd;                                                            //int to support color changing times up to 999
+        unsigned int readTime;
+        unsigned int rainSpd;                                                   
 };
 
 #endif	/* OPTIONS_H */
