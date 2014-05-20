@@ -10,7 +10,6 @@ public class ButtonActions {
     
     public ButtonActions(Options opt) {
         this.opt = opt;
-        brightness = opt.getBrightnessInt();
     }
     
     public void fn1() {                                                         //call this whenever we get a response from FN1 (make sure to applyOptions after)
@@ -29,17 +28,17 @@ public class ButtonActions {
                 prevTweet();
                 break;
             case 3:
-                pauseScroll();
+                toggleScroll();
                 break;
             case 4:
                 switchColor();
                 break;
             default:
-                break;
-                
-                            
+                break;                            
         }
     }
+    
+//==============================================================================
     
     private void switchBrightness() {                                           //used to switch through backlight brightness levels exponentially and on/off
         switch(brightState) {                                                   //switch through turning the backlight completely off and fading it on
@@ -73,17 +72,22 @@ public class ButtonActions {
         }
     }
     
-    private void prevTweet() {
-        if(opt.getPrevTweetBool()) {                                            //if rainbow mode is currently on
-            opt.setPrevTweet(false);                                            //turn it off
+    private void prevTweet() {                                                  //used to switch to the previous tweet and back
+        if(opt.getPrevTweetBool()) {                                            //if previous tweet is currently active
+            opt.setPrevTweet(false);                                            //go back to the current tweet
         }
-        else {                                                                  //if it's already off, turn it on
+        else {                                                                  //vice versa
             opt.setPrevTweet(true);
         }
     }
     
-    private void pauseScroll() {
-        
+    private void toggleScroll() {                                                //used to pause the text scrolling (if applicable)
+        if(opt.getScrollBool()) {                                               //if scrolling is currently enabled
+            opt.setScroll(false);                                               //disable scrolling
+        }
+        else {                                                                  //vice versa
+            opt.setScroll(true);
+        }
     }
     
     private void switchColor() {
