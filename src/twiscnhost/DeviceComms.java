@@ -91,7 +91,7 @@ public class DeviceComms {
     }
     
     public void sendOptions(String[] values) {                                  //used to send options to the device
-        for(int i = 0;i <= 3;i++) {                                             //only 3 sendable option groups so far
+        for(int i = 0;i <= 4;i++) {                                             //only 4 sendable option groups so far
             switch(i) {
                 case 0:                                                         //send the backlight brightness settings
                     //System.out.println("$b" + values[0]);
@@ -108,6 +108,10 @@ public class DeviceComms {
                 case 3:                                                         //send the rainbow mode settings
                     //System.out.println("$e" + values[5] + values[6]);
                     twiScnHID.send("$e" + values[5] + values[6]);
+                    break;
+                case 4:
+                    //System.out.println("$f" + values[7]);
+                    twiScnHID.send("$f" + values[7]);
                     break;
                 default:
                     break;
