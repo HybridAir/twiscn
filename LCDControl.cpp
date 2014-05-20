@@ -17,7 +17,6 @@ static prog_char PROGMEM right1[] = {0x0,0x0,0x0,0x10,0x18,0x1c,0x1e,0x3};
 LCDControl::LCDControl(int widthIn) {                                           //constructor, wants the lcdwidth  
     LCDWIDTH = widthIn;                                                         //character width of the LCD
     lcdc.begin(LCDWIDTH, 2);                                                    //get that LCD going  
-    readTime = 3000;                                                            //set the time for the user to read the beginning and end of a tweet, put this in options later
     ranOnce = false;                                                            //used in connectDisplay
     animCount = 0;                                                              //used in connectAnim
     previousMillis = 0;                                                         //used in printBegin
@@ -64,7 +63,7 @@ void LCDControl::scrollTweet() {                                                
             case 0: {                                                           //beginning of tweet section
                 if(printedBegin) {                                              //if we already printed the beginning
                     unsigned long currentMillis1 = millis();
-                    if(currentMillis1 - previousMillis > readTime) {            //wait for the user read time to elapse
+                    if(currentMillis1 - previousMillis > opt.getReadTime()) {            //wait for the user read time to elapse
                         previousMillis = currentMillis1;
                         section++;                                              //done waiting, allow the program to go to the next section
                         lcdPos = 0;                                             //reset the lcdPos var, needs to start at 0 after the beginning
@@ -85,7 +84,7 @@ void LCDControl::scrollTweet() {                                                
             }
             case 2:   {                                                         //end of tweet section
                 unsigned long currentMillis3 = millis();
-                if(currentMillis3 - previousMillis > readTime) {                //wait for the user read time to elapse
+                if(currentMillis3 - previousMillis > opt.getReadTime()) {                //wait for the user read time to elapse
                     previousMillis = currentMillis3;
                     section = 0;                                                //done waiting, go back to section 0
                     printedBegin = false;
