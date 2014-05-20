@@ -4,9 +4,11 @@ public class DeviceHandler {
     
     private Options options;
     private DeviceComms comms;
+    private ButtonActions btnActions;
     
-    public DeviceHandler(int[] deviceIDs, Options options) {                    //constructor, needs the device IDs to use and the options instance
-        this.options = options;
+    public DeviceHandler(int[] deviceIDs, Options opt) {                        //constructor, needs the device IDs to use and the options instance
+        this.options = opt;
+        btnActions = new ButtonActions(this.options);
         System.out.println("Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
         comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //try connecting to the device over usb, program will not continue until successful
         applyAllOptions();   
@@ -31,10 +33,10 @@ public class DeviceHandler {
                 try {
                         Thread.sleep(500L);                                    //2 seconds should be enough time for the device to get ready
                     } catch (Exception e) {}
-                comms.sendRaw("$g");
-                comms.sendRaw("=");
-                System.out.println("sent");
+                btnActions.fn1();
+                applyAllOptions();
             }
         }
+        in = null;
     }
 }
