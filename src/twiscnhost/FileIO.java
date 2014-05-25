@@ -12,12 +12,16 @@ import java.util.Properties;
 
 public class FileIO {
     
-    OutputStream output = null;
-    InputStream input = null;
+    private OutputStream output = null;
+    private InputStream input = null;
     private boolean exists = false;
     private boolean usingConfig = true;
     private boolean createProps = false;
-    private String fileName = "joop.properties";
+    private String fileName = "fard.properties";
+    
+    public FileIO() {
+        
+    }
     
     public boolean findFile() {                                                 //used to check if the config file exists, and create it if necessary/possible
         byte attempts = 0;                                                      //used to track attempts
@@ -40,68 +44,104 @@ public class FileIO {
     }
     
     private void checkExists() {                                                //checks if the properties file exists
-        try {
-            input = new FileInputStream(fileName);                              //create a new inputstream using fileName
+        if(openInput()) {                                                       //try to open the file input
             System.out.println("Found configuration file.");                    //if we get here, the program found the file
-            exists = true;                                                      //file exists, used to break out of any loops   
+            exists = true;                                                      //file exists, used to break out of any loops 
         }
-        catch(FileNotFoundException e) {                                        //file was not found
+        else {                                                                  //unable to open the input file
             System.out.println("Configuration file was not found, attempting to create now.");
-            exists = false;
-            createFile();                                                       //the file was not found, so try to create it
-	}
-        finally {
-            if (input != null) {                                                //if the inputstream was started successfully
-		try {                                                           //try to close it since we are done
-                    input.close();                                              
-		} 
-                catch (IOException e) {                                         //catch any IO errors
-                    e.printStackTrace();
-		}
-            }
-        }
+            exists = false;                                                     //assumed that the file does not exist
+            createFile();                                                       //create the file
+        }      
+        closeInput();                                                           //close the file output, not longer needed
     }
     
-    private void createFile() {                                                 //creates a new properties file
-        try {
-            output = new FileOutputStream(fileName);                            //try to start a new outputsteam using fileName
-            System.out.println("New configuration file was created.");          //if we get here, the file was created successfully
+    public void createFile() {                                                  //creates a new properties file
+        if(openOutput()) {                                                      //if the program was able to open the output stream
+            System.out.println("New configuration file was created.");
             createProps = true;                                                 //tell prophandler that it needs to set default properties
-	} 
-        catch (IOException io) {                                                //check for IO errors
+        }
+        else {                                                                  //unable to open output stream, and create the file
             System.out.println("Unable to create configuration file.");
-            io.printStackTrace();
-	} 
-        finally {                                                               //make sure to close the file when we are done
-            if (output != null) {
-                try {
-                    output.close();
-		} 
-                catch (IOException e) {                                         //check for IO errors
-                    e.printStackTrace();
-		}
-            }
-	}    
+        }       
+        closeOutput();    
     }
     
     public void writeProperties(Properties prop) {                              //used to write new properties to the file
-        try {                                                                   
-            output = new FileOutputStream(fileName);                            //try to open fileName                   
-            prop.store(output, null);                                           //try to store the new properties
-	} 
-        catch (IOException io) {                                                //check for IO errors
-            io.printStackTrace();
-	} 
-        finally {    
-            if (output != null) {                                               //make sure to close the file when we are done
-                try {
-                    output.close();
-                } 
-                catch (IOException e) {                                         //check for IO errors
-                    e.printStackTrace();
-                }
-            }
+        if(openOutput()) {
+            try {                                                                                      
+                prop.store(output, null);                                       //try to store the new properties
+                System.out.println("Properties written (stored)");
+            } 
+            catch (IOException io) {                                            //check for IO errors
+                io.printStackTrace();
+                System.out.println("Unable to write properties");
+            } 
+        }     
+        closeOutput();                                                          //close the file output, not longer needed
+    }
+    
+//==============================================================================
+    
+    public boolean openInput() {                                                //used to open the file for reading (input), returns true if successful
+        try {
+            input = new FileInputStream(fileName);                              //create a new inputstream using fileName
+            System.out.println("input opened");
+            return true;
+        }
+        catch(FileNotFoundException e) {                                        //file was not found
+            System.out.println("Unable to open input");
+            return false;
 	}
     }
     
+    public void loadProps(Properties prop) {                                    //used to load the properties from the file
+        if(input != null) {                                                     //only attempt loading if input is already open
+            try {                                                                   
+                prop.load(input);                                               //try to load the properties from the inputstream
+                System.out.println("loaded props");
+            } 
+            catch (IOException io) {                                            //check for IO errors
+                io.printStackTrace();
+                System.out.println("Unable to open props");
+            }
+        }
+    }
+    
+    public void closeInput() {                                                  //used to close the config file input
+        if (input != null) {                                                    //only close it if it's already open
+            try {                                                               //try to close it
+                input.close();                              
+                System.out.println("input closed");
+            } 
+            catch (IOException e) {                                             //catch any IO errors
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public boolean openOutput() {                                               //used to open the file for writing (output), returns true if successful
+        try {                                                                   
+            output = new FileOutputStream(fileName);                            //try to open fileName
+            System.out.println("output opened"); 
+            return true;
+	} 
+        catch (IOException io) {                                                //check for IO errors
+            io.printStackTrace();
+            System.out.println("Unable to open output");
+            return false;
+	} 
+    }
+    
+    public void closeOutput() {                                                 //used to close the file output
+        if (output != null) {                                                   //only close it if it's already open
+            try {
+                output.close();                                                 //close the output stream
+                System.out.println("output closed");
+            } 
+            catch (IOException e) {                                             //check for IO errors
+                e.printStackTrace();
+            }
+        }   
+    }
 }
