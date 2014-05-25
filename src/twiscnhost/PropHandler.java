@@ -5,78 +5,44 @@ import java.util.Properties;
 
 public class PropHandler {
     
-    Properties prop = new Properties();
-    FileIO fio = new FileIO();
-    Options opt;  
+    private Properties prop = new Properties();                                         //create a new instance of Properties, needed for data reading/writing
+    private FileIO fio = new FileIO();                                                  //create a new instance of FileIO, have to write this data somewhere
+    private Options opt;
     
-    public PropHandler(Options opt) {
+    public PropHandler(Options opt) {                                           //constructor, needs Options instance, gets the properties file going
         this.opt = opt;
-        fio.findFile();
-        checkIntegrity();
+        if(fio.findFile()) {                                                    //try to find and/or create the config file
+            //if it returns true, default properties need to be written to the file
+            writeDefaults();
+        }
+        else if(fio.usingConfig()) {                                            //don't need to write defaults, check integrity if we are using the config still
+            checkIntegrity();                                                   //make sure the the properties within the file are not retarded
+        }
     }
     
-    
-//    private void findFile() {                                                   //used to check if the config file exists, and create it if necessary/possible
-//        byte attempts = 0;                                                      //used to track attempts
-//        while(!exists && usingConfig) {                                         //while the file doesn't exist, and we are actually going to use the file
-//            checkExists();                                                      //check if the file exists
-//            attempts++;                                                         //file was not found if we got here, so increase the attempt amount
-//            if(attempts == 3) {                                                 //if we failed at creating the file 3 times
-//                //failsafe, the program can still run without a config file
-//                System.out.println("Failed to find/create config file 3 times. Proceeding without loading/saving settings.");
-//                usingConfig = false;                                            //let the program know not to use a config file
-//            }
-//        }
-//    }
-//    
-//    private void checkExists() {
-//        try {
-//            input = new FileInputStream("7rep.properties");
-//            System.out.println("Found configuration file.");
-//            exists = true;          
-//        }
-//        catch(FileNotFoundException e) {
-//            System.out.println("Configuration file was not found, attempting to create now.");
-//            exists = false;
-//            createFile();                                                       //the file was not found, so try to create it
-//	}
-//        finally {
-//            if (input != null) {
-//		try {
-//                    input.close();
-//		} 
-//                catch (IOException e) {
-//                    e.printStackTrace();
-//		}
-//            }
-//        }
-//    }
-//    
-//    private void createFile() {
-//        try {
-//            output = new FileOutputStream("7rep.properties");
-//            System.out.println("New configuration file was created.");
-//	} 
-//        catch (IOException io) {
-//            System.out.println("Unable to create configuration file.");
-//            io.printStackTrace();
-//	} 
-//        finally {
-//            if (output != null) {
-//                try {
-//                    output.close();
-//		} 
-//                catch (IOException e) {
-//                    e.printStackTrace();
-//		}
-//            }
-//	}    
-//    }
-    
-    private void checkIntegrity() {
+    private void checkIntegrity() {                                             //used to check the integrity of the properties within the config file
         if(fio.usingConfig()) {
             
         }
     }
+    
+    private void writeDefaults() {                                              //used to write default properties to a newly created properties file
+        String[] names = opt.getPropNames();                                    //get the array of property names
+        String[] values = opt.getPropValues();                                  //get the array of property values 
+        
+        for(int i = 0;i < names.length;i++) {                                   //for each property
+            prop.setProperty(names[i], values[i]);                              //set each property name and its value
+        }     
+        
+        fio.writeProperties(prop);                                              //actually write the properties to the file            
+    }
+    
+
+
+//Color lcdCol = new Color(0, 150, 255); 
+//       
+//       String colorS = Integer.toString(lcdCol.getRGB());
+//
+//       Color noop = new Color(Integer.parseInt(colorS));
     
 }
