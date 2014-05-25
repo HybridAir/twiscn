@@ -18,7 +18,6 @@ public class Options {
     private boolean blink = true;
     private boolean prevTweet = false;
     private boolean scroll = true;
-    //private byte b = 0;
     private byte fn1Action = 3;
     private byte fn2Action = 0;
 
@@ -43,6 +42,8 @@ public class Options {
         this.rnbwSpd = rnbwSpd;
     }
     
+//==============================================================================
+    
     private String formatColor(Color in) {                                      //extracts each color value, and combines them all into a string with leading zeroes
         String out = "";
         String r = String.valueOf(in.getRed());
@@ -61,7 +62,24 @@ public class Options {
         return out;
     }
      
-//==============================================================================    
+//============================================================================== 
+    
+    public String[] getPropNames() {
+        String[] out = {"brightness", "lcdColor", "blinkState", "blinkColor", 
+            "blinkSpeed", "rainbowState", "rainbowSpeed", "readTime", 
+            "fn1Action", "fn2Action"};
+        return out;
+    }
+    
+    public String[] getPropValues() {     
+        String[] out = {String.valueOf(String.valueOf(brightness)), 
+            getLCDColorInt(), getBlinkState(), getBlinkColorInt(), 
+            String.valueOf(blinkSpd), getRnbwState(), String.valueOf(rnbwSpd), 
+            String.valueOf(readTime), getFn1Str(), getFn2Str()};
+        return out;
+    }
+    
+//==============================================================================  
     
     public String getBrightness() {
         String out = String.valueOf(brightness);
@@ -76,6 +94,11 @@ public class Options {
         return formatColor(lcdCol);
     }
     
+    private String getLCDColorInt() {
+        return Integer.toString(lcdCol.getRGB());
+        //Color noop = new Color(Integer.parseInt(colorS));
+    }
+    
     public String getBlinkState() {
         int out = blink ? 1 : 0;
         return String.valueOf(out);
@@ -83,6 +106,11 @@ public class Options {
     
     public String getBlinkColor() {
         return formatColor(blinkCol);
+    }
+    
+    private String getBlinkColorInt() {
+        return Integer.toString(blinkCol.getRGB());
+        //Color noop = new Color(Integer.parseInt(colorS));
     }
     
     public String getBlinkSpd() {
@@ -131,11 +159,21 @@ public class Options {
         return fn1Action;
     }
     
+    private String getFn1Str() {
+        String out = "" + fn1Action;
+        return out;
+    }
+    
     public byte getFn2Action() {
         return fn2Action;
     }
     
-//==============================================================================    
+    private String getFn2Str() {
+        String out = "" + fn2Action;
+        return out;
+    }
+    
+//==============================================================================   
     
     public void setBrightness(int in) {
         brightness = in;
