@@ -21,7 +21,7 @@ public class Options {
     private boolean scroll = true;
     private byte fn1Action = 3;
     private byte fn2Action = 0;
-    private ArrayList<Long> followUsers;
+    private ArrayList<Long> followUsers = new ArrayList<>();
     
     //max values for certain options
     private final int MAXBRIGHTNESS = 255;
@@ -35,6 +35,7 @@ public class Options {
 
     public Options() {                                                          //default constructor, use all default settings
         followUsers.add(2524002330L);                                           //add twiscn as a default follow
+        followUsers.add(4536646346L);                                           //add twiscn as a default follow
         
     }
     
@@ -52,9 +53,9 @@ public class Options {
     }
     
     public String[] formatAll() {
-        String[] out = {getBrightness(), getLCDColor(), getBlinkState(), 
-            getBlinkSpd(), getBlinkColor(), getRnbwState(), getRnbwSpd(), 
-            getReadTime(), getPrevTweet(), getScroll()};
+        String[] out = {prepareBrightness(), prepareLCDColor(), prepareBlinkState(), 
+            prepareBlinkSpd(), prepareBlinkColor(), prepareRnbwState(), prepareRnbwSpd(), 
+            prepareReadTime(), preparePrevTweet(), prepareScroll()};
         return out;
     }
      
@@ -63,50 +64,54 @@ public class Options {
     public String[] getPropNames() {
         String[] out = {"brightness", "lcdColor", "blinkState", "blinkColor", 
             "blinkSpeed", "rainbowState", "rainbowSpeed", "readTime", 
-            "fn1Action", "fn2Action"};
+            "fn1Action", "fn2Action", "followUsers"};
         return out;
     }
     
     public String[] getPropValues() {     
         String[] out = {String.valueOf(String.valueOf(brightness)), 
-            getLCDColorInt(), getBlinkState(), getBlinkColorInt(), 
-            String.valueOf(blinkSpd), getRnbwState(), String.valueOf(rnbwSpd), 
-            String.valueOf(readTime), getFn1Str(), getFn2Str()};
+            getLCDColorInt(), prepareBlinkState(), getBlinkColorInt(), 
+            String.valueOf(blinkSpd), prepareRnbwState(), String.valueOf(rnbwSpd), 
+            String.valueOf(readTime), getFn1Str(), getFn2Str(), getFollowUsersStr()};
         return out;
     }
     
-    public void setPropValue(int valueID, int in) {                             //used to set the options here to values read from the config file, fixing them is necessary
+    //public void extractPropValue(int valueID, int in) {                             //used to set the options here to values read from the config file, fixing them is necessary
+    public void extractPropValue(int valueID, String in) {                             //used to set the options here to values read from the config file, fixing them is necessary
         //needs the property value ID and the value
         switch(valueID) {
             case 0:
-                setBrightness(checkValLimits(MAXBRIGHTNESS, in));
+                setBrightness(checkValLimits(MAXBRIGHTNESS, Integer.parseInt(in)));
                 break;
             case 1:
-                setLCDColor(new Color(in));
+                setLCDColor(new Color(Integer.parseInt(in)));
                 break;
             case 2:
-                setBlinkState((checkValLimits(1, in)) <= 0 ? true : false);     //convert the int to a boolean
+                setBlinkState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);     //convert the int to a boolean
                 break;
             case 3:
-                setBlinkColor(new Color(in));
+                setBlinkColor(new Color(Integer.parseInt(in)));
                 break;
             case 4:
-                setBlinkSpd(checkValLimits(MAXBLINKSPD, in));
+                setBlinkSpd(checkValLimits(MAXBLINKSPD, Integer.parseInt(in)));
                 break;
             case 5:
-                setRnbwState((checkValLimits(1, in)) <= 0 ? true : false);      //convert the int to a boolean
+                setRnbwState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);      //convert the int to a boolean
                 break;
             case 6:
-                setRnbwSpd(checkValLimits(MAXRNBWSPD, in));
+                setRnbwSpd(checkValLimits(MAXRNBWSPD, Integer.parseInt(in)));
                 break;
             case 7:
-                setReadTime(checkValLimits(MAXREADTIME, in));
+                setReadTime(checkValLimits(MAXREADTIME, Integer.parseInt(in)));
                 break;
             case 8:
-                setFn1Action((byte)checkValLimits(MAXACTION, in));
+                setFn1Action((byte)checkValLimits(MAXACTION, Integer.parseInt(in)));
                 break;
             case 9:
-                setFn2Action((byte)checkValLimits(MAXACTION, in));
+                setFn2Action((byte)checkValLimits(MAXACTION, Integer.parseInt(in)));
+                break;
+            case 10:
+                extractFollowUsers(in);
                 break;
         }
     }
@@ -126,74 +131,74 @@ public class Options {
     
 //==============================================================================  
     
-    public String getBrightness() {
+    public String prepareBrightness() {
         String out = String.valueOf(brightness);
         return ("000" + out).substring(out.length());
     }
+    
+    public String prepareLCDColor() {
+        return formatColor(lcdCol);
+    }
+    
+    public String prepareBlinkState() {
+        int out = blink ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
+    public String prepareBlinkColor() {
+        return formatColor(blinkCol);
+    }
+    
+    public String prepareBlinkSpd() {
+        String out = String.valueOf(blinkSpd);
+        return ("000" + out).substring(out.length());
+    }
+    
+    public String prepareRnbwState() {
+        int out = rainbow ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
+    public String prepareRnbwSpd() {
+        String out = String.valueOf(rnbwSpd);
+        return ("00000" + out).substring(out.length());
+    }
+    
+    public String prepareReadTime() {
+        String out = String.valueOf(readTime);
+        return ("00000" + out).substring(out.length());
+    }
+    
+    public String preparePrevTweet() {
+        int out = prevTweet ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
+    public String prepareScroll() {
+        int out = scroll ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
+//============================================================================== 
     
     public int getBrightnessInt() {
         return brightness;
     }
     
-    public String getLCDColor() {
-        return formatColor(lcdCol);
-    }
-    
     private String getLCDColorInt() {
         return Integer.toString(lcdCol.getRGB());
-        //Color noop = new Color(Integer.parseInt(colorS));
-    }
-    
-    public String getBlinkState() {
-        int out = blink ? 1 : 0;
-        return String.valueOf(out);
-    }
-    
-    public String getBlinkColor() {
-        return formatColor(blinkCol);
     }
     
     private String getBlinkColorInt() {
         return Integer.toString(blinkCol.getRGB());
-        //Color noop = new Color(Integer.parseInt(colorS));
-    }
-    
-    public String getBlinkSpd() {
-        String out = String.valueOf(blinkSpd);
-        return ("000" + out).substring(out.length());
-    }
-    
-    public String getRnbwState() {
-        int out = rainbow ? 1 : 0;
-        return String.valueOf(out);
     }
     
     public boolean getRnbwStateBool() {
         return rainbow;
     }
     
-    public String getRnbwSpd() {
-        String out = String.valueOf(rnbwSpd);
-        return ("00000" + out).substring(out.length());
-    }
-    
-    public String getReadTime() {
-        String out = String.valueOf(readTime);
-        return ("00000" + out).substring(out.length());
-    }
-    
-    public String getPrevTweet() {
-        int out = prevTweet ? 1 : 0;
-        return String.valueOf(out);
-    }
-    
     public boolean getPrevTweetBool() {
         return prevTweet;
-    }
-    
-    public String getScroll() {
-        int out = scroll ? 1 : 0;
-        return String.valueOf(out);
     }
     
     public boolean getScrollBool() {
@@ -270,12 +275,32 @@ public class Options {
     
 //==============================================================================  
     
-    public long[] getFollowUsers() {                                            //returns an array of longs, converted from the arraylist
-        long[] out = new long[followUsers.size()];
-        for (int i = 0; i < followUsers.size(); i++) {
-            out[i] = followUsers.get(i);
+    public long[] getFollowUsers() {                                            //converts the followUsers arraylist to an array of longs
+        long[] out = new long[followUsers.size()];                              //create a new array of longs
+        for (int i = 0; i < followUsers.size(); i++) {                          //for each entry in the arraylist
+            out[i] = followUsers.get(i);                                        //put that entry in the corresponding array element
         }
         return out;    
+    }
+
+    public String getFollowUsersStr() {                                         //returns a formatted delimited String containing the userIDs to follow
+        long[] in = getFollowUsers();                                           //get the followUsers into a new array
+        String out = "";
+        for(int i = 0;i <= in.length - 1;i++) {                                 //for each followUser
+            out += in[i];                                                       //add the ID to the output String
+            if(i < in.length - 1) {                                             //if we are not on the last ID
+                out += ",";                                                     //add a , to be used as a delimiter
+            }
+        }
+        return out;
+    }
+    
+    private void extractFollowUsers(String in) {                                //extracts the userIDs from the delimited String, and apply them
+        String[] stringIn = in.split(",");                                      //split the string up into managable parts
+        clearFollowUsers();                                                     //clear the list of followUsers
+        for(int i = 0;i < stringIn.length;i++) {                                //for each userID string we got
+            addFollowUser(Long.parseLong(stringIn[i]));                         //conver the ID to a long, and add it to the list
+        }
     }
       
     public void addFollowUser(long in) {
