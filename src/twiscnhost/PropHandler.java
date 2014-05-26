@@ -8,26 +8,28 @@ public class PropHandler {
     private Properties prop = new Properties();                                         //create a new instance of Properties, needed for data reading/writing
     private FileIO fio = new FileIO();                                                  //create a new instance of FileIO, have to write this data somewhere
     private Options opt;
+    String[] names;
+    
     
     public PropHandler(Options opt) {                                           //constructor, needs Options instance, gets the properties file going
         this.opt = opt;
+        names = opt.getPropNames();                                    //get the array of known property names
         if(fio.findFile()) {                                                    //try to find and/or create the config file
             //if it returns true, default properties need to and can be written to the file
-            writeDefaults(false);                                               //write defaults to the file, don't need to recreate it (already did)                              
+            writeAllProps(false);                                               //write defaults to the file, don't need to recreate it (already did)                              
         }
         else if(fio.usingConfig()) {                                            //don't need to write defaults, check integrity if we are still using the config
-            checkIntegrity();                                                   //make sure the the properties within the file exist
-            parseValues();
+            checkNames();                                                   //make sure the the properties within the file exist
+            checkValues();
         }
     }
     
 //==============================================================================
     
-    private void checkIntegrity() {                                             //used to check the integrity of the properties within the config file
-        System.out.println("Checking config integrity");
+    private void checkNames() {                                                 //used to ensure that the property names exist and are correct
+        System.out.println("Checking property names");
         fio.openInput();                                                        //open the file for reading
         fio.loadProps(prop);                                                    //load the properties
-        String[] names = opt.getPropNames();                                    //get the array of known property names
         boolean malformed = false;                                              //not malformed yet
         int i = 0;                                                              //start at the beginning
 
@@ -36,7 +38,7 @@ public class PropHandler {
             if(prop.getProperty(names[i]) == null) {                            //if it does not exists
                 System.out.println("Properties file is malformed, restoring defaults.");
                 malformed = true;                                               //mark the file as malformed
-                writeDefaults(malformed);                                       //write default properties to the file, let it know to recreate the file
+                writeAllProps(malformed);                                       //write default properties to the file, let it know to recreate the file
             }
             else {                                                              //if the property name does exist
                 System.out.println("got " + names[i] + "=" + prop.getProperty(names[i]));
@@ -44,19 +46,28 @@ public class PropHandler {
             }
         }
         
-        //once we get here, it is assumed that the properties are good, or are no longer malformed (still clean)
+        //once we get here, it is assumed that the property names are good
         fio.closeInput();
     }
     
-    private void applyValues() {                                                //used to get each property value out, fix them if they're retarded, and apply them
-        //if(Integer.parseInt((prop.getProperty(names[i]))) > ) {
-
-        //}
+    private void checkValues() {                                                //used to check each property value, fix, and apply them
+        for(int i = 0;i < names.length;i++) {                                   //for each property we have
+            try {
+                    int out = Integer.parseInt((prop.getProperty(names[i])));   //try to convert the value to an int
+                    opt.setPropValue(i, out);                                   //if we get here, send the probably-good value to options to get checked again and set
+            }
+            catch(NumberFormatException e) {                                    //parseInt will throw this if it doesn't like what it's seeing
+                //don't do anything, just catch the error
+                //options will reset the default value
+            }
+        }
+        writeAllProps(false);                                                   //finished checkeing and fixing all values, go make needed changes to the file
+        System.out.println("done checking");
     }
     
 //==============================================================================
     
-    private void writeDefaults(boolean recreate) {                              //used to write default properties to the file, needs to know if it needs to be recreated first
+    private void writeAllProps(boolean recreate) {                              //used to write default properties to the file, needs to know if it needs to be recreated first
         if(recreate) {                                                          //if true, recreates the file
             fio.createFile();
         }
@@ -68,14 +79,5 @@ public class PropHandler {
         }     
         
         fio.writeProperties(prop);                                              //actually write the properties to the file            
-    }
-    
-
-
-//Color lcdCol = new Color(0, 150, 255); 
-//       
-//       String colorS = Integer.toString(lcdCol.getRGB());
-//
-//       Color noop = new Color(Integer.parseInt(colorS));
-    
+    } 
 }
