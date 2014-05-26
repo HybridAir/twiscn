@@ -17,7 +17,7 @@ public class FileIO {
     private boolean exists = false;
     private boolean usingConfig = true;
     private boolean createProps = false;
-    private String fileName = "fard.properties";
+    private String fileName = "config.properties";
     
     public FileIO() {
         
