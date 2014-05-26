@@ -5,21 +5,21 @@ import java.util.Properties;
 
 public class PropHandler {
     
-    private Properties prop = new Properties();                                         //create a new instance of Properties, needed for data reading/writing
-    private FileIO fio = new FileIO();                                                  //create a new instance of FileIO, have to write this data somewhere
+    private Properties prop = new Properties();                                 //create a new instance of Properties, needed for data reading/writing
+    private FileIO fio = new FileIO();                                          //create a new instance of FileIO, have to write this data somewhere
     private Options opt;
     String[] names;
     
     
     public PropHandler(Options opt) {                                           //constructor, needs Options instance, gets the properties file going
         this.opt = opt;
-        names = opt.getPropNames();                                    //get the array of known property names
+        names = opt.getPropNames();                                             //get the array of known property names
         if(fio.findFile()) {                                                    //try to find and/or create the config file
             //if it returns true, default properties need to and can be written to the file
             writeAllProps(false);                                               //write defaults to the file, don't need to recreate it (already did)                              
         }
         else if(fio.usingConfig()) {                                            //don't need to write defaults, check integrity if we are still using the config
-            checkNames();                                                   //make sure the the properties within the file exist
+            checkNames();                                                       //make sure the the properties within the file exist
             checkValues();
         }
     }
@@ -67,7 +67,7 @@ public class PropHandler {
     
 //==============================================================================
     
-    private void writeAllProps(boolean recreate) {                              //used to write default properties to the file, needs to know if it needs to be recreated first
+    private void writeAllProps(boolean recreate) {                              //used to write properties to the file, needs to know if the file needs to be recreated first
         if(recreate) {                                                          //if true, recreates the file
             fio.createFile();
         }
