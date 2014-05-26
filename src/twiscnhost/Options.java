@@ -4,6 +4,7 @@
 package twiscnhost;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class Options {
     
@@ -20,6 +21,7 @@ public class Options {
     private boolean scroll = true;
     private byte fn1Action = 3;
     private byte fn2Action = 0;
+    private ArrayList<Long> followUsers;
     
     //max values for certain options
     private final int MAXBRIGHTNESS = 255;
@@ -31,25 +33,9 @@ public class Options {
     public String[] propValues;
     public String[] propNames;
 
-    public Options() {                                                          //default constructor, use all default settings  
-    }
-    
-    public Options(byte fn1, byte fn2, int brightness, Color lcdCol) {          //standard constructor, basic settings
-        this.brightness = brightness;
-        this.lcdCol = lcdCol;
-        fn1Action = fn1;
-        fn1Action = fn2;
-    }
-    
-    public Options(byte fn1, byte fn2, int brightness, Color lcdCol, boolean blink, 
-        Color blinkCol, int blinkSpd, boolean rainbow, int rnbwSpd) {           //extended constructor, all settings
-        this.brightness = brightness;
-        this.lcdCol = lcdCol;
-        this.blink = blink;
-        this.blinkCol = blinkCol;
-        this.blinkSpd = blinkSpd;
-        this.rainbow = rainbow;
-        this.rnbwSpd = rnbwSpd;
+    public Options() {                                                          //default constructor, use all default settings
+        followUsers.add(2524002330L);                                           //add twiscn as a default follow
+        
     }
     
 //==============================================================================
@@ -281,4 +267,26 @@ public class Options {
     public void setFn2Action(byte in) {
         fn2Action = in;
     } 
+    
+//==============================================================================  
+    
+    public long[] getFollowUsers() {                                            //returns an array of longs, converted from the arraylist
+        long[] out = new long[followUsers.size()];
+        for (int i = 0; i < followUsers.size(); i++) {
+            out[i] = followUsers.get(i);
+        }
+        return out;    
+    }
+      
+    public void addFollowUser(long in) {
+        followUsers.add(in);
+    }
+    
+    public void delFollowUser(long in) {
+        followUsers.remove(in);
+    }
+    
+    public void clearFollowUsers() {
+        followUsers.clear();
+    }
 }
