@@ -52,13 +52,7 @@ public class PropHandler {
     
     private void checkValues() {                                                //used to check each property value, fix, and apply them
         for(int i = 0;i < names.length;i++) {                                   //for each property we have
-            try {
-                opt.extractPropValue(i, prop.getProperty(names[i]));            //try to get the property value, then extract it
-            }
-            catch(NumberFormatException e) {                                    //parseInt will throw this if it doesn't like what it's seeing
-                //don't do anything, just catch the error
-                //options will reset the default value
-            }
+            opt.extractPropValue(i, prop.getProperty(names[i]));                //try to get the property value, then extract it
         }
         writeAllProps(false);                                                   //finished checkeing and fixing all values, go make needed changes to the file
         System.out.println("done checking");
