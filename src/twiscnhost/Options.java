@@ -79,41 +79,48 @@ public class Options {
     //public void extractPropValue(int valueID, int in) {                             //used to set the options here to values read from the config file, fixing them is necessary
     public void extractPropValue(int valueID, String in) {                             //used to set the options here to values read from the config file, fixing them is necessary
         //needs the property value ID and the value
-        switch(valueID) {
-            case 0:
-                setBrightness(checkValLimits(MAXBRIGHTNESS, Integer.parseInt(in)));
-                break;
-            case 1:
-                setLCDColor(new Color(Integer.parseInt(in)));
-                break;
-            case 2:
-                setBlinkState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);     //convert the int to a boolean
-                break;
-            case 3:
-                setBlinkColor(new Color(Integer.parseInt(in)));
-                break;
-            case 4:
-                setBlinkSpd(checkValLimits(MAXBLINKSPD, Integer.parseInt(in)));
-                break;
-            case 5:
-                setRnbwState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);      //convert the int to a boolean
-                break;
-            case 6:
-                setRnbwSpd(checkValLimits(MAXRNBWSPD, Integer.parseInt(in)));
-                break;
-            case 7:
-                setReadTime(checkValLimits(MAXREADTIME, Integer.parseInt(in)));
-                break;
-            case 8:
-                setFn1Action((byte)checkValLimits(MAXACTION, Integer.parseInt(in)));
-                break;
-            case 9:
-                setFn2Action((byte)checkValLimits(MAXACTION, Integer.parseInt(in)));
-                break;
-            case 10:
-                extractFollowUsers(in);
-                break;
-        }
+         try {
+            switch(valueID) {
+                case 0:
+                    setBrightness(checkValLimits(MAXBRIGHTNESS, Integer.parseInt(in)));
+                    break;
+                case 1:
+                    setLCDColor(new Color(Integer.parseInt(in)));
+                    break;
+                case 2:
+                    setBlinkState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);     //convert the int to a boolean
+                    break;
+                case 3:
+                    setBlinkColor(new Color(Integer.parseInt(in)));
+                    break;
+                case 4:
+                    setBlinkSpd(checkValLimits(MAXBLINKSPD, Integer.parseInt(in)));
+                    break;
+                case 5:
+                    setRnbwState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);      //convert the int to a boolean
+                    break;
+                case 6:
+                    setRnbwSpd(checkValLimits(MAXRNBWSPD, Integer.parseInt(in)));
+                    break;
+                case 7:
+                    setReadTime(checkValLimits(MAXREADTIME, Integer.parseInt(in)));
+                    break;
+                case 8:
+                    setFn1Action((byte)checkValLimits(MAXACTION, Integer.parseInt(in)));
+                    break;
+                case 9:
+                    setFn2Action((byte)checkValLimits(MAXACTION, Integer.parseInt(in)));
+                    break;
+                case 10:
+                    extractFollowUsers(in);
+                    break;
+            }
+         }
+        
+        catch(NumberFormatException e) {                                    //parseInt will throw this if it doesn't like what it's seeing
+                //don't do anything, just catch the error
+                //options will reset the default value
+            }
     }
     
     private int checkValLimits(int max, int in) {                               //used to ensure the property values are not outside their limits
@@ -297,9 +304,18 @@ public class Options {
     
     private void extractFollowUsers(String in) {                                //extracts the userIDs from the delimited String, and apply them
         String[] stringIn = in.split(",");                                      //split the string up into managable parts
-        clearFollowUsers();                                                     //clear the list of followUsers
-        for(int i = 0;i < stringIn.length;i++) {                                //for each userID string we got
-            addFollowUser(Long.parseLong(stringIn[i]));                         //conver the ID to a long, and add it to the list
+        boolean malformed = false;
+        for(int i = 0;i < stringIn.length && !malformed;i++) {                  //check each ID to ensure it is numeric only
+            if(!stringIn[i].matches("[0-9]+")) {                                //if it contains something other than numbers
+                malformed = true;                                               //might as well consider that whole property value to be compromised
+                System.out.println("Resetting following list");
+            }
+        }
+        if(!malformed) {
+            clearFollowUsers();                                                     //clear the list of followUsers
+            for(int i = 0;i < stringIn.length;i++) {                                //for each userID string we got
+                addFollowUser(Long.parseLong(stringIn[i]));                         //conver the ID to a long, and add it to the list
+            }
         }
     }
       
