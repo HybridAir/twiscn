@@ -1,2 +1,5 @@
 /build/
 /src/twiscnhost/PropsTest.java
+/config.properties
+/twitter4j.properties
+/lib/
