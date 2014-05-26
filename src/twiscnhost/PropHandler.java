@@ -53,8 +53,7 @@ public class PropHandler {
     private void checkValues() {                                                //used to check each property value, fix, and apply them
         for(int i = 0;i < names.length;i++) {                                   //for each property we have
             try {
-                    int out = Integer.parseInt((prop.getProperty(names[i])));   //try to convert the value to an int
-                    opt.setPropValue(i, out);                                   //if we get here, send the probably-good value to options to get checked again and set
+                opt.extractPropValue(i, prop.getProperty(names[i]));            //try to get the property value, then extract it
             }
             catch(NumberFormatException e) {                                    //parseInt will throw this if it doesn't like what it's seeing
                 //don't do anything, just catch the error
