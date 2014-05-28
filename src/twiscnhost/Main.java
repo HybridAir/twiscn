@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: detect handshake while running?, options saving/loading (use Properties), twitter implementation, gui (tray application), error logging?
+//TODO: detect handshake while running?, options saving/loading (use Properties), twitter implementation, gui (tray application), error logging?, use stadard usernames (not screennames?)
 //test
 package twiscnhost;
 
@@ -11,19 +11,10 @@ public class Main {
     public static Options devOptions;
 
     public static void main(String[] args) {
-        devOptions = new Options();                                             //create a new instance of DeviceOptions
-        PropHandler props = new PropHandler(devOptions);
-        DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, devOptions);        //create a new instance of DeviceHandler, needs the device ids and options      
-               
-        
-        //ask the user somewhere if they want to use default options or to try to find the prop file
-        
-        //set up and send a dummy tweet
-        String tweet = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque";
-        String user = "username:";
-        twiScn.newTweet(user, tweet);
-        
-        //props.read();
+        devOptions = new Options();                                             //create a new instance of DeviceOptions     
+        PropHandler props = new PropHandler(devOptions);        
+        DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, devOptions);        //create a new instance of DeviceHandler, needs the device ids and options 
+        TweetHandler twt = new TweetHandler(devOptions, twiScn);
               
         while(true) {
             //check for button updates
