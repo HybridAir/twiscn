@@ -13,69 +13,63 @@ public class TweetHandler {
     TwitterStream twitterStream;
     Twitter twitter;
    
-    public TweetHandler(Options opt, DeviceHandler twiScn) {
+    public TweetHandler(Options opt, DeviceHandler twiScn) {                    //constructor, needs the Options and DeviceHandler instances
         this.opt = opt;
         this.twiScn = twiScn;
         twitter = new TwitterFactory().getInstance();
-        twitterStream = new TwitterStreamFactory().getInstance();
-        twitterStream.addListener(listener);
+        twitterStream = new TwitterStreamFactory().getInstance();               //create a new instance of TwitterStream
+        twitterStream.addListener(listener);                                    //add our listener to it
         
-        sendLatestTweet();
+        sendLatestTweet();                                                      //try to send the latest tweet to the device
     }
     
-    public String[] getLatestTweet() {
+    private String[] getLatestTweet() throws TwitterException {                 //returns a String array containing the latest tweet, throws TwitterException
+        Query query = new Query(getUserQuery());                                //try to get a formatted query string created (will throw TwitterException if it fails)
+        QueryResult result = twitter.search(query);                             //try to get a list of recent tweets (will throw TwitterException if it fails)
+        List<Status> statuses = result.getTweets();                             //get the returned tweets into a List of statuses (will throw TwitterException if it fails)
+        Status status = statuses.get(0);                                        //get the first status out, it's the latest one
+        return formatTweet(status);                                             //format the status and return the result (throws TwitterException if it fails)
+    }
+    
+    private String[] formatTweet(Status status) {                               //returns a formatted String array, needs a valid Status
+        Date createdAt = status.getCreatedAt();                                 //get the Date the status was created on
+        SimpleDateFormat ft = new SimpleDateFormat (" hh:mm a");                //prepare to reformat that date
+        String user = status.getUser().getScreenName() + ":";                   //get the screenName out of the status and add a ":" to it
+        String text = status.getText() + " " + ft.format(createdAt);            //get the tweet text out of the status and add the formatted Date to the end
+        String[] out = {user, text};                                            //prepare a String array containing the above
+        return out;
+    }
+    
+    public void sendLatestTweet() {                                             //tries to send the latest tweet to the device
         try {
-            Query query = new Query(getUserQuery());
-            QueryResult result = twitter.search(query);
-            List<Status> statuses = result.getTweets();
-            Status status = statuses.get(0);
-            return formatTweet(status);
-        } catch (TwitterException te) {
-            //te.printStackTrace();
-            System.out.println("Failed to get latest tweet: " + te.getMessage());
-            return null;
+            String[] tweet = getLatestTweet();                                  //get the latest tweet into a new array (will catch TwitterException if it fails)
+            twiScn.newTweet(tweet[0], tweet[1]);                                //send the tweet to the device
         }
-    }
-    
-    private String[] formatTweet(Status status) {
-            Date createdAt = status.getCreatedAt();
-            SimpleDateFormat ft = new SimpleDateFormat (" hh:mm a");
-            String user = status.getUser().getScreenName() + ":";
-            String text = status.getText() + " " + ft.format(createdAt);
-            String[] out = {user, text};
-            return out;
-    }
-    
-    public void sendLatestTweet() {
-        String[] tweet = getLatestTweet();
-        if(tweet != null) {
-            twiScn.newTweet(tweet[0], tweet[1]);
+        catch (TwitterException te) {                                           //catch any TwitterException that could have happened here
+            System.err.println("Failed to send latest tweet:");
+            te.printStackTrace();
+            //cant send anything new to the device
         }
     }
   
-    public long getUserID(String screenName) throws TwitterException {
-        //try {
-            User user = twitter.showUser(screenName);
-            return user.getId();
-        //} 
-        //catch (TwitterException te) {
-        //    te.printStackTrace();
-        //    return 0;
-        //}
+    public long getUserID(String screenName) throws TwitterException {          //returns the user's userID, needs their screenName, and throws TwitterException
+        User user = twitter.showUser(screenName);                               //get the user info from showUser, and set it to a new User (throws TwitterException if it fails)
+        return user.getId();                                                    //get the userID out of the User and return it
     }
     
-    public String getScreenName(long ID) throws TwitterException {
-        User user = twitter.showUser(ID);
-        return user.getScreenName();
+    public String getScreenName(long ID) throws TwitterException {              //returns the user's screenName, needs their userID, and throws TwitterException
+        User user = twitter.showUser(ID);                                       //get the user info from showUser, and set it to a new User (throws TwitterException if it fails)
+        return user.getScreenName();                                            //get the screenName out of the User and return it
     }
     
-    private String getUserQuery() throws TwitterException {      
-        long[] users = opt.getFollowUsers(); 
+    private String getUserQuery() throws TwitterException {                     //returns a formatted query string, throws TwitterException   
+        //used for getting a query that returns the latest tweet from a group of users
+        long[] users = opt.getFollowUsers();                                    //get the array of users
         String out = "";
-        for(int i = 0;i <= users.length - 1;i++) { 
-            out += "from:" + getScreenName(users[i]);
-            if(i < users.length - 1) {                                             //if we are not on the last ID
-                out += " OR ";                                                     //add a , to be used as a delimiter
+        for(int i = 0;i <= users.length - 1;i++) {                              //for each user in there
+            out += "from:" + getScreenName(users[i]);                           //try to get the user's screenName (throws TwitterException if it fails)
+            if(i < users.length - 1) {                                          //if we are not on the last user
+                out += " OR ";                                                  //add an OR in between for use by the query thing
             }
         }
         return out;
@@ -83,12 +77,12 @@ public class TweetHandler {
     
 //==============================================================================
     
-    public void startStream() {
+    public void startStream() {                                                 //starts the twitterStream thread
         twitterStream.filter(new FilterQuery(opt.getFollowUsers()));    
         System.out.println("TwitterStream started");
     }
     
-    public void stopStream() {
+    public void stopStream() {                                                  //stops the twitterStream thread
         twitterStream.shutdown();
         System.out.println("TwitterStream stopped");
     }
