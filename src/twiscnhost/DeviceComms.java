@@ -2,9 +2,6 @@
 
 package twiscnhost;
 
-import java.util.*;
-import java.text.*;
-
 public class DeviceComms {  
     private UsbHidComms twiScnHID;
     
@@ -60,24 +57,15 @@ public class DeviceComms {
     }
     
     public String[] formatText(String in) {
-        if (in.length() > 140) {                                                //make sure the tweet is not greater than 140 chars (you never know)
-            System.err.println("That tweet is greater than 140 chars?");
-            return null;
+        if (in.length() < 30) {                                             //if the output will fit in one transfer
+            String[] out = new String[0];                                   //just need the first string out of the array
+            out[0] = "!" + in;                                              //add the tweet text notifier to the beginning
+            return out;                                                     //send the formatted string array out to get sent probably
         }
-        else {                                                                  //if it's a kosher tweet
-            Date time = new Date();
-            SimpleDateFormat ft = new SimpleDateFormat (" hh:mm a");
-            in += ft.format(time);                                              //add the current time to the end of the tweet, host computer specific
-            if (in.length() < 30) {                                             //if the output will fit in one transfer
-                String[] out = new String[0];                                   //just need the first string out of the array
-                out[0] = "!" + in;                                              //add the tweet text notifier to the beginning
-                return out;                                                     //send the formatted string array out to get sent probably
-            }
-            else {                                                              //if the output will not fit in one transfer
-                in = "!" + in;                                                  //add the tweet text notifier to the beginning
-                String[] out = (in.split("(?<=\\G.{30})"));;                    //split the tweet text into strings no larger than 30 chars, put them into an array
-                return out;                                                     //send the formatted string array out to get sent probably
-            }
+        else {                                                              //if the output will not fit in one transfer
+            in = "!" + in;                                                  //add the tweet text notifier to the beginning
+            String[] out = (in.split("(?<=\\G.{30})"));;                    //split the tweet text into strings no larger than 30 chars, put them into an array
+            return out;                                                     //send the formatted string array out to get sent probably
         }
     }
         
