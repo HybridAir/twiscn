@@ -57,15 +57,15 @@ public class DeviceComms {
     }
     
     public String[] formatText(String in) {
-        if (in.length() < 30) {                                             //if the output will fit in one transfer
-            String[] out = new String[0];                                   //just need the first string out of the array
-            out[0] = "!" + in;                                              //add the tweet text notifier to the beginning
-            return out;                                                     //send the formatted string array out to get sent probably
+        if (in.length() < 30) {                                                 //if the output will fit in one transfer
+            String[] out = new String[1];                                       //just need the first string out of the array
+            out[0] = "!" + in;                                                  //add the tweet text notifier to the beginning
+            return out;                                                         //send the formatted string array out to get sent probably
         }
-        else {                                                              //if the output will not fit in one transfer
-            in = "!" + in;                                                  //add the tweet text notifier to the beginning
-            String[] out = (in.split("(?<=\\G.{30})"));;                    //split the tweet text into strings no larger than 30 chars, put them into an array
-            return out;                                                     //send the formatted string array out to get sent probably
+        else {                                                                  //if the output will not fit in one transfer
+            in = "!" + in;                                                      //add the tweet text notifier to the beginning
+            String[] out = (in.split("(?<=\\G.{30})"));;                        //split the tweet text into strings no larger than 30 chars, put them into an array
+            return out;                                                         //send the formatted string array out to get sent probably
         }
     }
         
