@@ -35,7 +35,7 @@ public class Options {
 
     public Options() {                                                          //default constructor, use all default settings
         followUsers.add(2524002330L);                                           //add twiscn as a default follow
-        followUsers.add(4536646346L);                                           //add twiscn as a default follow
+        followUsers.add(18856582L);                                           //add twiscn as a default follow
         
     }
     
@@ -88,7 +88,7 @@ public class Options {
                     setLCDColor(new Color(Integer.parseInt(in)));
                     break;
                 case 2:
-                    setBlinkState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);     //convert the int to a boolean
+                    setBlinkState(((checkValLimits(1, Integer.parseInt(in))) >= 1));     //convert the int to a boolean
                     break;
                 case 3:
                     setBlinkColor(new Color(Integer.parseInt(in)));
@@ -97,7 +97,7 @@ public class Options {
                     setBlinkSpd(checkValLimits(MAXBLINKSPD, Integer.parseInt(in)));
                     break;
                 case 5:
-                    setRnbwState((checkValLimits(1, Integer.parseInt(in))) <= 0 ? true : false);      //convert the int to a boolean
+                    setRnbwState(((checkValLimits(1, Integer.parseInt(in))) >= 1));      //convert the int to a boolean
                     break;
                 case 6:
                     setRnbwSpd(checkValLimits(MAXRNBWSPD, Integer.parseInt(in)));
@@ -120,16 +120,17 @@ public class Options {
         catch(NumberFormatException e) {                                    //parseInt will throw this if it doesn't like what it's seeing
                 //don't do anything, just catch the error
                 //options will reset the default value
+            System.out.println("Got a bad number format: " + e);
             }
     }
     
     private int checkValLimits(int max, int in) {                               //used to ensure the property values are not outside their limits
         if(in > max) {                                                          //if the value is greater than the max it can be
-            System.out.println("got " + in);
+            System.out.println("wrong " + in);
             return max;                                                         //return the max value
         }
         else if(in < 0) {                                                       //vice versa, all option values are never less than 0
-            System.out.println("got " + in);
+            System.out.println("wrong " + in);
             return 0;
         }
         else                                                                    //property value should be good, just return it as is
