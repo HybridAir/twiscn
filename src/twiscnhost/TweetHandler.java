@@ -21,6 +21,7 @@ public class TweetHandler {
         twitterStream.addListener(listener);                                    //add our listener to it
         
         sendLatestTweet();                                                      //try to send the latest tweet to the device
+        startStream();
     }
     
     private String[] getLatestTweet() throws TwitterException {                 //returns a String array containing the latest tweet, throws TwitterException
@@ -40,7 +41,7 @@ public class TweetHandler {
         return out;
     }
     
-    public void sendLatestTweet() {                                             //tries to send the latest tweet to the device
+    private void sendLatestTweet() {                                            //tries to send the latest tweet to the device
         try {
             String[] tweet = getLatestTweet();                                  //get the latest tweet into a new array (will catch TwitterException if it fails)
             twiScn.newTweet(tweet[0], tweet[1]);                                //send the tweet to the device
@@ -51,6 +52,13 @@ public class TweetHandler {
             //cant send anything new to the device
         }
     }
+    
+    private void sendTweet(Status status) {                                     //tries to send the latest tweet to the device
+            String[] tweet = formatTweet(status);                               //get the latest tweet into a new array (will catch TwitterException if it fails)
+            twiScn.newTweet(tweet[0], tweet[1]);                                //send the tweet to the device
+    }
+    
+//==============================================================================
   
     public long getUserID(String screenName) throws TwitterException {          //returns the user's userID, needs their screenName, and throws TwitterException
         User user = twitter.showUser(screenName);                               //get the user info from showUser, and set it to a new User (throws TwitterException if it fails)
@@ -87,15 +95,17 @@ public class TweetHandler {
         System.out.println("TwitterStream stopped");
     }
     
-     private static final UserStreamListener listener = new UserStreamListener() {
+    private final UserStreamListener listener = new UserStreamListener() {      //UserStreamListener implementation
         @Override
         public void onStatus(Status status) {
             System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
+            sendTweet(status);
         }
 
         @Override
         public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
             System.out.println("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());
+            sendLatestTweet();
         }
 
         @Override
@@ -240,6 +250,5 @@ public class TweetHandler {
             ex.printStackTrace();
             System.out.println("onException:" + ex.getMessage());
         }
-    };
-     
+    };     
 }
