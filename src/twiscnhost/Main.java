@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: detect handshake while running?, options saving/loading (use Properties), twitter implementation, gui (tray application), error logging?, use stadard usernames (not screennames?)
+//TODO: detect handshake while running?, gui (tray application), error/general logging, handle protected users
 //test
 package twiscnhost;
 
