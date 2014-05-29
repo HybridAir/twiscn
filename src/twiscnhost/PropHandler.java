@@ -2,9 +2,11 @@
 package twiscnhost;
 
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class PropHandler {
     
+    private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private Properties prop = new Properties();                                 //create a new instance of Properties, needed for data reading/writing
     private FileIO fio = new FileIO();                                          //create a new instance of FileIO, have to write this data somewhere
     private Options opt;
@@ -27,7 +29,6 @@ public class PropHandler {
 //==============================================================================
     
     private void checkNames() {                                                 //used to ensure that the property names exist and are correct
-        System.out.println("Checking property names");
         fio.openInput();                                                        //open the file for reading
         fio.loadProps(prop);                                                    //load the properties
         boolean malformed = false;                                              //not malformed yet
@@ -36,12 +37,12 @@ public class PropHandler {
         //check if each property exists
         while(!malformed && i < names.length) {                                 //while the file is not marked as malformed and we are still going through it
             if(prop.getProperty(names[i]) == null) {                            //if it does not exists
-                System.out.println("Properties file is malformed, restoring defaults.");
+                logger.log(Level.WARNING, "Properties file is malformed, restoring defaults/nBad value was" + names[i]);
                 malformed = true;                                               //mark the file as malformed
                 writeAllProps(malformed);                                       //write default properties to the file, let it know to recreate the file
             }
             else {                                                              //if the property name does exist
-                System.out.println("got " + names[i] + "=" + prop.getProperty(names[i]));
+                logger.log(Level.FINE, "got " + names[i] + "=" + prop.getProperty(names[i]));
                 i++;                                                            //advance to the next name
             }
         }
@@ -55,7 +56,7 @@ public class PropHandler {
             opt.extractPropValue(i, prop.getProperty(names[i]));                //try to get the property value, then extract it
         }
         writeAllProps(false);                                                   //finished checkeing and fixing all values, go make needed changes to the file
-        System.out.println("done checking");
+        logger.log(Level.FINE, "Done checking values");
     }
     
 //==============================================================================
