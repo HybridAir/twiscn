@@ -45,6 +45,13 @@ public class DeviceHandler {
                 btnActions.fn1();
                 applyAllOptions();
             }
+            if(in.equals("2")) {                                                
+                try {
+                        Thread.sleep(500L);                                     //half a second should be enough time for the device to get ready
+                } catch (Exception e) {}
+                btnActions.fn2();
+                applyAllOptions();
+            }
         }
         in = null;
     }
