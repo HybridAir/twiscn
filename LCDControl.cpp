@@ -110,9 +110,6 @@ void LCDControl::scrollTweet() {                                                
     }
 }
 
-
-//put a scroll option check in here
-
 void LCDControl::shiftText() {                                                  //used to shift the tweet text by one column
     if(currentTweet) {                                                          //if we are on the current tweet
         twtLength = twt.getTweetLength();                                       //save the tweet length
@@ -261,4 +258,19 @@ void LCDControl::sleepLCD(bool sleep) {                                         
         lcdc.display();                                                         //turn the lcd "on"     
         bootAnim();                                                             //play the boot animation
     }
+}
+
+void LCDControl::scrollNotification(boolean paused) {                           //used to display the "scrolling paused" notification, needs the scroll status
+    if(paused) {                                                                //if scrolling was paused
+        clearRow(0);                                                            //clear the top row
+        lcdc.print("[Scroll  Paused]");                                         //display the notice
+    }
+    else {                                                                      //if scrolling was unpaused
+        if(twt.getUser() != "") {                                               //and also if we got the username
+            //needed when all options are set before the first tweet gets here
+            clearRow(0);                                                        //clear the top row
+            lcdc.print(twt.getUser());                                          //print the username
+        }
+    }
+    
 }
