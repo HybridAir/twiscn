@@ -9,9 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class FileIO {
     
+    private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private OutputStream output = null;
     private InputStream input = null;
     private boolean exists = false;
@@ -30,7 +32,7 @@ public class FileIO {
             attempts++;                                                         //file was not found if we got here, so increase the attempt amount
             if(attempts == 3) {                                                 //if we failed at creating the file 3 times
                 //failsafe, the program can still run without a config file
-                System.out.println("Failed to find/create config file 3 times. Proceeding without loading/saving settings.");
+                logger.log(Level.WARNING, "Failed to find/create config file 3 times. Proceeding without loading/saving settings.");
                 usingConfig = false;                                            //let the program know not to use a config file
             }
         }
@@ -45,11 +47,11 @@ public class FileIO {
     
     private void checkExists() {                                                //checks if the properties file exists
         if(openInput()) {                                                       //try to open the file input
-            System.out.println("Found configuration file.");                    //if we get here, the program found the file
+            logger.log(Level.INFO, "Found configuration file.");
             exists = true;                                                      //file exists, used to break out of any loops 
         }
         else {                                                                  //unable to open the input file
-            System.out.println("Configuration file was not found, attempting to create now.");
+            logger.log(Level.INFO, "Configuration file was not found, attempting to create now.");
             exists = false;                                                     //assumed that the file does not exist
             createFile();                                                       //create the file
         }      
@@ -58,11 +60,11 @@ public class FileIO {
     
     public void createFile() {                                                  //creates a new properties file
         if(openOutput()) {                                                      //if the program was able to open the output stream
-            System.out.println("New configuration file was created.");
+            logger.log(Level.INFO, "New configuration file was created.");
             createProps = true;                                                 //tell prophandler that it needs to set default properties
         }
         else {                                                                  //unable to open output stream, and create the file
-            System.out.println("Unable to create configuration file.");
+            logger.log(Level.WARNING, "Unable to create configuration file.");
         }       
         closeOutput();    
     }
@@ -71,11 +73,11 @@ public class FileIO {
         if(openOutput()) {
             try {                                                                                      
                 prop.store(output, null);                                       //try to store the new properties
-                System.out.println("Properties written (stored)");
+                logger.log(Level.INFO, "Properties written to file");
             } 
             catch (IOException io) {                                            //check for IO errors
                 io.printStackTrace();
-                System.out.println("Unable to write properties");
+                logger.log(Level.WARNING, "Failed to write properties to file");
             } 
         }     
         closeOutput();                                                          //close the file output, not longer needed
@@ -86,11 +88,11 @@ public class FileIO {
     public boolean openInput() {                                                //used to open the file for reading (input), returns true if successful
         try {
             input = new FileInputStream(fileName);                              //create a new inputstream using fileName
-            System.out.println("input opened");
+            logger.log(Level.INFO, "File input opened");
             return true;
         }
         catch(FileNotFoundException e) {                                        //file was not found
-            System.out.println("Unable to open input");
+            logger.log(Level.WARNING, "Failed to open file input.", e);
             return false;
 	}
     }
@@ -99,11 +101,11 @@ public class FileIO {
         if(input != null) {                                                     //only attempt loading if input is already open
             try {                                                                   
                 prop.load(input);                                               //try to load the properties from the inputstream
-                System.out.println("loaded props");
+                logger.log(Level.INFO, "Loaded properties");
             } 
             catch (IOException io) {                                            //check for IO errors
                 io.printStackTrace();
-                System.out.println("Unable to open props");
+                logger.log(Level.WARNING, "Failed to load properties.", io);
             }
         }
     }
@@ -112,10 +114,10 @@ public class FileIO {
         if (input != null) {                                                    //only close it if it's already open
             try {                                                               //try to close it
                 input.close();                              
-                System.out.println("input closed");
+                logger.log(Level.INFO, "File input closed");
             } 
             catch (IOException e) {                                             //catch any IO errors
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Failed to close file input.", e);
             }
         }
     }
@@ -123,12 +125,11 @@ public class FileIO {
     public boolean openOutput() {                                               //used to open the file for writing (output), returns true if successful
         try {                                                                   
             output = new FileOutputStream(fileName);                            //try to open fileName
-            System.out.println("output opened"); 
+            logger.log(Level.INFO, "File output opened");
             return true;
 	} 
         catch (IOException io) {                                                //check for IO errors
-            io.printStackTrace();
-            System.out.println("Unable to open output");
+            logger.log(Level.WARNING, "Failed to open file output.", io);
             return false;
 	} 
     }
@@ -137,10 +138,10 @@ public class FileIO {
         if (output != null) {                                                   //only close it if it's already open
             try {
                 output.close();                                                 //close the output stream
-                System.out.println("output closed");
+                logger.log(Level.INFO, "File output closed");
             } 
             catch (IOException e) {                                             //check for IO errors
-                e.printStackTrace();
+                logger.log(Level.WARNING, "Failed to close file output.", e);
             }
         }   
     }
