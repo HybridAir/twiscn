@@ -11,7 +11,7 @@ Comms::Comms() {                                                                
     gotUser = false;
     gotTweet = false;
     connected = false;                                                          //considering that this was just started, we will not be connected yet
-    version = "1a";                                                             //device version 1a (revision 1, a = rgb backlight)
+    version = "$v1a";                                                           //device version 1a
 }
 
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it, run this continuously
@@ -75,7 +75,10 @@ void Comms::handshake() {                                                       
             }
         }  
     }
-    usb.println(version);                                                       //send the device version to the host
+    delay(50);                                                                  //give the host a little time to get ready
+    char ver[5];                                                                //get a char array ready
+    version.toCharArray(ver, 5);                                                //put that String into that new char array
+    usb.println(ver);                                                           //send the device version to the host
     inout.connectionLED(1);                                                     //turn the connection led solid on since we're connected now
     lcd.connectDisplay(false);                                                  //show the connected notice on the lcd
 }
