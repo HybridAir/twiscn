@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//TODO: display message when swithcing to previous/current tweet, increase fading speed
+//TODO: display message when swithcing to previous/current tweet, increase fading speed, fix usb lock problem, maybe send version info after handshake, increase boot fade speed
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
