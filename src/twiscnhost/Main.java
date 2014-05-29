@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: detect handshake while running?, gui (tray application), add additional exception checking to hidcomms and twitter maybe, check twitter connection first
+//TODO: detect handshake while running?, gui (tray application), add additional exception checking to twitter maybe, check twitter connection first, maybe send a host shutdown packet
 package twiscnhost;
 
 import java.util.logging.*;
@@ -19,10 +19,18 @@ public class Main {
         PropHandler props = new PropHandler(devOptions);        
         DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, devOptions);        //create a new instance of DeviceHandler, needs the device ids and options 
         TweetHandler twt = new TweetHandler(devOptions, twiScn);
-              
+        
         while(true) {
-            //check for button updates
-            twiScn.monitorFNs();
+            while(UsbHidComms.connected()) {                                    //keep doing this stuff while the device is still connected
+                //check for button updates
+                twiScn.monitorFNs();
+            }
+            
+            //attempt reconnecting here
+            logger.log(Level.WARNING, "Lost connection to device.");
+            twt.stopStream();
+            twiScn.init();
+            twt.init();
         }
     }
 }
