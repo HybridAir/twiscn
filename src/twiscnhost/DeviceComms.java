@@ -2,7 +2,11 @@
 
 package twiscnhost;
 
+import java.util.logging.Level;
+
 public class DeviceComms {  
+    
+    private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private UsbHidComms twiScnHID;
     
     public DeviceComms(UsbHidComms device) {                                    //constructor, needs the usbhid device   
@@ -16,7 +20,7 @@ public class DeviceComms {
         while(!connected) {                                                     //while we are not connected
             connected = twiScnHID.connectDevice();                              //try connecting and get the connection result
         }
-        System.out.println("Connection successful");                            //connection was successful at this point
+        logger.log(Level.INFO, "Connection successful");                        //connection was successful at this point
     }
     
     public void sendRaw(String in) {                                            //used to send raw commands/data to the device
@@ -25,7 +29,7 @@ public class DeviceComms {
       
     private void handshake() {                                                  //used to establish a data connection with the device
         boolean connected = false;
-        System.out.println("Attempting handshake");
+        logger.log(Level.INFO, "Attempting handshake"); 
         while(!connected) {
             String in = twiScnHID.getData();                                    //try to get data from the device
             if(in != null) {                                                    //if we actually got data
@@ -35,7 +39,7 @@ public class DeviceComms {
                     try {
                         Thread.sleep(100L);                                     //let the device catch up before sending it data
                     } catch (Exception e) {}                                    //you never know
-                    System.out.println("Handshake successful");
+                    logger.log(Level.INFO, "Handshake successful");
                 }
             }
         }
