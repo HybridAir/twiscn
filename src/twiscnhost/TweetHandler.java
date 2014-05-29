@@ -20,8 +20,11 @@ public class TweetHandler {
         this.twiScn = twiScn;
         twitter = new TwitterFactory().getInstance();
         twitterStream = new TwitterStreamFactory().getInstance();               //create a new instance of TwitterStream
-        twitterStream.addListener(listener);                                    //add our listener to it
-        
+        twitterStream.addListener(listener);                                    //add our listener to it   
+        init();
+    }
+    
+    public void init() {                                                        //used to resend the latest tweet and restart the stream
         sendLatestTweet();                                                      //try to send the latest tweet to the device
         startStream();                                                          //start the twitterstream thread
     }
@@ -31,7 +34,7 @@ public class TweetHandler {
         for(int i = 0;i < in.length;i++) {                                      //for each ID
             try {
                 if(getProtected(in[i])) {                                       //try checking if the ID is protected
-                    logger.log(Level.WARNING, "userID " + in[i] + " is protected, remvoing from list.");
+                    logger.log(Level.WARNING, "userID " + in[i] + " is protected, removing from list.");
                     opt.delFollowUser(in[i]);                                   //remove the bad ID from the array if it is
                 }
             } catch (TwitterException e) {                                      //need to catch any twitter errors
