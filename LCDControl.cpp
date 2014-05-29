@@ -151,7 +151,7 @@ void LCDControl::CreateChar(byte code, PGM_P character) {                       
 void LCDControl::bootAnim() {                                                   //simple boot animation, needs to be called after the custom chars are made
     for(int i = 0; i <= 255; i++) {                                             //fades the backlight on
         opt.setBrightness(i);
-        delay(5);
+        delay(2);
     } 
     //create each custom character for use
     CreateChar(0, top1);
@@ -249,7 +249,7 @@ void LCDControl::sleepLCD(bool sleep) {                                         
         byte b = opt.getBrightness();                                           //get the current brightness to reference later
         for(int i = b; i >= 0; i--) {                                           //fade out the backlight
             opt.setBrightness(i);
-            delay(5);
+            delay(2);
         }
         lcdc.clear();                                                           //clear the display       
         lcdc.noDisplay();                                                       //turn the lcd "off"
