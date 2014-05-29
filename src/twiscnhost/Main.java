@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: detect handshake while running?, gui (tray application), add additional exception checking to twitter maybe, check twitter connection first, maybe send a host shutdown packet
+//TODO: detect handshake while running?, gui (tray application), check twitter connection first
 package twiscnhost;
 
 import java.util.logging.*;
