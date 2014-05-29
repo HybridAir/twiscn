@@ -175,9 +175,9 @@ void LCDControl::bootAnim() {                                                   
     lcdc.print((char)5);
     delay(250); 
     lcdc.setCursor(6, 0);
-    lcdc.print("Twitter");
+    lcdc.print("TwiScn");
     lcdc.setCursor(6, 1);
-    lcdc.print("Screen v1"); 
+    lcdc.print("Version 1a"); 
     delay(2000);
     lcdc.setCursor(6, 0);
     lcdc.print("Waiting");
