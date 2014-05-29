@@ -214,7 +214,7 @@ void Options::getPrevTweet(String in) {                                         
     }
     else {                                                                      //if the previous tweet was enabled
         if(twt.getPrevTweet() != "") {                                          //make sure there is a previous tweet first
-            if(!getPrevTweet()) {                                                 //only set it to the previous tweet if we are on the current one already
+            if(!getPrevTweet()) {                                               //only set it to the previous tweet if we are on the current one already
                 //set the tweet to the previous one
                 onPrevious = true;
                 lcd.printNewTweet(false);
@@ -223,12 +223,14 @@ void Options::getPrevTweet(String in) {                                         
     }
 }
 
-void Options::getScrollVal(String in) {
+void Options::getScrollVal(String in) {                                         //gets the scroll value out from the incoming data transfer
     String enable = in.substring(0, 1);                                         //get the enable setting out
     if(enable.toInt() == 0) {                                                   //if we are on the previous tweet already
         scroll = false;
+        lcd.scrollNotification(true);                                           //tell the lcd to display the scrolling paused notification
     }
     else {                                                                      //if we are on the current tweet already
         scroll = true;
+        lcd.scrollNotification(false);                                          //tell the lcd to display the scrolling paused notification
     }
 }
