@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//TODO: display message when swithcing to previous/current tweet, increase fading speed, fix usb lock problem, maybe send version info after handshake, increase boot fade speed
+//TODO: fix usb lock problem
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
@@ -80,8 +80,8 @@ void checkForSleep() {                                                          
 }
 
 void goToSleep() {                                                              //used to bring the device down for "sleep"
-    lcd.sleepLCD(true);                                                         //tell the lcd to sleep
     comms.setConnected(false);                                                  //tell comms that we are no longer connected to the host (so it will know to reconnect)
+    lcd.sleepLCD(true);                                                         //tell the lcd to sleep
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
         usbPoll();                                                              //keep checking the usb
