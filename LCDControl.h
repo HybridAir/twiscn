@@ -19,6 +19,7 @@ class LCDControl {
         void connectAnim();
         void connectDisplay(bool connecting);
         void setSpeed(int in);
+        void scrollNotification(boolean paused);
     private:
         void CreateChar(byte code, PGM_P character);
         void clearRow(byte row);
