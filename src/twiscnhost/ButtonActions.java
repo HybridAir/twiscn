@@ -16,6 +16,10 @@ public class ButtonActions {
         doAction(opt.getFn1Action());
     }
     
+    public void fn2() {                                                         //call this whenever we get a response from FN1 (make sure to applyOptions after)
+        doAction(opt.getFn2Action());
+    }
+    
     private void doAction(byte type) {                                          //used to call different functions depending on the byte passed in
         switch(type) {
             case 0:
