@@ -23,7 +23,23 @@ public class TweetHandler {
         twitterStream.addListener(listener);                                    //add our listener to it
         
         sendLatestTweet();                                                      //try to send the latest tweet to the device
-        startStream();
+        startStream();                                                          //start the twitterstream thread
+    }
+    
+    private long[] getFollowUsers() {                                           //used to get the array of userIDs to follow, and check if they're protected
+        long[] in = opt.getFollowUsers();                                       //get the current array of IDs out
+        for(int i = 0;i < in.length;i++) {                                      //for each ID
+            try {
+                if(getProtected(in[i])) {                                       //try checking if the ID is protected
+                    logger.log(Level.WARNING, "userID " + in[i] + " is protected, remvoing from list.");
+                    opt.delFollowUser(in[i]);                                   //remove the bad ID from the array if it is
+                }
+            } catch (TwitterException e) {                                      //need to catch any twitter errors
+                logger.log(Level.SEVERE, "Failed to check if userID is protected", e);
+                System.exit(-1);                                                //chances are twitter is not accessible, so kill the program
+            }
+        }
+        return opt.getFollowUsers();                                            //return the updated array
     }
     
     private String[] getLatestTweet() throws TwitterException {                 //returns a String array containing the latest tweet, throws TwitterException
@@ -74,7 +90,7 @@ public class TweetHandler {
     
     private String getUserQuery() throws TwitterException {                     //returns a formatted query string, throws TwitterException   
         //used for getting a query that returns the latest tweet from a group of users
-        long[] users = opt.getFollowUsers();                                    //get the array of users
+        long[] users = getFollowUsers();                                        //get the array of users
         String out = "";
         for(int i = 0;i <= users.length - 1;i++) {                              //for each user in there
             out += "from:" + getScreenName(users[i]);                           //try to get the user's screenName (throws TwitterException if it fails)
@@ -85,10 +101,15 @@ public class TweetHandler {
         return out;
     }
     
+    public boolean getProtected(long ID) throws TwitterException {
+        User user = twitter.showUser(ID);                                       //get the user info from showUser, and set it to a new User (throws TwitterException if it fails)
+        return user.isProtected();
+    }
+    
 //==============================================================================
     
     public void startStream() {                                                 //starts the twitterStream thread
-        twitterStream.filter(new FilterQuery(opt.getFollowUsers()));    
+        twitterStream.filter(new FilterQuery(getFollowUsers()));    
         logger.log(Level.INFO, "TwitterStream started");
     }
     
