@@ -8,9 +8,12 @@ import com.codeminders.hidapi.HIDDevice;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UsbHidComms {
     
+    private final static Logger logger = Logger.getLogger(LogHandler.class.getName());
     private int vndr;
     private int pdct;
     private static HIDDevice device = null;                                      
@@ -31,9 +34,6 @@ public class UsbHidComms {
         else {
             return true;
         }
-//        } else {
-//            System.out.println("Connected to device");                          //device was connected successfully
-//        }
     }
     
     private void deviceFindFirst() {                                            //look for the device, and then connect to it
@@ -45,6 +45,7 @@ public class UsbHidComms {
                 device = devices[0].open();                                     //try to open the first device in the array, and set that to the active device var
             } 
             catch (Exception e) {
+                logger.log(Level.WARNING, "Unable to find device.", e);
                 device = null;                                                  //device cannot be found error, device is null
             }
         }  
@@ -74,6 +75,7 @@ public class UsbHidComms {
             }
         } 
         catch (Exception e) {                                                   //catch any errors
+            logger.log(Level.WARNING, "Unable to get device info.", e);
         }
 
         return devlist.toArray(new HIDDeviceInfo[devlist.size()]);              //convert that arraylist to a normal array, have the array size be the size of the arraylist, and return it
@@ -108,9 +110,11 @@ public class UsbHidComms {
             } else {
                 return null;                                                    //didn't get anything, darn
             }
-        } catch(IOException ioe) {
-            System.err.println("deviceRead error");
+        } catch(IOException e) {
+            logger.log(Level.WARNING, "Device read error.", e);
             System.exit(0); 
+            //probably just want to reset program here instead or something
+            //might need to call diconnect device in here
         }
         return null;
     }
@@ -129,15 +133,14 @@ public class UsbHidComms {
         byte[] data = new byte[33];                                             //create a new byte array called data, size 33 (to hold the identifier byte in the beginning)
         data[0] = (byte)0;                                                      //first element needs to be a 0 converted to a byte
         int i;
-        for(i = 0;i<size;i++) {                                             //for each char in the string
+        for(i = 0;i<size;i++) {                                                 //for each char in the string
             data[i+1]=(byte)charArray[i];                                       //convert each char in the array to a byte, and put each into the data array
         }
         data[i+1]=0;                                                            //set the next element to 0 so we know where to stop sending
         try {
             device.sendFeatureReport(data);                                     //send that data array to the device
         } catch(Exception e) {
-            e.printStackTrace();
-            System.err.println("deviceWrite error");                            //jerp
+            logger.log(Level.WARNING, "Failed to write to device.", e);
         }
     }
     
@@ -145,11 +148,11 @@ public class UsbHidComms {
         if (device!=null) {                                                     //make sure the device is actually connected, cant disconnect nothing
             try {
                 device.close();                                                 //try closing the device
-                System.out.println("Device disconnected");
-            } catch (IOException ioe) {                                         //error stuff
-                ioe.printStackTrace();
+                logger.log(Level.INFO, "Diconnected device.");
+            } catch (IOException e) {                                         //error stuff
+                logger.log(Level.WARNING, "Failed to disconnect device.", e);
             }
-            device = null;                                                      //device is going to be gone at this point                       
+            device = null;                                                      //device is going to be gone either way at this point                       
         }
     }
 }
