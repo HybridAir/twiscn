@@ -10,7 +10,7 @@ public class Options {
     
     //set default option variables      
     private Color lcdCol = new Color(0, 150, 255);  
-    private Color blinkCol = Color.YELLOW; 
+    private Color blinkCol = Color.RED; 
     private int rnbwSpd = 100;   
     private int readTime = 1000;
     private int blinkSpd = 100;
