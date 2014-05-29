@@ -5,8 +5,11 @@ package twiscnhost;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.logging.*;
 
 public class Options {
+    
+    private final static Logger logger = Logger.getLogger(LogHandler.class.getName());
     
     //set default option variables      
     private Color lcdCol = new Color(0, 150, 255);  
@@ -35,8 +38,7 @@ public class Options {
 
     public Options() {                                                          //default constructor, use all default settings
         followUsers.add(2524002330L);                                           //add twiscn as a default follow
-        followUsers.add(18856582L);                                           //add twiscn as a default follow
-        
+        followUsers.add(18856582L);                                             //add twiscn as a default follow       
     }
     
 //==============================================================================
@@ -115,22 +117,22 @@ public class Options {
                     extractFollowUsers(in);
                     break;
             }
-         }
+        }
         
-        catch(NumberFormatException e) {                                    //parseInt will throw this if it doesn't like what it's seeing
-                //don't do anything, just catch the error
-                //options will reset the default value
-            System.out.println("Got a bad number format: " + e);
-            }
+        catch(NumberFormatException e) {                                        //parseInt will throw this if it doesn't like what it's seeing
+            //don't do anything, just catch the error
+            //options will reset the default value
+            logger.log(Level.WARNING, "Extracted bad propValue", e);
+        }
     }
     
     private int checkValLimits(int max, int in) {                               //used to ensure the property values are not outside their limits
         if(in > max) {                                                          //if the value is greater than the max it can be
-            System.out.println("wrong " + in);
+            logger.log(Level.WARNING, "Value over limit: " + in);
             return max;                                                         //return the max value
         }
         else if(in < 0) {                                                       //vice versa, all option values are never less than 0
-            System.out.println("wrong " + in);
+            logger.log(Level.WARNING, "Value under limit: " + in);
             return 0;
         }
         else                                                                    //property value should be good, just return it as is
@@ -309,7 +311,7 @@ public class Options {
         for(int i = 0;i < stringIn.length && !malformed;i++) {                  //check each ID to ensure it is numeric only
             if(!stringIn[i].matches("[0-9]+")) {                                //if it contains something other than numbers
                 malformed = true;                                               //might as well consider that whole property value to be compromised
-                System.out.println("Resetting following list");
+                logger.log(Level.WARNING, "Following list malformed, setting default");
             }
         }
         if(!malformed) {
