@@ -19,7 +19,7 @@ public class LogHandler {
         Logger l = Logger.getLogger("");
         fh.setFormatter(new SimpleFormatter());
         l.addHandler(fh);
-        l.setLevel(Level.CONFIG);
-        logger.log(Level.INFO, "Logging started");
+        l.setLevel(Level.INFO);
+        logger.log(Level.FINE, "Logging started");
     }
 }
