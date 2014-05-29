@@ -40,9 +40,6 @@ public class DeviceComms {
                 if(in.equals("`")) {                                            //check if the device is currently trying to connect (spamming "`"'s)
                     twiScnHID.send("~");                                        //send the response
                     connected = true;                                           //we are connected now                    
-                    try {
-                        Thread.sleep(100L);                                     //let the device catch up before sending it data
-                    } catch (Exception e) {}                                    //you never know
                     logger.log(Level.INFO, "Handshake successful");
                 }
             }
