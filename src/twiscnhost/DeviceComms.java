@@ -11,6 +11,10 @@ public class DeviceComms {
     
     public DeviceComms(UsbHidComms device) {                                    //constructor, needs the usbhid device   
         twiScnHID = device;                                                      
+        init();
+    }
+    
+    public void init() {                                                        //used to connect the device, can be called if reconnection is necessary
         tryConnecting();                                                        //try connecting to the device
         handshake();                                                            //try to send a handshake to the device
     }
