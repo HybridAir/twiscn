@@ -14,7 +14,13 @@ public class DeviceHandler {
         btnActions = new ButtonActions(this.options);
         logger.log(Level.INFO, "Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
         comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //try connecting to the device over usb, program will not continue until successful
-        applyAllOptions();   
+        applyAllOptions();                                                      
+    }
+    
+    public void init() {                                                        //used to reconnect the device, can be called if reconnection is necessary
+        logger.log(Level.INFO, "Attempting to reconnect to device.");
+        comms.init();                                                           //tell comms to start reconnecting
+        applyAllOptions();
     }
     
 //==============================================================================    
