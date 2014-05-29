@@ -26,7 +26,7 @@ public class UsbHidComms {
     
 //==============================================================================
     
-    public boolean connectDevice() {                                               //used to connect to the device
+    public boolean connectDevice() {                                            //used to connect to the device
         deviceFindFirst();                                                      //find the device and connect if possible
         if(device == null) {                                                    //if the device was not connected
             return false;
@@ -34,6 +34,15 @@ public class UsbHidComms {
         else {
             return true;
         }
+    }
+    
+    public static boolean connected() {                                         //returns whether the device is null or not, it's connection status
+        if(device == null) {                                                    //if the device is not connected
+            return false;
+        }
+        else {                                                                  //if the device is connected
+            return true;
+        } 
     }
     
     private void deviceFindFirst() {                                            //look for the device, and then connect to it
@@ -112,9 +121,7 @@ public class UsbHidComms {
             }
         } catch(IOException e) {
             logger.log(Level.WARNING, "Device read error.", e);
-            System.exit(0); 
-            //probably just want to reset program here instead or something
-            //might need to call diconnect device in here
+            device = null;                                                      //device is probably fubar at this point, trigger a reconnection
         }
         return null;
     }
