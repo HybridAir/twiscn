@@ -4,7 +4,7 @@ package twiscnhost;
 
 import java.util.logging.*;
 
-public class Main {
+public class Main extends javax.swing.JFrame {
     
     private final static Logger logger = Logger.getLogger(LogHandler.class.getName());
     public static final int VENDOR_ID = 0x16c0;                         
@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         LogHandler.init();
-        
+        Gui goopy = new Gui();
         devOptions = new Options();                                             //create a new instance of DeviceOptions     
         PropHandler props = new PropHandler(devOptions);        
         DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, devOptions);        //create a new instance of DeviceHandler, needs the device ids and options 
