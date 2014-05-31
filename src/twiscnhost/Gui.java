@@ -1,5 +1,11 @@
 package twiscnhost;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+
 public class Gui extends javax.swing.JFrame {
     
     public Gui() {                                                              //default constructor, gets everything started
@@ -9,12 +15,12 @@ public class Gui extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            //for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                //if ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                    //break;
+                //}
+            //}
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(Gui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -28,18 +34,7 @@ public class Gui extends javax.swing.JFrame {
       
         setVisible(true);                                                       //make the primary window visible
         initComponents();                                                       //get all the components going
-    }
-
-    public void setConnected(boolean connected) {
-        if(connected) {
-            connectionLbl.setText("Connected.");
-        }
-        else {
-            connectionLbl.setText("Disconnected.");
-        }
-    }
-    
-    
+    }  
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -55,6 +50,8 @@ public class Gui extends javax.swing.JFrame {
         hardwareName = new javax.swing.JLabel();
         firmwareName = new javax.swing.JLabel();
         statusLbl = new javax.swing.JLabel();
+        firmLbl = new javax.swing.JLabel();
+        hardLbl = new javax.swing.JLabel();
         deviceSettingsPane = new javax.swing.JTabbedPane();
         lcdTab = new javax.swing.JPanel();
         brightnessName = new javax.swing.JLabel();
@@ -104,7 +101,7 @@ public class Gui extends javax.swing.JFrame {
 
         statusTxt.setColumns(20);
         statusTxt.setRows(5);
-        statusTxt.setText("Program initialized");
+        statusTxt.setToolTipText("Program status log");
         statusTxt.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         statusTxt.setFocusable(false);
         statusTxt.setOpaque(false);
@@ -138,7 +135,13 @@ public class Gui extends javax.swing.JFrame {
 
         statusLbl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         statusLbl.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        statusLbl.setText("Searching");
+
+        firmLbl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        firmLbl.setText(" ");
+
+        hardLbl.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        hardLbl.setText(" ");
+        hardLbl.setToolTipText("");
 
         javax.swing.GroupLayout deviceInfoPaneLayout = new javax.swing.GroupLayout(deviceInfoPane);
         deviceInfoPane.setLayout(deviceInfoPaneLayout);
@@ -151,9 +154,13 @@ public class Gui extends javax.swing.JFrame {
                 .addComponent(statusLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(hardwareName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hardLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(firmwareName)
-                .addGap(79, 79, 79))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(firmLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         deviceInfoPaneLayout.setVerticalGroup(
             deviceInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,7 +170,9 @@ public class Gui extends javax.swing.JFrame {
                     .addComponent(statusName)
                     .addComponent(statusLbl)
                     .addComponent(hardwareName)
-                    .addComponent(firmwareName))
+                    .addComponent(firmwareName)
+                    .addComponent(firmLbl)
+                    .addComponent(hardLbl))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -570,12 +579,14 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JPanel deviceInfoPane;
     private javax.swing.JTabbedPane deviceSettingsPane;
     private javax.swing.JPanel deviceTab;
+    protected javax.swing.JLabel firmLbl;
     private javax.swing.JLabel firmwareName;
     private javax.swing.JComboBox fn1Cbx;
     private javax.swing.JLabel fn1Name;
     private javax.swing.JComboBox fn2Cbx;
     private javax.swing.JLabel fn2Name;
     private javax.swing.JMenuItem followMenuItm;
+    protected javax.swing.JLabel hardLbl;
     private javax.swing.JLabel hardwareName;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JButton jButton1;
@@ -600,11 +611,11 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JLabel readName;
     private javax.swing.JSpinner readSpnr;
     private javax.swing.JPanel settingsTab;
-    private javax.swing.JLabel statusLbl;
+    protected javax.swing.JLabel statusLbl;
     private javax.swing.JLabel statusName;
     private javax.swing.JPanel statusPane;
     private javax.swing.JScrollPane statusScrollPane;
-    private javax.swing.JTextArea statusTxt;
+    protected javax.swing.JTextArea statusTxt;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JPanel twitterTab;
     private javax.swing.JButton userColorBtn;
