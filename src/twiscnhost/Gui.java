@@ -123,18 +123,18 @@ public class Gui extends javax.swing.JFrame {
         deviceApplyBtn = new javax.swing.JButton();
         deviceDefaultsBtn = new javax.swing.JButton();
         twitterTab = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
+        followingPane = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        jButton2 = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jLabel9 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        twtUserLst = new javax.swing.JList();
+        addUserBtn = new javax.swing.JButton();
+        userInfoPane = new javax.swing.JPanel();
+        twtUserTitle = new javax.swing.JLabel();
+        twtUserIDTitle = new javax.swing.JLabel();
+        remUserBtn = new javax.swing.JButton();
+        twtProfileBtn = new javax.swing.JButton();
+        twtLastTitle = new javax.swing.JLabel();
+        twitterApplyBtn = new javax.swing.JButton();
+        twitterDefaultsBtn = new javax.swing.JButton();
         settingsTab = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         helpMenu = new javax.swing.JMenu();
@@ -503,96 +503,96 @@ public class Gui extends javax.swing.JFrame {
 
         tabbedPane.addTab("Device", deviceTab);
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Following"));
+        followingPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Following"));
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
+        twtUserLst.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(jList1);
+        jScrollPane2.setViewportView(twtUserLst);
 
-        jButton2.setText("Add User");
+        addUserBtn.setText("Add User");
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("User Info"));
+        userInfoPane.setBorder(javax.swing.BorderFactory.createTitledBorder("User Info"));
 
-        jLabel1.setText("Username:");
+        twtUserTitle.setText("Username:");
 
-        jLabel2.setText("User ID:");
+        twtUserIDTitle.setText("User ID:");
 
-        jButton1.setText("Remove User");
-        jButton1.setEnabled(false);
+        remUserBtn.setText("Remove User");
+        remUserBtn.setEnabled(false);
 
-        jButton5.setText("View Profile");
-        jButton5.setEnabled(false);
+        twtProfileBtn.setText("View Profile");
+        twtProfileBtn.setEnabled(false);
 
-        jLabel9.setText("Last Tweet:");
+        twtLastTitle.setText("Last Tweet:");
 
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        javax.swing.GroupLayout userInfoPaneLayout = new javax.swing.GroupLayout(userInfoPane);
+        userInfoPane.setLayout(userInfoPaneLayout);
+        userInfoPaneLayout.setHorizontalGroup(
+            userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(userInfoPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userInfoPaneLayout.createSequentialGroup()
+                        .addComponent(twtProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
                         .addGap(46, 46, 46)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel9))
+                        .addComponent(remUserBtn))
+                    .addGroup(userInfoPaneLayout.createSequentialGroup()
+                        .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(twtUserTitle)
+                            .addComponent(twtUserIDTitle)
+                            .addComponent(twtLastTitle))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
+        userInfoPaneLayout.setVerticalGroup(
+            userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(userInfoPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(twtUserTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
+                .addComponent(twtUserIDTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9)
+                .addComponent(twtLastTitle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton5))
+                .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(remUserBtn)
+                    .addComponent(twtProfileBtn))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout followingPaneLayout = new javax.swing.GroupLayout(followingPane);
+        followingPane.setLayout(followingPaneLayout);
+        followingPaneLayout.setHorizontalGroup(
+            followingPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(followingPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(followingPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
+                    .addComponent(addUserBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(userInfoPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        followingPaneLayout.setVerticalGroup(
+            followingPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(followingPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(followingPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(userInfoPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(followingPaneLayout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)))
+                        .addComponent(addUserBtn)))
                 .addContainerGap())
         );
 
-        jButton3.setText("Apply");
-        jButton3.setEnabled(false);
+        twitterApplyBtn.setText("Apply");
+        twitterApplyBtn.setEnabled(false);
 
-        jButton4.setText("Defaults");
+        twitterDefaultsBtn.setText("Defaults");
 
         javax.swing.GroupLayout twitterTabLayout = new javax.swing.GroupLayout(twitterTab);
         twitterTab.setLayout(twitterTabLayout);
@@ -601,22 +601,22 @@ public class Gui extends javax.swing.JFrame {
             .addGroup(twitterTabLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(twitterTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(followingPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, twitterTabLayout.createSequentialGroup()
-                        .addComponent(jButton4)
+                        .addComponent(twitterDefaultsBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)))
+                        .addComponent(twitterApplyBtn)))
                 .addContainerGap())
         );
         twitterTabLayout.setVerticalGroup(
             twitterTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(twitterTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(followingPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(twitterTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(twitterApplyBtn)
+                    .addComponent(twitterDefaultsBtn))
                 .addContainerGap())
         );
 
@@ -776,6 +776,7 @@ public class Gui extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
+    private javax.swing.JButton addUserBtn;
     private javax.swing.JButton blinkColorBtn;
     private javax.swing.JCheckBox blinkEnabledChk;
     private javax.swing.JPanel blinkPane;
@@ -796,22 +797,12 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JComboBox fn2Cbx;
     private javax.swing.JLabel fn2Name;
     private javax.swing.JMenuItem followMenuItm;
+    private javax.swing.JPanel followingPane;
     protected javax.swing.JLabel hardLbl;
     private javax.swing.JLabel hardwareName;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JColorChooser jColorChooser1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JList jList1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPanel lcdTab;
@@ -821,6 +812,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JPanel rainbowPane;
     private javax.swing.JLabel readName;
     private javax.swing.JSpinner readSpnr;
+    private javax.swing.JButton remUserBtn;
     private javax.swing.JPanel settingsTab;
     protected javax.swing.JLabel statusLbl;
     private javax.swing.JLabel statusName;
@@ -828,8 +820,16 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JScrollPane statusScrollPane;
     protected javax.swing.JTextArea statusTxt;
     private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JButton twitterApplyBtn;
+    private javax.swing.JButton twitterDefaultsBtn;
     private javax.swing.JPanel twitterTab;
+    private javax.swing.JLabel twtLastTitle;
+    private javax.swing.JButton twtProfileBtn;
+    private javax.swing.JLabel twtUserIDTitle;
+    private javax.swing.JList twtUserLst;
+    private javax.swing.JLabel twtUserTitle;
     private javax.swing.JButton userColorBtn;
+    private javax.swing.JPanel userInfoPane;
     private javax.swing.JMenuItem wikiMenuItm;
     // End of variables declaration//GEN-END:variables
 }
