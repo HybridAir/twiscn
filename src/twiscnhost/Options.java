@@ -199,8 +199,16 @@ public class Options {
         return Integer.toString(lcdCol.getRGB());
     }
     
+    public Color getLCDColor() {
+        return lcdCol;
+    }
+    
     private String getBlinkColorInt() {
         return Integer.toString(blinkCol.getRGB());
+    }
+    
+    public Color getBlinkColor() {
+        return blinkCol;
     }
     
     public boolean getRnbwStateBool() {
