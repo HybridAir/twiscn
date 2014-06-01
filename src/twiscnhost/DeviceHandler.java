@@ -5,35 +5,43 @@ import java.util.logging.Level;
 public class DeviceHandler {
     
     private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
-    private Options options;
+    private Options opt;
     private DeviceComms comms;
+    private Gui gui;
     private ButtonActions btnActions;
-    private String version = null;
+    private String hardVersion = null;
     
-    public DeviceHandler(int[] deviceIDs, Options opt) {                        //constructor, needs the device IDs to use and the options instance
-        this.options = opt;
-        btnActions = new ButtonActions(this.options);
+    public DeviceHandler(int[] deviceIDs, Options opt, Gui gui) {        //constructor, needs the device IDs to use, the options instance, and the guihandler instance
+        this.opt = opt;
+        this.gui = gui;
+        btnActions = new ButtonActions(this.opt);
         logger.log(Level.INFO, "Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
+        gui.addStatusLine("Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
         comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //try connecting to the device over usb, program will not continue until successful
+        gui.setConnected(true);
         getVersion();
         applyAllOptions();                                                      
     }
     
     public void init() {                                                        //used to reconnect the device, can be called if reconnection is necessary
-        logger.log(Level.INFO, "Attempting to reconnect to device.");
+        logger.log(Level.INFO, "Attempting to reconnect to device");
+        gui.addStatusLine("Attempting to reconnect to device");
         comms.init();                                                           //tell comms to start reconnecting
+        gui.setConnected(true);
         getVersion();
         applyAllOptions();
     }
     
     private void getVersion() {                                                 //used to set the device version
-        version = null;                                                         //set it to null first since this should only get called when it needs updating
-        while(version == null) {                                                //while we have no version 
+        gui.addStatusLine("Connected to device");
+        hardVersion = null;                                                         //set it to null first since this should only get called when it needs updating
+        while(hardVersion == null) {                                                //while we have no version 
             String in = comms.monitor();                                        //try to get something from the comms monitor                        
             if(in != null) {                                                    //if it returned something
                 if(in.contains("$v")) {                                         //check if it's a version packet
-                version = in.substring(2, 4);                                   //get the version out
-                logger.log(Level.INFO, "Got device version: " + version);
+                hardVersion = in.substring(2, 4);                                   //get the version out
+                logger.log(Level.INFO, "Got device hardware version: " + hardVersion);
+                gui.setVersions(hardVersion, "N/A");
                 }
             }
         }
@@ -43,7 +51,7 @@ public class DeviceHandler {
 //==============================================================================    
     
     public void applyAllOptions() {                                             //applys all options, use this after updating option settings
-        comms.sendOptions(options.formatAll());                                 //format and send the updated options to the device
+        comms.sendOptions(opt.formatAll());                                 //format and send the updated options to the device
     }
     
     public void newTweet(String user, String text) {                            //used to send a new tweet to the device, needs a user and tweet text
