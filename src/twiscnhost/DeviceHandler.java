@@ -10,6 +10,7 @@ public class DeviceHandler {
     private Gui gui;
     private ButtonActions btnActions;
     private String hardVersion = null;
+    private String firmVersion = null;
     
     public DeviceHandler(int[] deviceIDs, Options opt, Gui gui) {        //constructor, needs the device IDs to use, the options instance, and the guihandler instance
         this.opt = opt;
@@ -35,13 +36,14 @@ public class DeviceHandler {
     private void getVersion() {                                                 //used to set the device version
         gui.addStatusLine("Connected to device");
         hardVersion = null;                                                         //set it to null first since this should only get called when it needs updating
-        while(hardVersion == null) {                                                //while we have no version 
+        while(hardVersion == null && firmVersion == null) {                                                //while we have no version 
             String in = comms.monitor();                                        //try to get something from the comms monitor                        
             if(in != null) {                                                    //if it returned something
                 if(in.contains("$v")) {                                         //check if it's a version packet
-                hardVersion = in.substring(2, 4);                                   //get the version out
-                logger.log(Level.INFO, "Got device hardware version: " + hardVersion);
-                gui.setVersions(hardVersion, "N/A");
+                    hardVersion = in.substring(2, 4);
+                    firmVersion = in.substring(5, 7);
+                    logger.log(Level.INFO, "Got device hardware and firmware versions: " + hardVersion + ", " + firmVersion);
+                    gui.setVersions(hardVersion, firmVersion);
                 }
             }
         }
@@ -52,6 +54,7 @@ public class DeviceHandler {
     
     public void applyAllOptions() {                                             //applys all options, use this after updating option settings
         comms.sendOptions(opt.formatAll());                                 //format and send the updated options to the device
+        gui.addStatusLine("Settings sent to device");
     }
     
     public void newTweet(String user, String text) {                            //used to send a new tweet to the device, needs a user and tweet text
