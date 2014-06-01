@@ -12,18 +12,18 @@ public class Options {
     private final static Logger logger = Logger.getLogger(LogHandler.class.getName());
     
     //set default option variables      
-    private Color lcdCol = new Color(0, 150, 255);  
-    private Color blinkCol = Color.RED; 
-    private int rnbwSpd = 100;   
-    private int readTime = 1000;
-    private int blinkSpd = 100;
-    private int brightness = 255;
-    private boolean rainbow = false;
-    private boolean blink = true;
-    private boolean prevTweet = false;
-    private boolean scroll = true;
-    private byte fn1Action = 3;
-    private byte fn2Action = 0;
+    private Color lcdCol; 
+    private Color blinkCol; 
+    private int rnbwSpd;  
+    private int readTime;
+    private int blinkSpd;
+    private int brightness;
+    private boolean rainbow;
+    private boolean blink;
+    private boolean prevTweet;
+    private boolean scroll;
+    private byte fn1Action;
+    private byte fn2Action;
     private ArrayList<Long> followUsers = new ArrayList<>();
     
     //max values for certain options
@@ -37,8 +37,24 @@ public class Options {
     public String[] propNames;
 
     public Options() {                                                          //default constructor, use all default settings
+        setDeviceDefaults();
         followUsers.add(2524002330L);                                           //add twiscn as a default follow
         followUsers.add(18856582L);                                             //add twiscn as a default follow       
+    }
+    
+    public void setDeviceDefaults() {
+        lcdCol = new Color(0, 150, 255);  
+        blinkCol = Color.RED; 
+        rnbwSpd = 100;   
+        readTime = 1000;
+        blinkSpd = 100;
+        brightness = 255;
+        rainbow = false;
+        blink = true;
+        prevTweet = false;
+        scroll = true;
+        fn1Action = 0;
+        fn2Action = 0;
     }
     
 //==============================================================================
@@ -215,12 +231,24 @@ public class Options {
         return rainbow;
     }
     
+    public int getRnbwSpeedInt() {
+        return rnbwSpd;
+    }
+    
+    public boolean getBlinkStateBool() {
+        return blink;
+    }
+    
     public boolean getPrevTweetBool() {
         return prevTweet;
     }
     
     public boolean getScrollBool() {
         return scroll;
+    }
+    
+    public int getReadTime() {
+        return readTime;
     }
     
     public byte getFn1Action() {
