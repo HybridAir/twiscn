@@ -11,8 +11,7 @@ Comms::Comms() {                                                                
     gotUser = false;
     gotTweet = false;
     connected = false;                                                          //considering that this was just started, we will not be connected yet
-    hardVersion = "$1v1a";                                                      //hardware version 1a
-    firmVersion = "$2v1a";                                                      //firmware version 1a
+    versions = "$v1a$1a";                                                       //hardware and firmware versions
 }
 
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it, run this continuously
@@ -77,11 +76,8 @@ void Comms::handshake() {                                                       
         }  
     }
     delay(50);                                                                  //give the host a little time to get ready
-    char ver[5];                                                                //get a char array ready
-    hardVersion.toCharArray(ver, 6);                                                //put that String into that new char array
-    usb.println(ver);                                                           //send the device version to the host
-    delay(50);                                                                  //give the host a little time to get ready
-    firmVersion.toCharArray(ver, 6);                                                //put that String into that new char array
+    char ver[8];                                                                //get a char array ready
+    versions.toCharArray(ver, 8);                                               //put that String into that new char array
     usb.println(ver);                                                           //send the device version to the host
     inout.connectionLED(1);                                                     //turn the connection led solid on since we're connected now
     lcd.connectDisplay(false);                                                  //show the connected notice on the lcd
