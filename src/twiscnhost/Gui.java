@@ -8,9 +8,10 @@ import javax.swing.text.BadLocationException;
 
 public class Gui extends javax.swing.JFrame {
     
-    Options opt;
+    private Options opt;
+    public boolean applyOptions = false;                                        //stores whether apply the options is needed asap
     
-    public Gui(Options opt) {                                                              //default constructor, gets everything started
+    public Gui(Options opt) {                                                   //default constructor, gets everything started, needs the Options instance
         //set windows native lookandfeel
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -33,19 +34,16 @@ public class Gui extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Gui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-      
-        //setResizable(false);
-        //GuiHandler goop = new GuiHandler();
         this.opt = opt;
-        setVisible(true);                                                       //make the primary window visible
         initComponents();                                                       //get all the components going
+        setVisible(true);                                                       //make the primary window visible       
         addStatusLine("Program initialized");
-        setConnected(false);
+        setConnected(false);                                                    //set the connected status to false
     }
     
 //==============================================================================     
     
-    public void setConnected(boolean connected) {
+    public void setConnected(boolean connected) {                               //used to set the device connection status, needs a boolean
         if(connected) {
             statusLbl.setText("Connected");
         }
@@ -54,7 +52,7 @@ public class Gui extends javax.swing.JFrame {
         }
     }
     
-    public void setVersions(String hardware, String firmware) {
+    public void setVersions(String hardware, String firmware) {                 //used to set the device versions, needs two version Strings
         hardLbl.setText(hardware);
         firmLbl.setText(firmware);
     }
@@ -236,18 +234,28 @@ public class Gui extends javax.swing.JFrame {
         brightnessName.setText("Brightness:");
 
         brightnessSpnr.setModel(new javax.swing.SpinnerNumberModel(255, 0, 255, 1));
+        brightnessSpnr.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                brightnessSpnrStateChanged(evt);
+            }
+        });
 
         blinkPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Tweet Blink"));
 
         blinkEnabledChk.setText("Enabled");
-        blinkEnabledChk.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                blinkEnabledChkStateChanged(evt);
+        blinkEnabledChk.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                blinkEnabledChkItemStateChanged(evt);
             }
         });
 
         blinkColorBtn.setText("Color");
         blinkColorBtn.setEnabled(false);
+        blinkColorBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                blinkColorBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout blinkPaneLayout = new javax.swing.GroupLayout(blinkPane);
         blinkPane.setLayout(blinkPaneLayout);
@@ -275,6 +283,11 @@ public class Gui extends javax.swing.JFrame {
         readName.setText("Read Time:");
 
         readSpnr.setModel(new javax.swing.SpinnerNumberModel(2000, 0, 65535, 1));
+        readSpnr.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                readSpnrStateChanged(evt);
+            }
+        });
 
         userColorBtn.setText("Color");
         userColorBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -296,6 +309,11 @@ public class Gui extends javax.swing.JFrame {
 
         rainSpeedSpnr.setModel(new javax.swing.SpinnerNumberModel(100, 0, 65535, 1));
         rainSpeedSpnr.setEnabled(false);
+        rainSpeedSpnr.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                rainSpeedSpnrStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout rainbowPaneLayout = new javax.swing.GroupLayout(rainbowPane);
         rainbowPane.setLayout(rainbowPaneLayout);
@@ -428,6 +446,11 @@ public class Gui extends javax.swing.JFrame {
 
         deviceApplyBtn.setText("Apply");
         deviceApplyBtn.setEnabled(false);
+        deviceApplyBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deviceApplyBtnActionPerformed(evt);
+            }
+        });
 
         deviceDefaultsBtn.setText("Defaults");
 
@@ -646,6 +669,7 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_fn2CbxActionPerformed
 
     private void rainEnabledChkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rainEnabledChkItemStateChanged
+        //used to enable/disable components when the rainbow mode enable checkbox is modified
         if(rainEnabledChk.isSelected()) {
             rainSpeedSpnr.setEnabled(true);
             userColorBtn.setEnabled(false);
@@ -654,32 +678,78 @@ public class Gui extends javax.swing.JFrame {
             rainSpeedSpnr.setEnabled(false);
             userColorBtn.setEnabled(true);
         }
-        deviceApplyBtn.setEnabled(true);
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
     }//GEN-LAST:event_rainEnabledChkItemStateChanged
 
-    private void blinkEnabledChkStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_blinkEnabledChkStateChanged
+    private void fn1CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn1CbxItemStateChanged
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button when the fn1 action combobox is changed
+    }//GEN-LAST:event_fn1CbxItemStateChanged
+
+    private void fn2CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn2CbxItemStateChanged
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button when the fn2 action combobox is changed
+    }//GEN-LAST:event_fn2CbxItemStateChanged
+
+    private void userColorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userColorBtnActionPerformed
+        //used to set the user selected LCD color
+        Color selectedColor = JColorChooser.showDialog(this, "Select a Color", opt.getLCDColor());
+        //opens the color chooser dialog, and stores the selected color
+        if(selectedColor != null) {                                             //if the user actually chose a new color
+            opt.setLCDColor(selectedColor);                                     //give Options that new color
+            deviceApplyBtn.setEnabled(true);                                    //enable the apply button, since there has been a new change
+        }      
+    }//GEN-LAST:event_userColorBtnActionPerformed
+
+    private void blinkColorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blinkColorBtnActionPerformed
+        //used to set the user selected LCD blink color
+        Color selectedColor = JColorChooser.showDialog(this, "Select a Color", opt.getBlinkColor());
+        //opens the color chooser dialog, and stores the selected color
+        if(selectedColor != null) {                                             //if the user actually chose a new color
+            opt.setBlinkColor(selectedColor);                                   //give Options that new color
+            deviceApplyBtn.setEnabled(true);                                    //enable the apply button, since there has been a new change
+        }  
+    }//GEN-LAST:event_blinkColorBtnActionPerformed
+
+    private void deviceApplyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deviceApplyBtnActionPerformed
+        //used to get all options from the GUI and set them into Options, and then apply them to the device
+        opt.setBrightness((int)brightnessSpnr.getValue());
+        opt.setBlinkState(blinkEnabledChk.isSelected());
+        opt.setRnbwState(rainEnabledChk.isSelected());
+        opt.setRnbwSpd((int)rainSpeedSpnr.getValue());
+        opt.setReadTime((int)readSpnr.getValue());
+        opt.setFn1Action((byte)fn1Cbx.getSelectedIndex());
+        opt.setFn2Action((byte)fn2Cbx.getSelectedIndex());
+        if(!UsbHidComms.connected()) {                                          //if the device is not connected yet
+            addStatusLine("Settings will be applied when device is connected");
+        }
+        else {
+            addStatusLine("Settings sent to device");
+        }
+        applyOptions = true;                                                    //aply the options asap
+        deviceApplyBtn.setEnabled(false);                                       //enable the apply button, since there has been a new change
+    }//GEN-LAST:event_deviceApplyBtnActionPerformed
+
+    private void brightnessSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_brightnessSpnrStateChanged
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+    }//GEN-LAST:event_brightnessSpnrStateChanged
+
+    private void readSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_readSpnrStateChanged
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+    }//GEN-LAST:event_readSpnrStateChanged
+
+    private void rainSpeedSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rainSpeedSpnrStateChanged
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+    }//GEN-LAST:event_rainSpeedSpnrStateChanged
+
+    private void blinkEnabledChkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_blinkEnabledChkItemStateChanged
+        //used to enable/disable components when the blink enable checkbox is modified
         if(blinkEnabledChk.isSelected()) {
             blinkColorBtn.setEnabled(true);
         }
         else {
             blinkColorBtn.setEnabled(false);
         }
-        deviceApplyBtn.setEnabled(true);
-    }//GEN-LAST:event_blinkEnabledChkStateChanged
-
-    private void fn1CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn1CbxItemStateChanged
-        deviceApplyBtn.setEnabled(true);
-    }//GEN-LAST:event_fn1CbxItemStateChanged
-
-    private void fn2CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn2CbxItemStateChanged
-        deviceApplyBtn.setEnabled(true);
-    }//GEN-LAST:event_fn2CbxItemStateChanged
-
-    private void userColorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userColorBtnActionPerformed
-        Color selectedColor = JColorChooser.showDialog(this, "Pick a Color", Color.GREEN);
-        System.out.println(selectedColor);
-        
-    }//GEN-LAST:event_userColorBtnActionPerformed
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+    }//GEN-LAST:event_blinkEnabledChkItemStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;

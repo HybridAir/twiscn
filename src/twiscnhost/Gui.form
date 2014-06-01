@@ -397,6 +397,9 @@
                           <SpinnerModel initial="255" maximum="255" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="brightnessSpnrStateChanged"/>
+                      </Events>
                     </Component>
                     <Container class="javax.swing.JPanel" name="blinkPane">
                       <Properties>
@@ -441,7 +444,7 @@
                             <Property name="text" type="java.lang.String" value="Enabled"/>
                           </Properties>
                           <Events>
-                            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="blinkEnabledChkStateChanged"/>
+                            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="blinkEnabledChkItemStateChanged"/>
                           </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="blinkColorBtn">
@@ -449,6 +452,9 @@
                             <Property name="text" type="java.lang.String" value="Color"/>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="blinkColorBtnActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -463,6 +469,9 @@
                           <SpinnerModel initial="2000" maximum="65535" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="readSpnrStateChanged"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="userColorBtn">
                       <Properties>
@@ -537,6 +546,9 @@
                             </Property>
                             <Property name="enabled" type="boolean" value="false"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="rainSpeedSpnrStateChanged"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -643,6 +655,9 @@
                 <Property name="text" type="java.lang.String" value="Apply"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deviceApplyBtnActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="deviceDefaultsBtn">
               <Properties>
