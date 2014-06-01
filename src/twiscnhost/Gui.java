@@ -36,6 +36,8 @@ public class Gui extends javax.swing.JFrame {
         //</editor-fold>
         this.opt = opt;
         initComponents();                                                       //get all the components going
+        setDeviceDefaults();
+        deviceApplyBtn.setEnabled(false);                                        //enable the apply button, since there has been a new change
         setVisible(true);                                                       //make the primary window visible       
         addStatusLine("Program initialized");
         setConnected(false);                                                    //set the connected status to false
@@ -66,6 +68,17 @@ public class Gui extends javax.swing.JFrame {
         } catch (BadLocationException ex) {                                     //need to catch this, shouldn't ever get thrown
             ex.printStackTrace();
         }
+    }
+    
+    private void setDeviceDefaults() {
+        opt.setDeviceDefaults();
+        brightnessSpnr.setValue(opt.getBrightnessInt());
+        readSpnr.setValue(opt.getReadTime());
+        rainEnabledChk.setSelected(opt.getRnbwStateBool());
+        rainSpeedSpnr.setValue(opt.getRnbwSpeedInt());
+        blinkEnabledChk.setSelected(opt.getBlinkStateBool());
+        fn1Cbx.setSelectedIndex(opt.getFn1Action());
+        fn2Cbx.setSelectedIndex(opt.getFn2Action());
     }
     
 //==============================================================================    
@@ -453,6 +466,11 @@ public class Gui extends javax.swing.JFrame {
         });
 
         deviceDefaultsBtn.setText("Defaults");
+        deviceDefaultsBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deviceDefaultsBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout deviceTabLayout = new javax.swing.GroupLayout(deviceTab);
         deviceTab.setLayout(deviceTabLayout);
@@ -750,6 +768,11 @@ public class Gui extends javax.swing.JFrame {
         }
         deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
     }//GEN-LAST:event_blinkEnabledChkItemStateChanged
+
+    private void deviceDefaultsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deviceDefaultsBtnActionPerformed
+        setDeviceDefaults();
+        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+    }//GEN-LAST:event_deviceDefaultsBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
