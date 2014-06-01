@@ -25,8 +25,7 @@ class Comms {
         String transferOut;
         String userOut;
         String twtOut;
-        String hardVersion;
-        String firmVersion;
+        String versions;
         bool gotUser;
         bool gotTweet;
         bool connected;
