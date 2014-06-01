@@ -133,7 +133,7 @@ void IO::rainbow() {                                                            
         unsigned long currentMillis = millis();
         if(currentMillis - previousMillis6 > opt.getRainSpd()) {                //if it's time to advance colors
             previousMillis6 = currentMillis;
-            if(rainLevel <= 255) {                                              //fade through each color section 255 times
+            if(rainLevel < 255) {                                              //fade through each color section 255 times
                 switch(currentColor) {                                          //fade through each different color section
                     case 0:
                         opt.setCol(rainLevel, 0, 255-rainLevel);
