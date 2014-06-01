@@ -1,14 +1,16 @@
 package twiscnhost;
 
+import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JColorChooser;
 import javax.swing.text.BadLocationException;
 
 public class Gui extends javax.swing.JFrame {
     
-    public Gui() {                                                              //default constructor, gets everything started
+    Options opt;
+    
+    public Gui(Options opt) {                                                              //default constructor, gets everything started
         //set windows native lookandfeel
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -32,14 +34,50 @@ public class Gui extends javax.swing.JFrame {
         }
         //</editor-fold>
       
+        //setResizable(false);
+        //GuiHandler goop = new GuiHandler();
+        this.opt = opt;
         setVisible(true);                                                       //make the primary window visible
         initComponents();                                                       //get all the components going
-    }  
+        addStatusLine("Program initialized");
+        setConnected(false);
+    }
+    
+//==============================================================================     
+    
+    public void setConnected(boolean connected) {
+        if(connected) {
+            statusLbl.setText("Connected");
+        }
+        else {
+            statusLbl.setText("Searching");
+        }
+    }
+    
+    public void setVersions(String hardware, String firmware) {
+        hardLbl.setText(hardware);
+        firmLbl.setText(firmware);
+    }
+    
+    public void addStatusLine(String in) {                                      //used to write a line to the top of the status box
+        Date time = new Date();                                                 //get the current time
+        SimpleDateFormat ft = new SimpleDateFormat ("HH:mm : ");                //get the date formatter ready
+        String t = ft.format(time);                                             //create a new string with the current formatted time
+        try {
+            statusTxt.getDocument().insertString(0, t + in + "\n", null);       //put the in String at the top of the text area
+        } catch (BadLocationException ex) {                                     //need to catch this, shouldn't ever get thrown
+            ex.printStackTrace();
+        }
+    }
+    
+//==============================================================================    
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        colorFrame = new javax.swing.JFrame();
+        jColorChooser1 = new javax.swing.JColorChooser();
         statusPane = new javax.swing.JPanel();
         statusScrollPane = new javax.swing.JScrollPane();
         statusTxt = new javax.swing.JTextArea();
@@ -95,7 +133,26 @@ public class Gui extends javax.swing.JFrame {
         followMenuItm = new javax.swing.JMenuItem();
         aboutMenuItm = new javax.swing.JMenuItem();
 
+        javax.swing.GroupLayout colorFrameLayout = new javax.swing.GroupLayout(colorFrame.getContentPane());
+        colorFrame.getContentPane().setLayout(colorFrameLayout);
+        colorFrameLayout.setHorizontalGroup(
+            colorFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, colorFrameLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jColorChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 646, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        colorFrameLayout.setVerticalGroup(
+            colorFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(colorFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jColorChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("TwiScn Host");
+        setResizable(false);
 
         statusPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Status"));
 
@@ -178,9 +235,16 @@ public class Gui extends javax.swing.JFrame {
 
         brightnessName.setText("Brightness:");
 
+        brightnessSpnr.setModel(new javax.swing.SpinnerNumberModel(255, 0, 255, 1));
+
         blinkPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Tweet Blink"));
 
         blinkEnabledChk.setText("Enabled");
+        blinkEnabledChk.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                blinkEnabledChkStateChanged(evt);
+            }
+        });
 
         blinkColorBtn.setText("Color");
         blinkColorBtn.setEnabled(false);
@@ -210,14 +274,27 @@ public class Gui extends javax.swing.JFrame {
 
         readName.setText("Read Time:");
 
+        readSpnr.setModel(new javax.swing.SpinnerNumberModel(2000, 0, 65535, 1));
+
         userColorBtn.setText("Color");
+        userColorBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userColorBtnActionPerformed(evt);
+            }
+        });
 
         rainbowPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Rainbow Mode"));
 
         rainEnabledChk.setText("Enabled");
+        rainEnabledChk.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                rainEnabledChkItemStateChanged(evt);
+            }
+        });
 
         rainSpeedName.setText("Speed:");
 
+        rainSpeedSpnr.setModel(new javax.swing.SpinnerNumberModel(100, 0, 65535, 1));
         rainSpeedSpnr.setEnabled(false);
 
         javax.swing.GroupLayout rainbowPaneLayout = new javax.swing.GroupLayout(rainbowPane);
@@ -233,7 +310,7 @@ public class Gui extends javax.swing.JFrame {
                     .addGroup(rainbowPaneLayout.createSequentialGroup()
                         .addComponent(rainSpeedName)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rainSpeedSpnr, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)))
+                        .addComponent(rainSpeedSpnr, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         rainbowPaneLayout.setVerticalGroup(
@@ -254,16 +331,16 @@ public class Gui extends javax.swing.JFrame {
             lcdTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(lcdTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(lcdTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(userColorBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(lcdTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(lcdTabLayout.createSequentialGroup()
                         .addGroup(lcdTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(brightnessName)
                             .addComponent(readName))
                         .addGap(18, 18, 18)
-                        .addGroup(lcdTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(readSpnr, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                            .addComponent(brightnessSpnr))))
+                        .addGroup(lcdTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(brightnessSpnr, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                            .addComponent(readSpnr, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
+                    .addComponent(userColorBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(rainbowPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
@@ -296,15 +373,20 @@ public class Gui extends javax.swing.JFrame {
         fn1Name.setText("FN1:");
 
         fn1Cbx.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Increment Brightness", "Toggle Rainbow Mode", "Switch Tweet", "Toggle Scroll" }));
-        fn1Cbx.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fn1CbxActionPerformed(evt);
+        fn1Cbx.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fn1CbxItemStateChanged(evt);
             }
         });
 
         fn2Name.setText("FN2:");
 
         fn2Cbx.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Increment Brightness", "Toggle Rainbow Mode", "Switch Tweet", "Toggle Scroll" }));
+        fn2Cbx.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fn2CbxItemStateChanged(evt);
+            }
+        });
         fn2Cbx.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fn2CbxActionPerformed(evt);
@@ -549,7 +631,7 @@ public class Gui extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(statusPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(11, 11, 11))
         );
@@ -557,13 +639,47 @@ public class Gui extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fn1CbxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fn1CbxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fn1CbxActionPerformed
-
+//==============================================================================     
+    
     private void fn2CbxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fn2CbxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fn2CbxActionPerformed
+
+    private void rainEnabledChkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rainEnabledChkItemStateChanged
+        if(rainEnabledChk.isSelected()) {
+            rainSpeedSpnr.setEnabled(true);
+            userColorBtn.setEnabled(false);
+        }
+        else {
+            rainSpeedSpnr.setEnabled(false);
+            userColorBtn.setEnabled(true);
+        }
+        deviceApplyBtn.setEnabled(true);
+    }//GEN-LAST:event_rainEnabledChkItemStateChanged
+
+    private void blinkEnabledChkStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_blinkEnabledChkStateChanged
+        if(blinkEnabledChk.isSelected()) {
+            blinkColorBtn.setEnabled(true);
+        }
+        else {
+            blinkColorBtn.setEnabled(false);
+        }
+        deviceApplyBtn.setEnabled(true);
+    }//GEN-LAST:event_blinkEnabledChkStateChanged
+
+    private void fn1CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn1CbxItemStateChanged
+        deviceApplyBtn.setEnabled(true);
+    }//GEN-LAST:event_fn1CbxItemStateChanged
+
+    private void fn2CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn2CbxItemStateChanged
+        deviceApplyBtn.setEnabled(true);
+    }//GEN-LAST:event_fn2CbxItemStateChanged
+
+    private void userColorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userColorBtnActionPerformed
+        Color selectedColor = JColorChooser.showDialog(this, "Pick a Color", Color.GREEN);
+        System.out.println(selectedColor);
+        
+    }//GEN-LAST:event_userColorBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
@@ -574,6 +690,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JSpinner brightnessSpnr;
     private javax.swing.JMenuItem bugMenuItm;
     private javax.swing.JPanel buttonsTab;
+    private javax.swing.JFrame colorFrame;
     private javax.swing.JButton deviceApplyBtn;
     private javax.swing.JButton deviceDefaultsBtn;
     private javax.swing.JPanel deviceInfoPane;
@@ -594,6 +711,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JColorChooser jColorChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel9;
