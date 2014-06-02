@@ -21,7 +21,6 @@ public class TweetHandler {
         twitter = new TwitterFactory().getInstance();
         twitterStream = new TwitterStreamFactory().getInstance();               //create a new instance of TwitterStream
         twitterStream.addListener(listener);                                    //add our listener to it   
-        init();
     }
     
     public void init() {                                                        //used to resend the latest tweet and restart the stream
