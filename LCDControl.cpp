@@ -180,9 +180,9 @@ void LCDControl::bootAnim() {                                                   
     lcdc.print("Version 1a"); 
     delay(2000);
     lcdc.setCursor(6, 0);
-    lcdc.print("Waiting");
+    lcdc.print("Waiting   ");
     lcdc.setCursor(6, 1);
-    lcdc.print("for USB  ");
+    lcdc.print("for USB   ");
 }
 
 void LCDControl::connectAnim() {                                                //displays a connecting animation on the lcd, must be called to advance "frames"
