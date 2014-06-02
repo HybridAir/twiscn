@@ -11,22 +11,19 @@ public class DeviceHandler {
     private ButtonActions btnActions;
     private String hardVersion = null;
     private String firmVersion = null;
+    private int[] devIDs;
     
-    public DeviceHandler(int[] deviceIDs, Options opt, Gui gui) {        //constructor, needs the device IDs to use, the options instance, and the guihandler instance
+    public DeviceHandler(int[] devIDs, Options opt, Gui gui) {        //constructor, needs the device IDs to use, the options instance, and the guihandler instance
         this.opt = opt;
         this.gui = gui;
+        this.devIDs = devIDs;
         btnActions = new ButtonActions(this.opt);
-        logger.log(Level.INFO, "Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
-        gui.addStatusLine("Attempting to connect to device with VENDOR_ID: " + deviceIDs[0] + " and PRODUCT_ID: " + deviceIDs[1]);
-        comms = new DeviceComms(new UsbHidComms(deviceIDs[0], deviceIDs[1]));   //try connecting to the device over usb, program will not continue until successful
-        gui.setConnected(true);
-        getVersion();
-        applyAllOptions();                                                      
+        comms = new DeviceComms(new UsbHidComms(devIDs[0], devIDs[1]));   //try connecting to the device over usb, program will not continue until successful                                                     
     }
     
     public void init() {                                                        //used to reconnect the device, can be called if reconnection is necessary
-        logger.log(Level.INFO, "Attempting to reconnect to device");
-        gui.addStatusLine("Attempting to reconnect to device");
+        logger.log(Level.INFO, "Attempting to connect to device with VENDOR_ID: " + devIDs[0] + " and PRODUCT_ID: " + devIDs[1]);
+        gui.addStatusLine("Attempting to connect to device with VENDOR_ID: " + devIDs[0] + " and PRODUCT_ID: " + devIDs[1]);
         comms.init();                                                           //tell comms to start reconnecting
         gui.setConnected(true);
         getVersion();
@@ -53,8 +50,8 @@ public class DeviceHandler {
 //==============================================================================    
     
     public void applyAllOptions() {                                             //applys all options, use this after updating option settings
-        comms.sendOptions(opt.formatAll());                                 //format and send the updated options to the device
-        gui.addStatusLine("Settings sent to device");
+        comms.sendOptions(opt.formatAll());                                     //format and send the updated options to the device
+        //add a call in here to save set options
     }
     
     public void newTweet(String user, String text) {                            //used to send a new tweet to the device, needs a user and tweet text
