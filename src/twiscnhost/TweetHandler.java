@@ -28,7 +28,7 @@ public class TweetHandler {
         startStream();                                                          //start the twitterstream thread
     }
     
-    private long[] getFollowUsers() {                                           //used to get the array of userIDs to follow, and check if they're protected
+    public long[] getFollowUsers() {                                           //used to get the array of userIDs to follow, and check if they're protected
         long[] in = opt.getFollowUsers();                                       //get the current array of IDs out
         for(int i = 0;i < in.length;i++) {                                      //for each ID
             try {
