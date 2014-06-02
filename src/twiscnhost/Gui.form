@@ -726,8 +726,8 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jScrollPane2" max="32767" attributes="0"/>
-                              <Component id="addUserBtn" pref="150" max="32767" attributes="0"/>
+                              <Component id="jScrollPane2" pref="150" max="32767" attributes="0"/>
+                              <Component id="addUserBtn" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="userInfoPane" max="32767" attributes="0"/>
@@ -761,17 +761,6 @@
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
                     <Component class="javax.swing.JList" name="twtUserLst">
-                      <Properties>
-                        <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-                          <StringArray count="5">
-                            <StringItem index="0" value="Item 1"/>
-                            <StringItem index="1" value="Item 2"/>
-                            <StringItem index="2" value="Item 3"/>
-                            <StringItem index="3" value="Item 4"/>
-                            <StringItem index="4" value="Item 5"/>
-                          </StringArray>
-                        </Property>
-                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -800,13 +789,18 @@
                                       <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                                       <Component id="remUserBtn" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="twtUserTitle" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="twtUserIDTitle" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="twtLastTitle" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="twtUserLbl" max="32767" attributes="0"/>
+                                          <Component id="twtUserIDLbl" max="32767" attributes="0"/>
+                                          <Component id="twtLastLbl" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -817,11 +811,20 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="twtUserTitle" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="twtUserTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="twtUserLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="twtUserIDTitle" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="twtUserIDTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="twtUserIDLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="twtLastTitle" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="twtLastTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="twtLastLbl" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="remUserBtn" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -858,6 +861,21 @@
                     <Component class="javax.swing.JLabel" name="twtLastTitle">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Last Tweet:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="twtUserLbl">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value=" "/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="twtUserIDLbl">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value=" "/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="twtLastLbl">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value=" "/>
                       </Properties>
                     </Component>
                   </SubComponents>

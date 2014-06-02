@@ -3,12 +3,17 @@ package twiscnhost;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JColorChooser;
 import javax.swing.text.BadLocationException;
+import twitter4j.TwitterException;
 
 public class Gui extends javax.swing.JFrame {
     
     private Options opt;
+    private TweetHandler twt;
     public boolean applyOptions = false;                                        //stores whether apply the options is needed asap
     
     public Gui(Options opt) {                                                   //default constructor, gets everything started, needs the Options instance
@@ -36,7 +41,12 @@ public class Gui extends javax.swing.JFrame {
         //</editor-fold>
         this.opt = opt;
         initComponents();                                                       //get all the components going
+    }
+    
+    public void init(TweetHandler twt) {
+        this.twt = twt;
         setDeviceDefaults();
+        setTwitterDefaults();
         deviceApplyBtn.setEnabled(false);                                        //enable the apply button, since there has been a new change
         setVisible(true);                                                       //make the primary window visible       
         addStatusLine("Program initialized");
@@ -79,6 +89,23 @@ public class Gui extends javax.swing.JFrame {
         blinkEnabledChk.setSelected(opt.getBlinkStateBool());
         fn1Cbx.setSelectedIndex(opt.getFn1Action());
         fn2Cbx.setSelectedIndex(opt.getFn2Action());
+    }
+    
+    private void setTwitterDefaults() {
+        twtUserLst.setListData(new Object[0]);
+        long[] users = twt.getFollowUsers();
+        DefaultListModel model = new DefaultListModel();
+        twtUserLst.setModel(model);
+        for(int i = 0;i < users.length;i++) {
+            try {
+                String name = twt.getScreenName(users[i]);
+                System.out.println(name);             
+                model.addElement(name);
+                
+            } catch (TwitterException ex) {
+                Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 //==============================================================================    
@@ -133,6 +160,9 @@ public class Gui extends javax.swing.JFrame {
         remUserBtn = new javax.swing.JButton();
         twtProfileBtn = new javax.swing.JButton();
         twtLastTitle = new javax.swing.JLabel();
+        twtUserLbl = new javax.swing.JLabel();
+        twtUserIDLbl = new javax.swing.JLabel();
+        twtLastLbl = new javax.swing.JLabel();
         twitterApplyBtn = new javax.swing.JButton();
         twitterDefaultsBtn = new javax.swing.JButton();
         settingsTab = new javax.swing.JPanel();
@@ -505,11 +535,6 @@ public class Gui extends javax.swing.JFrame {
 
         followingPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Following"));
 
-        twtUserLst.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane2.setViewportView(twtUserLst);
 
         addUserBtn.setText("Add User");
@@ -528,6 +553,12 @@ public class Gui extends javax.swing.JFrame {
 
         twtLastTitle.setText("Last Tweet:");
 
+        twtUserLbl.setText(" ");
+
+        twtUserIDLbl.setText(" ");
+
+        twtLastLbl.setText(" ");
+
         javax.swing.GroupLayout userInfoPaneLayout = new javax.swing.GroupLayout(userInfoPane);
         userInfoPane.setLayout(userInfoPaneLayout);
         userInfoPaneLayout.setHorizontalGroup(
@@ -544,18 +575,28 @@ public class Gui extends javax.swing.JFrame {
                             .addComponent(twtUserTitle)
                             .addComponent(twtUserIDTitle)
                             .addComponent(twtLastTitle))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(twtUserLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(twtUserIDLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(twtLastLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         userInfoPaneLayout.setVerticalGroup(
             userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(userInfoPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(twtUserTitle)
+                .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(twtUserTitle)
+                    .addComponent(twtUserLbl))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(twtUserIDTitle)
+                .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(twtUserIDTitle)
+                    .addComponent(twtUserIDLbl))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(twtLastTitle)
+                .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(twtLastTitle)
+                    .addComponent(twtLastLbl))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(userInfoPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(remUserBtn)
@@ -570,8 +611,8 @@ public class Gui extends javax.swing.JFrame {
             .addGroup(followingPaneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(followingPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2)
-                    .addComponent(addUserBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                    .addComponent(addUserBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(userInfoPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -823,9 +864,12 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JButton twitterApplyBtn;
     private javax.swing.JButton twitterDefaultsBtn;
     private javax.swing.JPanel twitterTab;
+    private javax.swing.JLabel twtLastLbl;
     private javax.swing.JLabel twtLastTitle;
     private javax.swing.JButton twtProfileBtn;
+    private javax.swing.JLabel twtUserIDLbl;
     private javax.swing.JLabel twtUserIDTitle;
+    private javax.swing.JLabel twtUserLbl;
     private javax.swing.JList twtUserLst;
     private javax.swing.JLabel twtUserTitle;
     private javax.swing.JButton userColorBtn;
