@@ -52,6 +52,19 @@ public class TweetHandler {
         return formatTweet(status);                                             //format the status and return the result (throws TwitterException if it fails)
     }
     
+    public Date getLastTweetDate(String userName) throws TwitterException {     //returns the date of a user's last tweet, throws TwitterException
+        Query query = new Query("from:" + userName);                            //try to get a formatted query string created (will throw TwitterException if it fails)
+        QueryResult result = twitter.search(query);                             //try to get a list of recent tweets (will throw TwitterException if it fails)
+        List<Status> statuses = result.getTweets();                             //get the returned tweets into a List of statuses (will throw TwitterException if it fails)
+        try {
+            Status status = statuses.get(0);                                    //get the first status out, it's the latest one      
+            return status.getCreatedAt();                                       //format the status and return the result (throws TwitterException if it fails)
+        }
+        catch(IndexOutOfBoundsException e) {                                    //user has not made any tweets, can't return a date
+            return null;
+        }
+    }
+    
     private String[] formatTweet(Status status) {                               //returns a formatted String array, needs a valid Status
         Date createdAt = status.getCreatedAt();                                 //get the Date the status was created on
         SimpleDateFormat ft = new SimpleDateFormat (" hh:mm a");                //prepare to reformat that date
@@ -76,6 +89,22 @@ public class TweetHandler {
     private void sendTweet(Status status) {                                     //tries to send the latest tweet to the device
             String[] tweet = formatTweet(status);                               //get the latest tweet into a new array (will catch TwitterException if it fails)
             twiScn.newTweet(tweet[0], tweet[1]);                                //send the tweet to the device
+    }
+    
+    public boolean checkExists(String userName) {                               //used to check if a user exists
+        try{
+            twitter.showUser(getUserID(userName));                              //try to get the user
+            return true;                                                        //got it, user exists
+        }
+        catch(TwitterException ex){                                             //catch any twitter errors
+            if(te.getStatusCode() == 404){                                      //if the error code is 404, the user doesn't exist
+                return false;
+            } 
+            else {                                                              //we have bigger problems if it wasn't just a 404
+                java.util.logging.Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }   
     }
     
 //==============================================================================
