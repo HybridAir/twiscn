@@ -40,11 +40,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="See the Wiki"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wikiMenuItmActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="bugMenuItm">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Report a bug"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bugMenuItmActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
@@ -52,11 +58,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Follow TwiScn on Twitter"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="followMenuItmActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="aboutMenuItm">
               <Properties>
                 <Property name="text" type="java.lang.String" value="About TwiScn"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aboutMenuItmActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

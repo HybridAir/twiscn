@@ -15,6 +15,7 @@ import twitter4j.TwitterException;
 
 public class Gui extends javax.swing.JFrame {
     
+    private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private Options opt;
     private TweetHandler twt;
     public boolean applyOptions = false;                                        //stores whether apply the options is needed asap
@@ -70,12 +71,7 @@ public class Gui extends javax.swing.JFrame {
     }   
     
     private void openProfile(String userName) {                                 //used to open the selected user's profile in the system's browser
-        try {
-            //try to open the user's profile
-            Desktop.getDesktop().browse(new URL("https://twitter.com/" + userName).toURI());
-        } catch (Exception e) {                                                 //catch any errors, like if the browser is unable to open
-            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, e);   //log it just in case
-        }
+        openWebsite("https://twitter.com/" + userName);
     }
     
     private void getUserInfo(String userName) {                                 //used to get and display the selected user's info, needs their username
@@ -101,6 +97,15 @@ public class Gui extends javax.swing.JFrame {
             remUserBtn.setEnabled(true);
         } catch (TwitterException ex) {                                         
             Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);  //log it just in case
+        }
+    }
+    
+    private void openWebsite(String url) {
+        try {
+            //try to open the user's profile
+            Desktop.getDesktop().browse(new URL(url).toURI());
+        } catch (Exception e) {                                                 //catch any errors, like if the browser is unable to open
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, e);   //log it just in case
         }
     }
     
@@ -733,16 +738,36 @@ public class Gui extends javax.swing.JFrame {
         helpMenu.setText("Help");
 
         wikiMenuItm.setText("See the Wiki");
+        wikiMenuItm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wikiMenuItmActionPerformed(evt);
+            }
+        });
         helpMenu.add(wikiMenuItm);
 
         bugMenuItm.setText("Report a bug");
+        bugMenuItm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bugMenuItmActionPerformed(evt);
+            }
+        });
         helpMenu.add(bugMenuItm);
         helpMenu.add(jSeparator1);
 
         followMenuItm.setText("Follow TwiScn on Twitter");
+        followMenuItm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                followMenuItmActionPerformed(evt);
+            }
+        });
         helpMenu.add(followMenuItm);
 
         aboutMenuItm.setText("About TwiScn");
+        aboutMenuItm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItmActionPerformed(evt);
+            }
+        });
         helpMenu.add(aboutMenuItm);
 
         jMenuBar1.add(helpMenu);
@@ -925,6 +950,25 @@ public class Gui extends javax.swing.JFrame {
             }
         }       
     }//GEN-LAST:event_addUserBtnActionPerformed
+
+    private void wikiMenuItmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wikiMenuItmActionPerformed
+        //used to go the wiki
+        openWebsite("https://github.com/HybridAir/TwiScnHost/wiki");
+    }//GEN-LAST:event_wikiMenuItmActionPerformed
+
+    private void bugMenuItmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bugMenuItmActionPerformed
+        //used to go the issues page
+        openWebsite("https://github.com/HybridAir/TwiScnHost/issues");
+    }//GEN-LAST:event_bugMenuItmActionPerformed
+
+    private void followMenuItmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followMenuItmActionPerformed
+        //used to go the issues page
+        openWebsite("https://twitter.com/twiscn");
+    }//GEN-LAST:event_followMenuItmActionPerformed
+
+    private void aboutMenuItmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItmActionPerformed
+        AboutPanel about = new AboutPanel();
+    }//GEN-LAST:event_aboutMenuItmActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
