@@ -1,12 +1,15 @@
 package twiscnhost;
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 import twitter4j.TwitterException;
 
@@ -46,11 +49,57 @@ public class Gui extends javax.swing.JFrame {
     public void init(TweetHandler twt) {
         this.twt = twt;
         setDeviceDefaults();
-        setTwitterDefaults();
+        getUserList();
         deviceApplyBtn.setEnabled(false);                                        //enable the apply button, since there has been a new change
         setVisible(true);                                                       //make the primary window visible       
         addStatusLine("Program initialized");
         setConnected(false);                                                    //set the connected status to false
+    }
+    
+//==============================================================================
+    
+    public void addStatusLine(String in) {                                      //used to write a line to the top of the status box
+        Date time = new Date();                                                 //get the current time
+        SimpleDateFormat ft = new SimpleDateFormat ("HH:mm : ");                //get the date formatter ready
+        String t = ft.format(time);                                             //create a new string with the current formatted time
+        try {
+            statusTxt.getDocument().insertString(0, t + in + "\n", null);       //put the in String at the top of the text area
+        } catch (BadLocationException ex) {                                     //need to catch this, shouldn't ever get thrown
+            ex.printStackTrace();
+        }
+    }   
+    
+    private void openProfile(String userName) {
+    try {
+        Desktop.getDesktop().browse(new URL("https://twitter.com/" + userName).toURI());
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+    
+    private void getUserInfo(String userName) {
+        twtUserLbl.setText(userName);
+        long userID;
+        try {
+            userID = twt.getUserID(userName);
+            twtUserIDLbl.setText(String.valueOf(userID));
+        } catch (TwitterException ex) {
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            Date d = twt.getLastTweetDate(userName);
+            if(d != null) {
+                SimpleDateFormat ft = new SimpleDateFormat ("MM.dd.yyyy 'at' hh:mm a");                //prepare to reformat that date
+                twtLastLbl.setText(ft.format(d));
+            }
+            else {
+                twtLastLbl.setText("Unable to get last Tweet date");
+            }
+            twtProfileBtn.setEnabled(true);
+            remUserBtn.setEnabled(true);
+        } catch (TwitterException ex) {
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 //==============================================================================     
@@ -69,17 +118,6 @@ public class Gui extends javax.swing.JFrame {
         firmLbl.setText(firmware);
     }
     
-    public void addStatusLine(String in) {                                      //used to write a line to the top of the status box
-        Date time = new Date();                                                 //get the current time
-        SimpleDateFormat ft = new SimpleDateFormat ("HH:mm : ");                //get the date formatter ready
-        String t = ft.format(time);                                             //create a new string with the current formatted time
-        try {
-            statusTxt.getDocument().insertString(0, t + in + "\n", null);       //put the in String at the top of the text area
-        } catch (BadLocationException ex) {                                     //need to catch this, shouldn't ever get thrown
-            ex.printStackTrace();
-        }
-    }
-    
     private void setDeviceDefaults() {
         opt.setDeviceDefaults();
         brightnessSpnr.setValue(opt.getBrightnessInt());
@@ -91,17 +129,15 @@ public class Gui extends javax.swing.JFrame {
         fn2Cbx.setSelectedIndex(opt.getFn2Action());
     }
     
-    private void setTwitterDefaults() {
+    private void getUserList() {
         twtUserLst.setListData(new Object[0]);
         long[] users = twt.getFollowUsers();
         DefaultListModel model = new DefaultListModel();
         twtUserLst.setModel(model);
         for(int i = 0;i < users.length;i++) {
             try {
-                String name = twt.getScreenName(users[i]);
-                System.out.println(name);             
-                model.addElement(name);
-                
+                String name = twt.getScreenName(users[i]);           
+                model.addElement(name);  
             } catch (TwitterException ex) {
                 Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -535,9 +571,19 @@ public class Gui extends javax.swing.JFrame {
 
         followingPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Following"));
 
+        twtUserLst.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                twtUserLstValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(twtUserLst);
 
         addUserBtn.setText("Add User");
+        addUserBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addUserBtnActionPerformed(evt);
+            }
+        });
 
         userInfoPane.setBorder(javax.swing.BorderFactory.createTitledBorder("User Info"));
 
@@ -547,9 +593,19 @@ public class Gui extends javax.swing.JFrame {
 
         remUserBtn.setText("Remove User");
         remUserBtn.setEnabled(false);
+        remUserBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                remUserBtnActionPerformed(evt);
+            }
+        });
 
         twtProfileBtn.setText("View Profile");
         twtProfileBtn.setEnabled(false);
+        twtProfileBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                twtProfileBtnActionPerformed(evt);
+            }
+        });
 
         twtLastTitle.setText("Last Tweet:");
 
@@ -814,6 +870,62 @@ public class Gui extends javax.swing.JFrame {
         setDeviceDefaults();
         deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
     }//GEN-LAST:event_deviceDefaultsBtnActionPerformed
+
+    private void twtUserLstValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_twtUserLstValueChanged
+        String out = String.valueOf(twtUserLst.getSelectedValue());
+        getUserInfo(out);
+    }//GEN-LAST:event_twtUserLstValueChanged
+
+    private void twtProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twtProfileBtnActionPerformed
+        String out = String.valueOf(twtUserLst.getSelectedValue());
+        openProfile(out);
+    }//GEN-LAST:event_twtProfileBtnActionPerformed
+
+    private void remUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remUserBtnActionPerformed
+        String out = String.valueOf(twtUserLst.getSelectedValue());
+        try {  
+            opt.delFollowUser(twt.getUserID(out));
+            getUserList();
+            twtUserIDLbl.setText("");
+            twtUserLbl.setText("");
+            twtLastLbl.setText("");
+        } catch (TwitterException ex) {
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_remUserBtnActionPerformed
+
+    private void addUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserBtnActionPerformed
+        String input = null;
+        input = JOptionPane.showInputDialog(null, 
+           "Type in the user name found in the user's profile URL:", 
+           "Add User", JOptionPane.QUESTION_MESSAGE,null,null,"").toString();
+        
+        if(input != null) {
+            if(twt.checkExists(input)) {
+                try {
+                    long ID = twt.getUserID(input);
+                    if(!twt.getProtected(ID)) {
+                        opt.addFollowUser(twt.getUserID(input));
+                        getUserList();
+                        twtUserIDLbl.setText("");
+                        twtUserLbl.setText("");
+                        twtLastLbl.setText("");
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(null, input + "'s tweets are protected, unable to add user.", "Error", JOptionPane.ERROR_MESSAGE, null);
+                    }
+                } catch (TwitterException ex) {
+                    Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Failed to find the user.", "Error", JOptionPane.ERROR_MESSAGE, null);
+            }
+        }
+       
+        
+        
+    }//GEN-LAST:event_addUserBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
