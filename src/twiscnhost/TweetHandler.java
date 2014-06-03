@@ -97,7 +97,7 @@ public class TweetHandler {
             return true;                                                        //got it, user exists
         }
         catch(TwitterException ex){                                             //catch any twitter errors
-            if(te.getStatusCode() == 404){                                      //if the error code is 404, the user doesn't exist
+            if(ex.getStatusCode() == 404){                                      //if the error code is 404, the user doesn't exist
                 return false;
             } 
             else {                                                              //we have bigger problems if it wasn't just a 404
