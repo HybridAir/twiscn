@@ -46,13 +46,13 @@ public class Gui extends javax.swing.JFrame {
         initComponents();                                                       //get all the components going
     }
     
-    public void init(TweetHandler twt) {
+    public void init(TweetHandler twt) {                                        //used to finish setting up and displaying the GUI, needs the tweethandler instance
         this.twt = twt;
-        setDeviceDefaults();
-        getUserList();
-        deviceApplyBtn.setEnabled(false);                                        //enable the apply button, since there has been a new change
+        setDeviceDefaults();                                                    //set the default settings for the device tab
+        refreshUserList();                                                          //set up the user list in the twitter tab
+        deviceApplyBtn.setEnabled(false);                                       //disable the device apply button, it will get the default settings automatically
         setVisible(true);                                                       //make the primary window visible       
-        addStatusLine("Program initialized");
+        addStatusLine("Program initialized");               
         setConnected(false);                                                    //set the connected status to false
     }
     
@@ -65,40 +65,42 @@ public class Gui extends javax.swing.JFrame {
         try {
             statusTxt.getDocument().insertString(0, t + in + "\n", null);       //put the in String at the top of the text area
         } catch (BadLocationException ex) {                                     //need to catch this, shouldn't ever get thrown
-            ex.printStackTrace();
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);  //log it just in case
         }
     }   
     
-    private void openProfile(String userName) {
-    try {
-        Desktop.getDesktop().browse(new URL("https://twitter.com/" + userName).toURI());
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-    
-    private void getUserInfo(String userName) {
-        twtUserLbl.setText(userName);
-        long userID;
+    private void openProfile(String userName) {                                 //used to open the selected user's profile in the system's browser
         try {
-            userID = twt.getUserID(userName);
-            twtUserIDLbl.setText(String.valueOf(userID));
-        } catch (TwitterException ex) {
-            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+            //try to open the user's profile
+            Desktop.getDesktop().browse(new URL("https://twitter.com/" + userName).toURI());
+        } catch (Exception e) {                                                 //catch any errors, like if the browser is unable to open
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, e);   //log it just in case
+        }
+    }
+    
+    private void getUserInfo(String userName) {                                 //used to get and display the selected user's info, needs their username
+        twtUserLbl.setText(userName);                                           //set the username label
+        long userID;                                                            //get a long ready
+        try {
+            userID = twt.getUserID(userName);                                   //try to convert the username to a userID
+            twtUserIDLbl.setText(String.valueOf(userID));                       //set the userID label to that ID we just got
+        } catch (TwitterException ex) {                                         //catch any twitter related errors
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);  //log it just in case
         }
         try {
-            Date d = twt.getLastTweetDate(userName);
-            if(d != null) {
-                SimpleDateFormat ft = new SimpleDateFormat ("MM.dd.yyyy 'at' hh:mm a");                //prepare to reformat that date
-                twtLastLbl.setText(ft.format(d));
+            Date d = twt.getLastTweetDate(userName);                            //try to get the date of the user's last tweet
+            if(d != null) {                                                     //if they actually tweeted before
+                SimpleDateFormat ft = new SimpleDateFormat ("MM.dd.yyyy 'at' hh:mm a");
+                twtLastLbl.setText(ft.format(d));                               //set the last tweet label to the formatted date
             }
             else {
                 twtLastLbl.setText("Unable to get last Tweet date");
             }
-            twtProfileBtn.setEnabled(true);
+            //got the user's data, so start enabling the necessary buttons
+            twtProfileBtn.setEnabled(true);                                     
             remUserBtn.setEnabled(true);
-        } catch (TwitterException ex) {
-            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TwitterException ex) {                                         
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);  //log it just in case
         }
     }
     
@@ -118,8 +120,9 @@ public class Gui extends javax.swing.JFrame {
         firmLbl.setText(firmware);
     }
     
-    private void setDeviceDefaults() {
-        opt.setDeviceDefaults();
+    private void setDeviceDefaults() {                                          //used to set the default device settings in the GUI
+        opt.setDeviceDefaults();                                                //tell Options to set all device settings to default
+        //reset all the necessary components
         brightnessSpnr.setValue(opt.getBrightnessInt());
         readSpnr.setValue(opt.getReadTime());
         rainEnabledChk.setSelected(opt.getRnbwStateBool());
@@ -129,16 +132,16 @@ public class Gui extends javax.swing.JFrame {
         fn2Cbx.setSelectedIndex(opt.getFn2Action());
     }
     
-    private void getUserList() {
-        twtUserLst.setListData(new Object[0]);
-        long[] users = twt.getFollowUsers();
-        DefaultListModel model = new DefaultListModel();
-        twtUserLst.setModel(model);
-        for(int i = 0;i < users.length;i++) {
+    private void refreshUserList() {                                                //used to update the list of users in the list
+        twtUserLst.setListData(new Object[0]);                                  //clear the list
+        long[] users = twt.getFollowUsers();                                    //get the user array from options
+        DefaultListModel model = new DefaultListModel();                        //create a new list model
+        twtUserLst.setModel(model);                                             //set the list to that empty model
+        for(int i = 0;i < users.length;i++) {                                   //for each user we got
             try {
-                String name = twt.getScreenName(users[i]);           
-                model.addElement(name);  
-            } catch (TwitterException ex) {
+                String name = twt.getScreenName(users[i]);                      //try to convert the ID to a username String      
+                model.addElement(name);                                         //add the username to the list
+            } catch (TwitterException ex) {                                     //catch any twitter related errors
                 Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -484,11 +487,6 @@ public class Gui extends javax.swing.JFrame {
                 fn2CbxItemStateChanged(evt);
             }
         });
-        fn2Cbx.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fn2CbxActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout buttonsTabLayout = new javax.swing.GroupLayout(buttonsTab);
         buttonsTab.setLayout(buttonsTabLayout);
@@ -777,12 +775,6 @@ public class Gui extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-//==============================================================================     
-    
-    private void fn2CbxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fn2CbxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fn2CbxActionPerformed
-
     private void rainEnabledChkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rainEnabledChkItemStateChanged
         //used to enable/disable components when the rainbow mode enable checkbox is modified
         if(rainEnabledChk.isSelected()) {
@@ -825,7 +817,7 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_blinkColorBtnActionPerformed
 
     private void deviceApplyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deviceApplyBtnActionPerformed
-        //used to get all options from the GUI and set them into Options, and then apply them to the device
+        //used to get all device options from the GUI, set them into Options, and then apply them to the device
         opt.setBrightness((int)brightnessSpnr.getValue());
         opt.setBlinkState(blinkEnabledChk.isSelected());
         opt.setRnbwState(rainEnabledChk.isSelected());
@@ -839,8 +831,8 @@ public class Gui extends javax.swing.JFrame {
         else {
             addStatusLine("Settings sent to device");
         }
-        applyOptions = true;                                                    //aply the options asap
-        deviceApplyBtn.setEnabled(false);                                       //enable the apply button, since there has been a new change
+        applyOptions = true;                                                    //tell the program to apply the options asap
+        deviceApplyBtn.setEnabled(false);                                       //disable the apply button, just applied changes
     }//GEN-LAST:event_deviceApplyBtnActionPerformed
 
     private void brightnessSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_brightnessSpnrStateChanged
@@ -867,64 +859,71 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_blinkEnabledChkItemStateChanged
 
     private void deviceDefaultsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deviceDefaultsBtnActionPerformed
-        setDeviceDefaults();
+        setDeviceDefaults();                                                    //apply the default device settings
         deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
     }//GEN-LAST:event_deviceDefaultsBtnActionPerformed
 
     private void twtUserLstValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_twtUserLstValueChanged
-        String out = String.valueOf(twtUserLst.getSelectedValue());
-        getUserInfo(out);
+        //calls when the user selects a user in the user list
+        String out = String.valueOf(twtUserLst.getSelectedValue());             //get the selected username out
+        getUserInfo(out);                                                       //display that user's info
     }//GEN-LAST:event_twtUserLstValueChanged
 
     private void twtProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twtProfileBtnActionPerformed
-        String out = String.valueOf(twtUserLst.getSelectedValue());
-        openProfile(out);
+        String out = String.valueOf(twtUserLst.getSelectedValue());             //get the selected username out
+        openProfile(out);                                                       //open the user's profile page
     }//GEN-LAST:event_twtProfileBtnActionPerformed
 
     private void remUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_remUserBtnActionPerformed
-        String out = String.valueOf(twtUserLst.getSelectedValue());
+        //removes a selected user from the user list
+        String out = String.valueOf(twtUserLst.getSelectedValue());             //get the selected username out
         try {  
-            opt.delFollowUser(twt.getUserID(out));
-            getUserList();
+            opt.delFollowUser(twt.getUserID(out));                              //try to convert the username to an ID, then tell options to remove it
+            refreshUserList();        
+            //clear the user's info
             twtUserIDLbl.setText("");
             twtUserLbl.setText("");
             twtLastLbl.setText("");
-        } catch (TwitterException ex) {
+            twtProfileBtn.setEnabled(false);                                     
+            remUserBtn.setEnabled(false);
+        } catch (TwitterException ex) {                                         //catch any twitter errors
             Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_remUserBtnActionPerformed
 
     private void addUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserBtnActionPerformed
+        //adds a user to the user list
         String input = null;
+        //spawn an input dialog requesting the username to add
         input = JOptionPane.showInputDialog(null, 
            "Type in the user name found in the user's profile URL:", 
            "Add User", JOptionPane.QUESTION_MESSAGE,null,null,"").toString();
         
-        if(input != null) {
-            if(twt.checkExists(input)) {
+        if(input != null) {                                                     //if the user gave us something to use
+            if(twt.checkExists(input)) {                                        //check if the username exists
                 try {
-                    long ID = twt.getUserID(input);
-                    if(!twt.getProtected(ID)) {
-                        opt.addFollowUser(twt.getUserID(input));
-                        getUserList();
+                    long ID = twt.getUserID(input);                             //try to convert the username to an ID
+                    if(!twt.getProtected(ID)) {                                 //if the user is not protected
+                        opt.addFollowUser(ID);                                  //add the userID to the list
+                        refreshUserList();
+                        //clear the user's info
                         twtUserIDLbl.setText("");
                         twtUserLbl.setText("");
                         twtLastLbl.setText("");
+                        twtProfileBtn.setEnabled(false);                                     
+                        remUserBtn.setEnabled(false);
                     }
-                    else {
+                    else {                                                      //user's tweets are protected, cant do much with that
                         JOptionPane.showMessageDialog(null, input + "'s tweets are protected, unable to add user.", "Error", JOptionPane.ERROR_MESSAGE, null);
                     }
-                } catch (TwitterException ex) {
+                } catch (TwitterException ex) {                                 //catch any twitter errors
                     Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            else {
+            else {                                                              //couldn't find the user
                 JOptionPane.showMessageDialog(null, "Failed to find the user.", "Error", JOptionPane.ERROR_MESSAGE, null);
             }
-        }
-       
-        
-        
+        }       
     }//GEN-LAST:event_addUserBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
