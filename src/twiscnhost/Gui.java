@@ -263,7 +263,6 @@ public class Gui extends javax.swing.JFrame {
         twtUserIDLbl = new javax.swing.JLabel();
         twtLastLbl = new javax.swing.JLabel();
         twitterDefaultsBtn = new javax.swing.JButton();
-        settingsTab = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         helpMenu = new javax.swing.JMenu();
         wikiMenuItm = new javax.swing.JMenuItem();
@@ -784,19 +783,6 @@ public class Gui extends javax.swing.JFrame {
 
         tabbedPane.addTab("Twitter", twitterTab);
 
-        javax.swing.GroupLayout settingsTabLayout = new javax.swing.GroupLayout(settingsTab);
-        settingsTab.setLayout(settingsTabLayout);
-        settingsTabLayout.setHorizontalGroup(
-            settingsTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 528, Short.MAX_VALUE)
-        );
-        settingsTabLayout.setVerticalGroup(
-            settingsTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 302, Short.MAX_VALUE)
-        );
-
-        tabbedPane.addTab("Settings", settingsTab);
-
         helpMenu.setText("Help");
 
         wikiMenuItm.setText("See the Wiki");
@@ -1103,7 +1089,6 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JLabel readName;
     private javax.swing.JSpinner readSpnr;
     private javax.swing.JButton remUserBtn;
-    private javax.swing.JPanel settingsTab;
     protected javax.swing.JLabel statusLbl;
     private javax.swing.JLabel statusName;
     private javax.swing.JPanel statusPane;
