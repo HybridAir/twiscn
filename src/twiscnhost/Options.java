@@ -38,11 +38,10 @@ public class Options {
 
     public Options() {                                                          //default constructor, use all default settings
         setDeviceDefaults();
-        followUsers.add(2524002330L);                                           //add twiscn as a default follow
-        followUsers.add(18856582L);                                             //add twiscn as a default follow       
+        setTwitterDefaults();      
     }
     
-    public void setDeviceDefaults() {
+    public void setDeviceDefaults() {                                           //used to set device defaults
         lcdCol = new Color(0, 150, 255);  
         blinkCol = Color.RED; 
         rnbwSpd = 100;   
@@ -55,6 +54,12 @@ public class Options {
         scroll = true;
         fn1Action = 0;
         fn2Action = 0;
+    }
+    
+    public void setTwitterDefaults() {                                          //used to set twitter defaults
+        clearFollowUsers();
+        followUsers.add(2524002330L);                                           //add twiscn as a default follow
+        followUsers.add(18856582L);                                             //add twiscn as a default follow 
     }
     
 //==============================================================================
@@ -94,8 +99,7 @@ public class Options {
         return out;
     }
     
-    //public void extractPropValue(int valueID, int in) {                             //used to set the options here to values read from the config file, fixing them is necessary
-    public void extractPropValue(int valueID, String in) {                             //used to set the options here to values read from the config file, fixing them is necessary
+    public void extractPropValue(int valueID, String in) {                      //used to set the options here to values read from the config file, fixing them is necessary
         //needs the property value ID and the value
          try {
             switch(valueID) {
