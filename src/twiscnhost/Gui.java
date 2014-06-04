@@ -1,7 +1,16 @@
 package twiscnhost;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +28,8 @@ public class Gui extends javax.swing.JFrame {
     private Options opt;
     private TweetHandler twt;
     public boolean applyOptions = false;                                        //stores whether apply the options is needed asap
+    private SystemTray tray;
+    private TrayIcon trayIcon;
     
     public Gui(Options opt) {                                                   //default constructor, gets everything started, needs the Options instance
         //set windows native lookandfeel
@@ -46,15 +57,59 @@ public class Gui extends javax.swing.JFrame {
         this.opt = opt;
         initComponents();                                                       //get all the components going
     }
-    
+      
     public void init(TweetHandler twt) {                                        //used to finish setting up and displaying the GUI, needs the tweethandler instance
         this.twt = twt;
         setDeviceDefaults();                                                    //set the default settings for the device tab
         refreshUserList();                                                          //set up the user list in the twitter tab
         deviceApplyBtn.setEnabled(false);                                       //disable the device apply button, it will get the default settings automatically
+        systemTray();
         setVisible(true);                                                       //make the primary window visible       
         addStatusLine("Program initialized");               
         setConnected(false);                                                    //set the connected status to false
+    }
+    
+    private void systemTray() {                                                 //used to create the system tray icon and listen for any actions
+        if (SystemTray.isSupported()) {                                         //check if the system tray is supported on this system
+            tray = SystemTray.getSystemTray();                                  //create a new systemtray instance
+            //get the tray icon ready
+            Image trayImage = Toolkit.getDefaultToolkit().getImage("trayicon.gif");
+            PopupMenu menu = new PopupMenu();                                   //create the popup menu
+            MenuItem openItm = new MenuItem("Open");                            //create a new menuitem, used to open the main window
+            menu.add(openItm); 
+            menu.addSeparator();                                                //add a separator for good measure
+            MenuItem exitItm = new MenuItem("Exit");                            //create a new menuitem, used to close the program
+            menu.add(exitItm);    
+            trayIcon = new TrayIcon(trayImage, "TwiScn Host", menu);            //create a new tray icon
+            try {
+                tray.add(trayIcon);                                             //try to add the trayicon to the system tray
+            }
+            catch(AWTException e) {                                             //this gets thrown if the system tray is not supported
+                //don't do anything, just pretend it didn't happen
+                //probably will never get here with that first check above
+            }
+            
+            trayIcon.addActionListener(new ActionListener() {                   //listener for double clicking the tray icon
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(true);                                           //make the main window visible
+                    setState(NORMAL);                                           //unminimize if necessary
+                }
+            });
+
+            openItm.addActionListener(new ActionListener() {                    //listener for the "open" menuitem
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(true);                                           //make the main window visible
+                    setState(NORMAL);                                           //unminimize if necessary
+                }
+            });
+
+            exitItm.addActionListener(new ActionListener() {                    //listener for the "exit" menuitem
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);                                             //shutdown the program
+                    //probably need to have some kind of hook to close files and whatever
+                }
+            });          
+        }
     }
     
 //==============================================================================
@@ -235,9 +290,18 @@ public class Gui extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("TwiScn Host");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+        addWindowStateListener(new java.awt.event.WindowStateListener() {
+            public void windowStateChanged(java.awt.event.WindowEvent evt) {
+                formWindowStateChanged(evt);
+            }
+        });
 
         statusPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Status"));
 
@@ -693,6 +757,11 @@ public class Gui extends javax.swing.JFrame {
         twitterApplyBtn.setEnabled(false);
 
         twitterDefaultsBtn.setText("Defaults");
+        twitterDefaultsBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                twitterDefaultsBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout twitterTabLayout = new javax.swing.GroupLayout(twitterTab);
         twitterTab.setLayout(twitterTabLayout);
@@ -823,7 +892,7 @@ public class Gui extends javax.swing.JFrame {
 
     private void userColorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userColorBtnActionPerformed
         //used to set the user selected LCD color
-        Color selectedColor = JColorChooser.showDialog(this, "Select a Color", opt.getLCDColor());
+        Color selectedColor = JColorChooser.showDialog(this, "Select a Color", opt.getLCDColor());       
         //opens the color chooser dialog, and stores the selected color
         if(selectedColor != null) {                                             //if the user actually chose a new color
             opt.setLCDColor(selectedColor);                                     //give Options that new color
@@ -969,6 +1038,26 @@ public class Gui extends javax.swing.JFrame {
     private void aboutMenuItmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItmActionPerformed
         AboutPanel about = new AboutPanel();
     }//GEN-LAST:event_aboutMenuItmActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        trayIcon.displayMessage("Notice",
+                "TwiScn is running in the background.", TrayIcon.MessageType.INFO);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
+        if(evt.getNewState()==ICONIFIED){
+            setVisible(false);
+            trayIcon.displayMessage("Notice",
+                "TwiScn is running in the background.", TrayIcon.MessageType.INFO);
+        }
+        else if(evt.getNewState()==NORMAL){
+            setVisible(true);
+        }
+    }//GEN-LAST:event_formWindowStateChanged
+
+    private void twitterDefaultsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twitterDefaultsBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_twitterDefaultsBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
