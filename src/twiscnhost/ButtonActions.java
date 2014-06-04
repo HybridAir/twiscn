@@ -23,15 +23,17 @@ public class ButtonActions {
     private void doAction(byte type) {                                          //used to call different functions depending on the byte passed in
         switch(type) {
             case 0:
-                switchBrightness();
                 break;
             case 1:
-                toggleRainbow();
+                switchBrightness();
                 break;
             case 2:
-                prevTweet();
+                toggleRainbow();
                 break;
             case 3:
+                prevTweet();
+                break;
+            case 4:
                 toggleScroll();
                 break;
             default:
