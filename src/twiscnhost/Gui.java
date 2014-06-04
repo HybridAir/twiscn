@@ -27,7 +27,8 @@ public class Gui extends javax.swing.JFrame {
     private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private Options opt;
     private TweetHandler twt;
-    public boolean applyOptions = false;                                        //stores whether apply the options is needed asap
+    public boolean applyDevice = false;                                         //stores if the program needs to apply and save the device options
+    public boolean applyTwitter = false;                                        //stores if the program needs to save the twitter options
     private SystemTray tray;
     private TrayIcon trayIcon;
     
@@ -174,6 +175,7 @@ public class Gui extends javax.swing.JFrame {
         }
         else {
             statusLbl.setText("Searching");
+            setVersions(null, null);
         }
     }
     
@@ -183,7 +185,6 @@ public class Gui extends javax.swing.JFrame {
     }
     
     private void setDeviceDefaults() {                                          //used to set the default device settings in the GUI
-        opt.setDeviceDefaults();                                                //tell Options to set all device settings to default
         //reset all the necessary components
         brightnessSpnr.setValue(opt.getBrightnessInt());
         readSpnr.setValue(opt.getReadTime());
@@ -915,7 +916,7 @@ public class Gui extends javax.swing.JFrame {
         else {
             addStatusLine("Settings sent to device");
         }
-        applyOptions = true;                                                    //tell the program to apply the options asap
+        applyDevice = true;                                                    //tell the program to apply the options asap
         deviceApplyBtn.setEnabled(false);                                       //disable the apply button, just applied changes
     }//GEN-LAST:event_deviceApplyBtnActionPerformed
 
@@ -943,6 +944,7 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_blinkEnabledChkItemStateChanged
 
     private void deviceDefaultsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deviceDefaultsBtnActionPerformed
+        opt.setDeviceDefaults();                                                //tell Options to set all device settings to default
         setDeviceDefaults();                                                    //apply the default device settings
         deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
     }//GEN-LAST:event_deviceDefaultsBtnActionPerformed
@@ -963,6 +965,7 @@ public class Gui extends javax.swing.JFrame {
         String out = String.valueOf(twtUserLst.getSelectedValue());             //get the selected username out
         try {  
             opt.delFollowUser(twt.getUserID(out));                              //try to convert the username to an ID, then tell options to remove it
+            applyTwitter = true;
             refreshUserList();        
             //clear the user's info
             twtUserIDLbl.setText("");
@@ -989,6 +992,7 @@ public class Gui extends javax.swing.JFrame {
                     long ID = twt.getUserID(input);                             //try to convert the username to an ID
                     if(!twt.getProtected(ID)) {                                 //if the user is not protected
                         opt.addFollowUser(ID);                                  //add the userID to the list
+                        applyTwitter = true;
                         refreshUserList();
                         //clear the user's info
                         twtUserIDLbl.setText("");
