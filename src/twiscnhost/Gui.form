@@ -701,8 +701,7 @@
                           <Component id="followingPane" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="twitterDefaultsBtn" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="twitterApplyBtn" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -715,10 +714,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="followingPane" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="twitterApplyBtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="twitterDefaultsBtn" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="twitterDefaultsBtn" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -908,12 +904,6 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="twitterApplyBtn">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Apply"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JButton" name="twitterDefaultsBtn">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Defaults"/>

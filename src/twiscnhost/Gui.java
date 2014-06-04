@@ -262,7 +262,6 @@ public class Gui extends javax.swing.JFrame {
         twtUserLbl = new javax.swing.JLabel();
         twtUserIDLbl = new javax.swing.JLabel();
         twtLastLbl = new javax.swing.JLabel();
-        twitterApplyBtn = new javax.swing.JButton();
         twitterDefaultsBtn = new javax.swing.JButton();
         settingsTab = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -753,9 +752,6 @@ public class Gui extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        twitterApplyBtn.setText("Apply");
-        twitterApplyBtn.setEnabled(false);
-
         twitterDefaultsBtn.setText("Defaults");
         twitterDefaultsBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -773,8 +769,7 @@ public class Gui extends javax.swing.JFrame {
                     .addComponent(followingPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, twitterTabLayout.createSequentialGroup()
                         .addComponent(twitterDefaultsBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(twitterApplyBtn)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         twitterTabLayout.setVerticalGroup(
@@ -783,9 +778,7 @@ public class Gui extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(followingPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(twitterTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(twitterApplyBtn)
-                    .addComponent(twitterDefaultsBtn))
+                .addComponent(twitterDefaultsBtn)
                 .addContainerGap())
         );
 
@@ -1036,17 +1029,21 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_followMenuItmActionPerformed
 
     private void aboutMenuItmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItmActionPerformed
+        //used to display the about window
         AboutPanel about = new AboutPanel();
     }//GEN-LAST:event_aboutMenuItmActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        //used to display a notice when the window is closed
         trayIcon.displayMessage("Notice",
                 "TwiScn is running in the background.", TrayIcon.MessageType.INFO);
     }//GEN-LAST:event_formWindowClosing
 
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged
-        if(evt.getNewState()==ICONIFIED){
-            setVisible(false);
+        //used to display a notice balloon if the window is minimized or something
+        if(evt.getNewState()==ICONIFIED){                                       //if the window was minimized
+            setVisible(false);                                                  //hide the taskbar icon
+            //display the notice that the program is running in the background
             trayIcon.displayMessage("Notice",
                 "TwiScn is running in the background.", TrayIcon.MessageType.INFO);
         }
@@ -1056,7 +1053,15 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowStateChanged
 
     private void twitterDefaultsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twitterDefaultsBtnActionPerformed
-        // TODO add your handling code here:
+        //used to apply default twitter settings
+        opt.setTwitterDefaults();                                               //tell Options to go back to default twitter settings
+        refreshUserList();                                                      //refresh the user list
+        //reset user info
+        twtUserIDLbl.setText("");
+        twtUserLbl.setText("");
+        twtLastLbl.setText("");
+        twtProfileBtn.setEnabled(false);                                     
+        remUserBtn.setEnabled(false);
     }//GEN-LAST:event_twitterDefaultsBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1105,7 +1110,6 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JScrollPane statusScrollPane;
     protected javax.swing.JTextArea statusTxt;
     private javax.swing.JTabbedPane tabbedPane;
-    private javax.swing.JButton twitterApplyBtn;
     private javax.swing.JButton twitterDefaultsBtn;
     private javax.swing.JPanel twitterTab;
     private javax.swing.JLabel twtLastLbl;
