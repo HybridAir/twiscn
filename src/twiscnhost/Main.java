@@ -11,15 +11,15 @@ public class Main extends javax.swing.JFrame {
     public static final int PRODUCT_ID = 0x27d9;
     public static final int[] DEVICEIDS = {VENDOR_ID, PRODUCT_ID};
     
-    public static Options devOptions = new Options();
-    public static PropHandler props = new PropHandler(devOptions);        
-    public static Gui gui = new Gui(devOptions);
-    public static DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, devOptions, gui);   //create a new instance of DeviceHandler, needs the device ids and options 
-    public static TweetHandler twt = new TweetHandler(devOptions, twiScn);
+    public static final Options devOptions = new Options();
+    public static final PropHandler props = new PropHandler(devOptions);        
+    public static final Gui gui = new Gui(devOptions);
+    public static final DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, devOptions, gui);   //create a new instance of DeviceHandler, needs the device ids and options 
+    public static final TweetHandler twt = new TweetHandler(devOptions, twiScn);
 
     public static void main(String[] args) {
         LogHandler.init();                                                      //start logging
-        gui.setTwt(twt);
+        gui.init(twt);
         twiScn.init();
         twt.init();
         
