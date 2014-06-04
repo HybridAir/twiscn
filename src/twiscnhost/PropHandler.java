@@ -61,17 +61,19 @@ public class PropHandler {
     
 //==============================================================================
     
-    private void writeAllProps(boolean recreate) {                              //used to write properties to the file, needs to know if the file needs to be recreated first
-        if(recreate) {                                                          //if true, recreates the file
-            fio.createFile();
+    public void writeAllProps(boolean recreate) {                              //used to write properties to the file, needs to know if the file needs to be recreated first
+        if(fio.usingConfig()) {
+            if(recreate) {                                                          //if true, recreates the file
+                fio.createFile();
+            }
+            String[] names = opt.getPropNames();                                    //get the array of property names
+            String[] values = opt.getPropValues();                                  //get the array of property values 
+
+            for(int i = 0;i < names.length;i++) {                                   //for each property
+                prop.setProperty(names[i], values[i]);                              //set each property name and its value
+            }     
+
+            fio.writeProperties(prop);                                              //actually write the properties to the file      
         }
-        String[] names = opt.getPropNames();                                    //get the array of property names
-        String[] values = opt.getPropValues();                                  //get the array of property values 
-        
-        for(int i = 0;i < names.length;i++) {                                   //for each property
-            prop.setProperty(names[i], values[i]);                              //set each property name and its value
-        }     
-        
-        fio.writeProperties(prop);                                              //actually write the properties to the file            
     } 
 }
