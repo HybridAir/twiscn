@@ -10,6 +10,7 @@ import java.util.logging.*;
 public class Options {
     
     private final static Logger logger = Logger.getLogger(LogHandler.class.getName());
+    private PropHandler props;
     
     //set default option variables      
     private Color lcdCol; 
@@ -39,6 +40,10 @@ public class Options {
     public Options() {                                                          //default constructor, use all default settings
         setDeviceDefaults();
         setTwitterDefaults();      
+    }
+    
+    public void init(PropHandler props) {
+        this.props = props;
     }
     
     public void setDeviceDefaults() {                                           //used to set device defaults
@@ -76,6 +81,7 @@ public class Options {
     }
     
     public String[] formatAll() {
+        props.writeAllProps(false);
         String[] out = {prepareBrightness(), prepareLCDColor(), prepareBlinkState(), 
             prepareBlinkSpd(), prepareBlinkColor(), prepareRnbwState(), prepareRnbwSpd(), 
             prepareReadTime(), preparePrevTweet(), prepareScroll()};
@@ -351,7 +357,7 @@ public class Options {
         for(int i = 0;i < stringIn.length && !malformed;i++) {                  //check each ID to ensure it is numeric only
             if(!stringIn[i].matches("[0-9]+")) {                                //if it contains something other than numbers
                 malformed = true;                                               //might as well consider that whole property value to be compromised
-                logger.log(Level.WARNING, "Following list malformed, setting default");
+                logger.log(Level.WARNING, "Following list malformed, using default");
             }
         }
         if(!malformed) {
