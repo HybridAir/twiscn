@@ -1,5 +1,11 @@
 package twiscnhost;
 
+import java.awt.Desktop;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+
 public class AboutPanel extends javax.swing.JFrame {
 
     public AboutPanel() {
@@ -25,6 +31,8 @@ public class AboutPanel extends javax.swing.JFrame {
         }
         //</editor-fold>    
         initComponents();
+        ImageIcon icon = new ImageIcon("icon.gif"); 
+        imgLbl.setIcon(icon);  
         setVisible(true);
     }
 
@@ -32,34 +40,65 @@ public class AboutPanel extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        imgLbl = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        linkLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("About TwiScn");
 
-        jButton1.setText("jButton1");
+        imgLbl.setText(" ");
+
+        jLabel1.setText("TwiScn Host v. 1");
+
+        linkLbl.setForeground(new java.awt.Color(51, 153, 255));
+        linkLbl.setText("<HTML><U>http://hybridair.me</U></HTML>");
+        linkLbl.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        linkLbl.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                linkLblMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(123, 123, 123)
-                .addComponent(jButton1)
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(imgLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addComponent(linkLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(153, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(122, 122, 122))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(imgLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(linkLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void linkLblMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_linkLblMouseClicked
+        try {
+            //try to open the user's profile
+            Desktop.getDesktop().browse(new URL("http://hybridair.me/").toURI());
+        } catch (Exception e) {                                                 //catch any errors, like if the browser is unable to open
+            Logger.getLogger(Gui.class.getName()).log(Level.SEVERE, null, e);   //log it just in case
+        }
+    }//GEN-LAST:event_linkLblMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel imgLbl;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel linkLbl;
     // End of variables declaration//GEN-END:variables
 }
