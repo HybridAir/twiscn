@@ -60,8 +60,10 @@ public class Gui extends javax.swing.JFrame {
       
     public void init(TweetHandler twt) {                                        //used to finish setting up and displaying the GUI, needs the tweethandler instance
         this.twt = twt;
+        Image trayImage = Toolkit.getDefaultToolkit().getImage("icon.gif");
+        setIconImage(trayImage);
         setDeviceDefaults();                                                    //set the default settings for the device tab
-        refreshUserList();                                                          //set up the user list in the twitter tab
+        refreshUserList();                                                      //set up the user list in the twitter tab
         deviceApplyBtn.setEnabled(false);                                       //disable the device apply button, it will get the default settings automatically
         systemTray();
         setVisible(true);                                                       //make the primary window visible       
@@ -264,6 +266,7 @@ public class Gui extends javax.swing.JFrame {
         twtLastLbl = new javax.swing.JLabel();
         twitterDefaultsBtn = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
+        exitMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
         wikiMenuItm = new javax.swing.JMenuItem();
         bugMenuItm = new javax.swing.JMenuItem();
@@ -783,6 +786,14 @@ public class Gui extends javax.swing.JFrame {
 
         tabbedPane.addTab("Twitter", twitterTab);
 
+        exitMenu.setText("Exit");
+        exitMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                exitMenuMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(exitMenu);
+
         helpMenu.setText("Help");
 
         wikiMenuItm.setText("See the Wiki");
@@ -1050,6 +1061,11 @@ public class Gui extends javax.swing.JFrame {
         remUserBtn.setEnabled(false);
     }//GEN-LAST:event_twitterDefaultsBtnActionPerformed
 
+    private void exitMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exitMenuMouseClicked
+        //used to exit the program when the exit button is clicked on
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
     private javax.swing.JButton addUserBtn;
@@ -1066,6 +1082,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JPanel deviceInfoPane;
     private javax.swing.JTabbedPane deviceSettingsPane;
     private javax.swing.JPanel deviceTab;
+    private javax.swing.JMenu exitMenu;
     protected javax.swing.JLabel firmLbl;
     private javax.swing.JLabel firmwareName;
     private javax.swing.JComboBox fn1Cbx;
