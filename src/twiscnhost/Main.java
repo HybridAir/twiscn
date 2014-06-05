@@ -11,6 +11,7 @@ public class Main extends javax.swing.JFrame {
     public static final int PRODUCT_ID = 0x27d9;
     public static final int[] DEVICEIDS = {VENDOR_ID, PRODUCT_ID};
     
+    public static final LogHandler log = new LogHandler();
     public static final Options opt = new Options();
     public static final PropHandler props = new PropHandler(opt);        
     public static final Gui gui = new Gui(opt);
@@ -18,7 +19,6 @@ public class Main extends javax.swing.JFrame {
     public static final TweetHandler twt = new TweetHandler(opt, twiScn);
 
     public static void main(String[] args) {
-        LogHandler.init();                                                      //start logging
         opt.init(props);
         gui.init(twt);
         twiScn.init();
