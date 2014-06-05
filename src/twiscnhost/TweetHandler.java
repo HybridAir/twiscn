@@ -26,7 +26,9 @@ public class TweetHandler {
     
     public void init() {                                                        //used to resend the latest tweet and restart the stream
         sendLatestTweet();                                                      //try to send the latest tweet to the device
-        startStream();                                                          //start the twitterstream thread
+        //startStream();                                                          //start the twitterstream thread
+                twitterStream.filter(new FilterQuery(getFollowUsers()));    
+        logger.log(Level.INFO, "TwitterStream started");
     }
     
     public long[] getFollowUsers() {                                           //used to get the array of userIDs to follow, and check if they're protected
@@ -78,7 +80,7 @@ public class TweetHandler {
         return out;
     }
     
-    private void sendLatestTweet() {                                            //tries to send the latest tweet to the device
+    public void sendLatestTweet() {                                            //tries to send the latest tweet to the device
         try {
             String[] tweet = getLatestTweet();                                  //get the latest tweet into a new array (will catch TwitterException if it fails)
             twiScn.newTweet(tweet[0], tweet[1]);                                //send the tweet to the device
@@ -145,8 +147,6 @@ public class TweetHandler {
     
     public void startStream() {                                                 //starts the twitterStream thread
         stopped = false;
-        twitterStream.filter(new FilterQuery(getFollowUsers()));    
-        logger.log(Level.INFO, "TwitterStream started");
     }
     
     public void stopStream() {                                                  //stops the twitterStream thread
