@@ -32,8 +32,9 @@ public class DeviceHandler {
     
     private void getVersion() {                                                 //used to set the device version
         gui.addStatusLine("Connected to device");
-        hardVersion = null;                                                         //set it to null first since this should only get called when it needs updating
-        while(hardVersion == null && firmVersion == null) {                                                //while we have no version 
+        hardVersion = null;                                                     //set it to null first since this should only get called when it needs updating
+        firmVersion = null;
+        while(hardVersion == null && firmVersion == null) {                     //while we have no versions 
             String in = comms.monitor();                                        //try to get something from the comms monitor                        
             if(in != null) {                                                    //if it returned something
                 if(in.contains("$v")) {                                         //check if it's a version packet
