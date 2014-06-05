@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: check twitter connection first, device sleep button
+//TODO: device sleep button
 package twiscnhost;
 
 import java.util.logging.*;
