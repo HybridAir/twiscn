@@ -49,8 +49,7 @@ void loop() {
     inout.rainbow();                                                            //control the rainbow backlight changes                                                        
     lcd.scrollTweet();                                                          //scrolls the tweet
     inout.tweetBlink();                                                         //blinks the lcd if any new tweets are displayed
-    lcd.printAlive(comms.keepAlive);
-    checkAlive();                                                            //checks if the device needs to be sleeping
+    checkAlive();                                                               //checks if the device needs to be sleeping
 }
 
 void prepare() {                                                                //used to prepare the device for operation
