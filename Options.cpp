@@ -21,6 +21,7 @@ void Options::defaults() {
     readTime = 4000;                                                            //time to wait for the user to read the beginning/end of a tweet
     onPrevious = false;
     scroll = true;
+    sleep = false;
 }
 
 //==============================================================================
@@ -67,6 +68,10 @@ bool Options::getPrevTweet() {
 
 bool Options::getScroll() {
     return scroll;
+}
+
+bool Options::getSleep() {
+    return sleep;
 }
 
 //==============================================================================
@@ -148,6 +153,8 @@ void Options::extractOption(String in) {                                        
         case 'h':
             getScrollVal(in);
             break;
+        case 's':
+            getSleepVal(in);
         default:
             break;
     } 
@@ -225,12 +232,22 @@ void Options::getPrevTweet(String in) {                                         
 
 void Options::getScrollVal(String in) {                                         //gets the scroll value out from the incoming data transfer
     String enable = in.substring(0, 1);                                         //get the enable setting out
-    if(enable.toInt() == 0) {                                                   //if we are on the previous tweet already
+    if(enable.toInt() == 0) {                                                   //scrolling was paused
         scroll = false;
         lcd.scrollNotification(true);                                           //tell the lcd to display the scrolling paused notification
     }
-    else {                                                                      //if we are on the current tweet already
+    else {                                                                      //scrolling was resumed
         scroll = true;
         lcd.scrollNotification(false);                                          //tell the lcd to display the scrolling paused notification
+    }
+}
+
+void Options::getSleepVal(String in) {                                          //gets the sleep value out from the incoming data transfer
+    String enable = in.substring(0, 1);                                         //get the enable setting out
+    if(enable.toInt() == 0) {                                                   //sleep was disabled
+        sleep = false;
+    }
+    else {                                                                      //sleep was enabled
+        sleep = true;
     }
 }
