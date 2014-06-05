@@ -12,6 +12,7 @@ Comms::Comms() {                                                                
     gotTweet = false;
     connected = false;                                                          //considering that this was just started, we will not be connected yet
     versions = "$v1a$1a";                                                       //hardware and firmware versions
+    keepAlive = 1;
 }
 
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it, run this continuously
@@ -36,6 +37,10 @@ void Comms::checkType() {                                                       
     char type = transferOut.charAt(0);                                          //get the first char out of the transfer output, it's the transfer type
     transferOut = transferOut.substring(1);                                     //remove the the first character, it's no longer needed in there
     switch(type) {                                                              //check the first char of the transferOut String
+        case '%':                                                               //keepalive transfer, lets the device know that the host is still alive
+            keepAlive++;                                                        //increase the keepalive value
+            transferOut = "";                                                   //empty transferOut so it can accept a new transfer
+            break;
         case '@':                                                               //username transfer, also signifies the start of a new tweet
             userOut = transferOut;                                              //put the transfer into a new String for the username
             transferOut = "";                                                   //empty transferOut so it can accept a new transfer
@@ -50,7 +55,7 @@ void Comms::checkType() {                                                       
             String out = transferOut;                                           //get the transferOut into a new string
             transferOut = "";                                                   //empty transferOut so it can accept a new transfer
             opt.extractOption(out);                                             //get the option data out of the transfer
-            break;   
+            break;
     }
     if (gotUser & gotTweet) {                                                   //if we got both the tweet and the user
         twt.setUser(userOut);                                                   //give the tweet handler a new user
