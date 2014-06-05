@@ -39,6 +39,9 @@ public class TweetHandler {
             } catch (TwitterException e) {                                      //need to catch any twitter errors
                 logger.log(Level.SEVERE, "Failed to check if userID is protected", e);
                 System.exit(-1);                                                //chances are twitter is not accessible, so kill the program
+            } catch(IllegalStateException e) {
+                logger.log(Level.SEVERE, "Unable to connect to Twitter, check twitter4j.properties", e);
+                System.exit(0);
             }
         }
         return opt.getFollowUsers();                                            //return the updated array
