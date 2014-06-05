@@ -93,6 +93,7 @@ public class Gui extends javax.swing.JFrame {
             }
             
             trayIcon.addActionListener(new ActionListener() {                   //listener for double clicking the tray icon
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     setVisible(true);                                           //make the main window visible
                     setState(NORMAL);                                           //unminimize if necessary
@@ -100,6 +101,7 @@ public class Gui extends javax.swing.JFrame {
             });
 
             openItm.addActionListener(new ActionListener() {                    //listener for the "open" menuitem
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     setVisible(true);                                           //make the main window visible
                     setState(NORMAL);                                           //unminimize if necessary
@@ -107,6 +109,7 @@ public class Gui extends javax.swing.JFrame {
             });
 
             exitItm.addActionListener(new ActionListener() {                    //listener for the "exit" menuitem
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     System.exit(0);                                             //shutdown the program
                     //probably need to have some kind of hook to close files and whatever
