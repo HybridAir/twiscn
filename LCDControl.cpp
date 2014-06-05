@@ -241,7 +241,7 @@ void LCDControl::sleepLCD(bool sleep) {                                         
     if(sleep) {                                                                 //if the lcd needs to go to sleep
         lcdc.clear();                                                           //display a warning message for 4 seconds
         lcdc.setCursor(0, 0);
-        lcdc.print("Host is offline,");
+        lcdc.print("Disconnected,");
         lcdc.setCursor(0, 1);
         lcdc.print("entering standby");
         delay(4000);  
