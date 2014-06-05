@@ -17,6 +17,7 @@ class Comms {
         void handshake();
         void sendBtn(char in);
         void setConnected(bool in);
+        unsigned long keepAlive;
     private:
         void checkType();
         HIDSerial usb;                                                          //creates a new HIDSerial instance, named usb
