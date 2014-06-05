@@ -20,6 +20,6 @@ public class LogHandler {
         fh.setFormatter(new SimpleFormatter());
         l.addHandler(fh);
         l.setLevel(Level.INFO);
-        logger.log(Level.FINE, "Logging started");
+        logger.log(Level.WARNING, "Logging started");
     }
 }
