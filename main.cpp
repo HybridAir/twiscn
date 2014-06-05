@@ -1,5 +1,5 @@
 //TwitterScreen Device code
-//TODO: ??????
+//TODO: add handshake check while running
 #include <Arduino.h>                                                            //used for its nice methods and stuff
 #include "usbdrv.h"                                                             //needed for SOF counts
 #include <avr/wdt.h>                                                            //needed to keep the whole system alive when USB is disconnected
@@ -18,14 +18,13 @@ void setup();
 void loop();
 void checkConnection();
 void goToSleep();
-void checkForSleep();
+void checkAlive();
 void prepare();
 
 //global variables, shouldn't hurt anything
-volatile uchar usbSofCount;                                                     //holds the current SOF count
 bool sleeping = false;                                                          //stores the sleep status
-const unsigned int SOFDELAY = 1000;                                             //max time to wait in between SOF checks
-unsigned long lastSOF = 0;                                                      //last time an SOF happened in ms
+const unsigned int ALIVEDELAY = 1000;                                           //max time to wait in between SOF checks
+unsigned long previousAlive = 0;                                                //last time an SOF happened in ms
 unsigned long previousMillis2 = 0;                                              //used for keeping track of SOF checking times
 const int LCDWIDTH = 16;                                                        //character width of the LCD
     
@@ -50,38 +49,46 @@ void loop() {
     inout.rainbow();                                                            //control the rainbow backlight changes                                                        
     lcd.scrollTweet();                                                          //scrolls the tweet
     inout.tweetBlink();                                                         //blinks the lcd if any new tweets are displayed
-    checkForSleep();                                                            //checks if the device needs to be sleeping
+    lcd.printAlive(comms.keepAlive);
+    checkAlive();                                                            //checks if the device needs to be sleeping
 }
 
 void prepare() {                                                                //used to prepare the device for operation
     opt.defaults();                                                             //go back to all default options
     lcd.sleepLCD(false);                                                        //get the LCD going
     comms.handshake();                                                          //establish a connection with the host program
+    previousMillis2 = millis();                                                 //set previousMillis2 to the current time in preparation for the first checkForSleep
 }
 
 //==============================================================================
 
-void checkForSleep() {                                                          //checks if the device was told to sleep, must continuously ran
-    if(opt.getSleep()) {                                                        //check if the sleep value in Options was set to true
-        if(!sleeping) {                                                         //if we are not already sleeping
-            sleeping = true;                                                    //we will be now
-            goToSleep();
-        }
-    }
-    else {                                                                      //not sleeping
-        sleeping = false;
-    }
+void checkAlive() {                                                             //checks if the host died
+    unsigned long currentMillis = millis();                                     //get the current time
+     unsigned long currentAlive = comms.keepAlive;                              //get the current keepAlive value
+     if(currentMillis - previousMillis2 > ALIVEDELAY) {                         //only check for new keepalives every ALIVEDELAY
+         previousMillis2 = currentMillis;                                       //save the current time to use as a reference
+         if(currentAlive == previousAlive) {                                    //if the keepAlive values match (meaning we lost program/host connection)  
+             if(!sleeping) {                                                    //if we are not already sleeping
+                 sleeping = true;                                               //we will be now
+                 goToSleep();
+             }
+         }
+         else {                                                                 //the SOF counts are different (they're being updated, so it's connected)
+             previousAlive = currentAlive;                                      //save the current SOF to use as a reference
+             sleeping = false;                                                  //set this to true to wake up if nec
+         }
+     }
 }
 
-void goToSleep() {                                                              //used to make the device sleep
-    comms.setConnected(false);                                                  //tell comms that we are no longer connected to the host (so it will know to reconnect)
+void goToSleep() {                                                              //used to make the device sleep, usually after the host died
+    comms.setConnected(false);                                                  //tell comms that we are no longer connected to the host (so it can reconnect when we wake up)
     lcd.sleepLCD(true);                                                         //tell the lcd to sleep
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
-        comms.readComms();                                                      //checks for any new comms data and processes it
-        checkForSleep();                                                        //check if we still need to be sleeping
+        comms.readComms();                                                      //checks for any new comms data, there could be a new keepAlive packet
+        checkAlive();                                                           //check if we still need to be sleeping
         if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                                    
-            prepare();                                                          //prepare the device for operation again, sort of like resetting
+            prepare();                                                          //prepare the device for operation again
         }
     }
 }
