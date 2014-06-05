@@ -23,6 +23,7 @@ public class Options {
     private boolean blink;
     private boolean prevTweet;
     private boolean scroll;
+    private boolean sleep;
     private byte fn1Action;
     private byte fn2Action;
     private ArrayList<Long> followUsers = new ArrayList<>();
@@ -84,7 +85,7 @@ public class Options {
         props.writeAllProps(false);
         String[] out = {prepareBrightness(), prepareLCDColor(), prepareBlinkState(), 
             prepareBlinkSpd(), prepareBlinkColor(), prepareRnbwState(), prepareRnbwSpd(), 
-            prepareReadTime(), preparePrevTweet(), prepareScroll()};
+            prepareReadTime(), preparePrevTweet(), prepareScroll(), prepareSleep()};
         return out;
     }
      
@@ -215,6 +216,11 @@ public class Options {
         return String.valueOf(out);
     }
     
+    public String prepareSleep() {
+        int out = sleep ? 1 : 0;
+        return String.valueOf(out);
+    }
+    
 //============================================================================== 
     
     public int getBrightnessInt() {
@@ -319,6 +325,10 @@ public class Options {
     
     public void setScroll(boolean in) {
         scroll = in;
+    }
+    
+    public void setSleep(boolean in) {
+        sleep = in;
     }
     
     public void setFn1Action(byte in) {
