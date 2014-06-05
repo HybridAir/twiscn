@@ -8,6 +8,10 @@ import java.io.IOException;
 public class LogHandler {
     private final static Logger logger = Logger.getLogger(LogHandler.class.getName());
     private static FileHandler fh = null;
+    
+    public LogHandler() {
+        init();
+    }
        
     public static void init(){
         try {
@@ -19,7 +23,7 @@ public class LogHandler {
         Logger l = Logger.getLogger("");
         fh.setFormatter(new SimpleFormatter());
         l.addHandler(fh);
-        l.setLevel(Level.WARNING);
-        logger.log(Level.WARNING, "Logging started");
+        l.setLevel(Level.INFO);
+        logger.log(Level.INFO, "Logging started");
     }
 }
