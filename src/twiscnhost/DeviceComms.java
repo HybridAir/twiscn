@@ -33,6 +33,8 @@ public class DeviceComms {
     private void handshake() {                                                  //used to establish a data connection with the device
         boolean connected = false;
         logger.log(Level.INFO, "Attempting handshake"); 
+        twiScnHID.send("$s0"); 
+        twiScnHID.send("=");
         while(!connected) {
             String in = twiScnHID.getData();                                    //try to get data from the device
             if(in != null) {                                                    //if we actually got data
@@ -83,7 +85,7 @@ public class DeviceComms {
     }
     
     public void sendOptions(String[] values) {                                  //used to send options to the device
-        for(int i = 0;i <= 6;i++) {                                             //only 4 sendable option groups so far
+        for(int i = 0;i <= 7;i++) {                                             //7 sendable option groups so far
             switch(i) {
                 case 0:                                                         //send the backlight brightness settings
                     twiScnHID.send("$b" + values[0]);
@@ -105,6 +107,10 @@ public class DeviceComms {
                     break;
                 case 6:                                                         //send the scroll toggle setting
                     twiScnHID.send("$h" + values[9]);
+                    break;
+                case 7:                                                         //send the scroll toggle setting
+                    twiScnHID.send("$s" + values[10]);
+                    System.out.println("$s" + values[10]);
                     break;
                 default:
                     break;
