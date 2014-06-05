@@ -39,7 +39,7 @@ Comms comms;                                                                    
 
 //==============================================================================
 
-void setup() {   
+void setup() {  
     prepare();                                                                  //prepare the device for operation
 }
 
@@ -62,20 +62,14 @@ void prepare() {                                                                
 //==============================================================================
 
 void checkForSleep() {                                                          //checks if the device was disconnected, must be continuously ran
-    unsigned long currentMillis = millis();                                     //get the current time
-    unsigned long currentSOF = usbSofCount;                                     //get the current number of SOFs
-    if(currentMillis - previousMillis2 > SOFDELAY) {                            //only check for new SOF counts every 500 ms (SOFDELAY)
-        previousMillis2 = currentMillis;                                        //save the current time to use as a reference
-        if(currentSOF == lastSOF) {                                             //if the SOF counts match (meaning we lost usb connection)  
-            if(!sleeping) {                                                     //if we are not already sleeping
-                sleeping = true;                                                //we will be now
-                goToSleep();
-            }
+    if(opt.getSleep()) {
+        if(!sleeping) {                                                     //if we are not already sleeping
+            sleeping = true;                                                //we will be now
+            goToSleep();
         }
-        else {                                                                  //the SOF counts are different (they're being updated, so it's connected)
-            lastSOF = currentSOF;                                               //save the current SOF to use as a reference
-            sleeping = false;                                                   //set this to true to wake up if necessary
-        }
+    }
+    else {
+        sleeping = false;
     }
 }
 
@@ -84,7 +78,8 @@ void goToSleep() {                                                              
     lcd.sleepLCD(true);                                                         //tell the lcd to sleep
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
-        usbPoll();                                                              //keep checking the usb
+        comms.readComms();                                                      //checks for any new comms data and processes it
+        inout.checkButtons();                                                       //monitors button changes and processes them
         checkForSleep();                                                        //check if we still need to be sleeping
         if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                                    
             prepare();                                                          //prepare the device for operation again, sort of like resetting
