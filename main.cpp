@@ -61,25 +61,24 @@ void prepare() {                                                                
 
 //==============================================================================
 
-void checkForSleep() {                                                          //checks if the device was disconnected, must be continuously ran
-    if(opt.getSleep()) {
-        if(!sleeping) {                                                     //if we are not already sleeping
-            sleeping = true;                                                //we will be now
+void checkForSleep() {                                                          //checks if the device was told to sleep, must continuously ran
+    if(opt.getSleep()) {                                                        //check if the sleep value in Options was set to true
+        if(!sleeping) {                                                         //if we are not already sleeping
+            sleeping = true;                                                    //we will be now
             goToSleep();
         }
     }
-    else {
+    else {                                                                      //not sleeping
         sleeping = false;
     }
 }
 
-void goToSleep() {                                                              //used to bring the device down for "sleep"
+void goToSleep() {                                                              //used to make the device sleep
     comms.setConnected(false);                                                  //tell comms that we are no longer connected to the host (so it will know to reconnect)
     lcd.sleepLCD(true);                                                         //tell the lcd to sleep
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
         comms.readComms();                                                      //checks for any new comms data and processes it
-        inout.checkButtons();                                                       //monitors button changes and processes them
         checkForSleep();                                                        //check if we still need to be sleeping
         if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                                    
             prepare();                                                          //prepare the device for operation again, sort of like resetting
