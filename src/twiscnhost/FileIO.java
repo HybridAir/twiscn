@@ -88,7 +88,7 @@ public class FileIO {
     public boolean openInput() {                                                //used to open the file for reading (input), returns true if successful
         try {
             input = new FileInputStream(fileName);                              //create a new inputstream using fileName
-            logger.log(Level.INFO, "File input opened");
+            logger.log(Level.FINE, "File input opened");
             return true;
         }
         catch(FileNotFoundException e) {                                        //file was not found
@@ -101,7 +101,7 @@ public class FileIO {
         if(input != null) {                                                     //only attempt loading if input is already open
             try {                                                                   
                 prop.load(input);                                               //try to load the properties from the inputstream
-                logger.log(Level.INFO, "Loaded properties");
+                logger.log(Level.FINE, "Loaded properties");
             } 
             catch (IOException io) {                                            //check for IO errors
                 io.printStackTrace();
@@ -114,7 +114,7 @@ public class FileIO {
         if (input != null) {                                                    //only close it if it's already open
             try {                                                               //try to close it
                 input.close();                              
-                logger.log(Level.INFO, "File input closed");
+                logger.log(Level.FINE, "File input closed");
             } 
             catch (IOException e) {                                             //catch any IO errors
                 logger.log(Level.WARNING, "Failed to close file input.", e);
@@ -125,7 +125,7 @@ public class FileIO {
     public boolean openOutput() {                                               //used to open the file for writing (output), returns true if successful
         try {                                                                   
             output = new FileOutputStream(fileName);                            //try to open fileName
-            logger.log(Level.INFO, "File output opened");
+            logger.log(Level.FINE, "File output opened");
             return true;
 	} 
         catch (IOException io) {                                                //check for IO errors
@@ -138,7 +138,7 @@ public class FileIO {
         if (output != null) {                                                   //only close it if it's already open
             try {
                 output.close();                                                 //close the output stream
-                logger.log(Level.INFO, "File output closed");
+                logger.log(Level.FINE, "File output closed");
             } 
             catch (IOException e) {                                             //check for IO errors
                 logger.log(Level.WARNING, "Failed to close file output.", e);
