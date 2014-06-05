@@ -10,10 +10,11 @@ import twitter4j.*;
 public class TweetHandler {
     
     private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
-    Options opt;
-    DeviceHandler twiScn;
-    TwitterStream twitterStream;
-    Twitter twitter;
+    private Options opt;
+    private DeviceHandler twiScn;
+    private TwitterStream twitterStream;
+    private Twitter twitter;
+    private boolean stopped = false;
    
     public TweetHandler(Options opt, DeviceHandler twiScn) {                    //constructor, needs the Options and DeviceHandler instances
         this.opt = opt;
@@ -143,26 +144,32 @@ public class TweetHandler {
 //==============================================================================
     
     public void startStream() {                                                 //starts the twitterStream thread
+        stopped = false;
         twitterStream.filter(new FilterQuery(getFollowUsers()));    
         logger.log(Level.INFO, "TwitterStream started");
     }
     
     public void stopStream() {                                                  //stops the twitterStream thread
-        twitterStream.shutdown();
-        logger.log(Level.INFO, "TwitterStream stopped");
+        stopped = true;
+        //twitterStream.shutdown();
+        //logger.log(Level.INFO, "TwitterStream stopped");
     }
     
     private final UserStreamListener listener = new UserStreamListener() {      //UserStreamListener implementation
         @Override
         public void onStatus(Status status) {
             //System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
-            sendTweet(status);
+            if(!stopped) {
+                sendTweet(status);
+            }
         }
 
         @Override
         public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
             //System.out.println("Got a status deletion notice id:" + statusDeletionNotice.getStatusId());
-            sendLatestTweet();
+            if(!stopped) {
+                sendLatestTweet();
+            }
         }
 
         @Override
