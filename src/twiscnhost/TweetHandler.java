@@ -73,7 +73,7 @@ public class TweetHandler {
     
     private String[] formatTweet(Status status) {                               //returns a formatted String array, needs a valid Status
         Date createdAt = status.getCreatedAt();                                 //get the Date the status was created on
-        SimpleDateFormat ft = new SimpleDateFormat (" hh:mm a");                //prepare to reformat that date
+        SimpleDateFormat ft = new SimpleDateFormat ("hh:mm a");                //prepare to reformat that date
         String user = status.getUser().getScreenName() + ":";                   //get the screenName out of the status and add a ":" to it
         String text = status.getText() + " " + ft.format(createdAt);            //get the tweet text out of the status and add the formatted Date to the end
         String[] out = {user, text};                                            //prepare a String array containing the above
