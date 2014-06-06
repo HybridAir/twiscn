@@ -119,7 +119,6 @@ public class DeviceComms {
                     break;
                 case 7:                                                         //send the scroll toggle setting
                     twiScnHID.send("$s" + values[10]);
-                    System.out.println("$s" + values[10]);
                     break;
                 default:
                     break;
