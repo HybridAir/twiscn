@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: device sleep button, keep alive signal maybe, killing the trayicon on exit, show device failures in gui, send sleep separately
+//TODO: killing the trayicon on exit, show device failures in gui, send sleep separately
 package twiscnhost;
 
 import java.util.logging.*;
@@ -31,7 +31,7 @@ public class Main extends javax.swing.JFrame {
         twt.init();
         
         while(true) {
-            if(UsbHidComms.connected()) {                                       //keep doing this stuff while the device is still connected
+            if(UsbHidComms.connected() && DeviceComms.connected) {                                       //keep doing this stuff while the device is still connected
                 if(gui.applyDevice) {                                           //check if device settings need to be applied to the device and saved
                     props.writeAllProps(false);
                     twiScn.applyAllOptions();
@@ -41,7 +41,7 @@ public class Main extends javax.swing.JFrame {
                     props.writeAllProps(false);
                     gui.applyTwitter = false;
                 }
-                twiScn.monitorFNs();                                            //monitor the FN buttons for updates
+                twiScn.monitorDevice();                                            //monitor the FN buttons for updates
             }
             else {
                 //device got disconnected, try reconnecting it
@@ -49,7 +49,10 @@ public class Main extends javax.swing.JFrame {
                 logger.log(Level.WARNING, "Lost connection to device.");
                 twt.stopStream();
                 twiScn.init();
+                gui.applyDevice = true;
+                gui.applyTwitter = true;
                 twt.sendLatestTweet();
+                twt.startStream();
             }
         }
     }
@@ -76,7 +79,7 @@ class KeepAlive extends Thread {                                                
                 twiScn.keepAlive();                                             //send a keep alive packet      
             }
             try {                                                               //try to wait 100 ms before sending another
-                Thread.sleep(200L);
+                Thread.sleep(500L);
             } catch (Exception e) {}
          }
      }
