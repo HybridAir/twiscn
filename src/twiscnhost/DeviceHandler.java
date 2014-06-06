@@ -24,10 +24,18 @@ public class DeviceHandler {
     public void init() {                                                        //used to reconnect the device, can be called if reconnection is necessary
         logger.log(Level.INFO, "Attempting to connect to device with VENDOR_ID: " + devIDs[0] + " and PRODUCT_ID: " + devIDs[1]);
         gui.addStatusLine("Attempting to connect to device with VENDOR_ID: " + devIDs[0] + " and PRODUCT_ID: " + devIDs[1]);
+        keepAlive();
         comms.init();                                                           //tell comms to start reconnecting
+        keepAlive();
         gui.setConnected(true);
         getVersion();
+        keepAlive();
         applyAllOptions();
+    }
+    
+    public void keepAlive() {
+        comms.sendRaw("%");
+        comms.sendRaw("=");
     }
     
     private void getVersion() {                                                 //used to set the device version
@@ -52,7 +60,6 @@ public class DeviceHandler {
     
     public void applyAllOptions() {                                             //applys all options, use this after updating option settings
         comms.sendOptions(opt.formatAll());                                     //format and send the updated options to the device
-        //add a call in here to save set options
     }
     
     public void newTweet(String user, String text) {                            //used to send a new tweet to the device, needs a user and tweet text
