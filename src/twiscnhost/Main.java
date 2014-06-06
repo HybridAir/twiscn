@@ -1,5 +1,5 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: device sleep button, keep alive signal maybe, killing the trayicon on exit
+//TODO: device sleep button, keep alive signal maybe, killing the trayicon on exit, show device failures in gui, send sleep separately
 package twiscnhost;
 
 import java.util.logging.*;
@@ -76,7 +76,7 @@ class KeepAlive extends Thread {                                                
                 twiScn.keepAlive();                                             //send a keep alive packet      
             }
             try {                                                               //try to wait 100 ms before sending another
-                Thread.sleep(100L);
+                Thread.sleep(200L);
             } catch (Exception e) {}
          }
      }
