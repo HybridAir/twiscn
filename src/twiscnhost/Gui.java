@@ -1087,8 +1087,16 @@ public class Gui extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuMouseClicked
 
     private void sleepBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sleepBtnActionPerformed
-        opt.setSleep(true);
-        applyDevice = true;
+        if(opt.getSleep()) {                                                    //if the device should already be sleeping
+            opt.setSleep(false);                                                //set sleep to false
+            sleepBtn.setText("Sleep");                                          //reset the sleep button text
+            applyDevice = true;                                                 //go apply it
+        }
+        else {
+            opt.setSleep(true);                                                 //set sleep to true
+            sleepBtn.setText("Wake Up");                                        //reset the sleep button text
+            applyDevice = true;                                                 //go apply it
+        }
     }//GEN-LAST:event_sleepBtnActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
