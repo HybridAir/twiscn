@@ -117,7 +117,7 @@ public class Gui extends javax.swing.JFrame {
             });          
         }
     }
-    
+       
 //==============================================================================
     
     public void addStatusLine(String in) {                                      //used to write a line to the top of the status box
