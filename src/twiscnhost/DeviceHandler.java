@@ -67,7 +67,7 @@ public class DeviceHandler {
         comms.row1(text);
     }
          
-    public void monitorFNs() {                                                  //used to monitor the device's fn buttons, needs to be ran continuously
+    public void monitorDevice() {                                               //used to monitor the device's fn buttons, needs to be ran continuously
         String in = comms.monitor();
         if(in != null) {
             logger.log(Level.FINE, "Got " + in + "from device comms");
@@ -84,6 +84,9 @@ public class DeviceHandler {
                 } catch (Exception e) {}
                 btnActions.fn2();
                 applyAllOptions();
+            }
+            if(in.equals("`")) {
+                comms.connected = false;
             }
         }
         in = null;
