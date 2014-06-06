@@ -50,7 +50,6 @@ public class UsbHidComms {
         deviceInitialize();                                                     //maybe remove                                            
         HIDDeviceInfo[] devices = deviceFindAllDescriptors();                   //find the device that we want to connect to
         if (devices.length > 0) {                                               //check if we found a device (there will be something in that array)
-            System.out.println(devices.length);
             try {
                 int i = 0;
                 while(device == null) {
