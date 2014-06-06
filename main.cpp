@@ -23,7 +23,7 @@ void prepare();
 
 //global variables, shouldn't hurt anything
 bool sleeping = false;                                                          //stores the sleep status
-const unsigned int ALIVEDELAY = 1000;                                           //max time to wait in between SOF checks
+const unsigned int ALIVEDELAY = 1000;                                           //max time to wait in between keepAlive updates
 unsigned long previousAlive = 0;                                                //last time an SOF happened in ms
 unsigned long previousMillis2 = 0;                                              //used for keeping track of SOF checking times
 const int LCDWIDTH = 16;                                                        //character width of the LCD
@@ -85,9 +85,9 @@ void goToSleep() {                                                              
     inout.connectionLED(0);                                                     //turn the connection LED off, no longer connected
     while(sleeping) {                                                           //run some checks while the device is "sleeping"
         comms.readComms();                                                      //checks for any new comms data, there could be a new keepAlive packet
-        checkAlive();                                                           //check if we still need to be sleeping
-        if (!sleeping) {                                                        //if the previous method said it's time to wake up                                                                    
-            prepare();                                                          //prepare the device for operation again
+        if(comms.keepAlive != previousAlive) {                                  //check if we still need to be sleeping
+            sleeping = false;                                                   //time to wake up
+            prepare();
         }
     }
 }
