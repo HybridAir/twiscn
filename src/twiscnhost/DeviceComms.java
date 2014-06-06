@@ -8,6 +8,7 @@ public class DeviceComms {
     
     private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private UsbHidComms twiScnHID;
+    public static boolean connected = false;
     
     public DeviceComms(UsbHidComms device) {                                    //constructor, needs the usbhid device   
         twiScnHID = device;                                                      
@@ -26,20 +27,28 @@ public class DeviceComms {
         logger.log(Level.INFO, "Connection successful");                        //connection was successful at this point
     }
     
+    public void tryDisconnecting() {
+        twiScnHID.disconnectDevice();
+    }
+    
     public void sendRaw(String in) {                                            //used to send raw commands/data to the device
         twiScnHID.send(in);
     }
       
     private void handshake() {                                                  //used to establish a data connection with the device
-        boolean connected = false;
+        connected = false;
         logger.log(Level.INFO, "Attempting handshake"); 
-        twiScnHID.send("$s0"); 
+        //send a keepalive in case the device is sleeping from being disconnected
+        twiScnHID.send("%"); 
         twiScnHID.send("=");
         while(!connected) {
             String in = twiScnHID.getData();                                    //try to get data from the device
             if(in != null) {                                                    //if we actually got data
                 if(in.equals("`")) {                                            //check if the device is currently trying to connect (spamming "`"'s)
                     twiScnHID.send("~");                                        //send the response
+                    try {                                                       //try to wait 100 ms to let the device catch up
+                        Thread.sleep(100L);
+                    } catch (Exception e) {}
                     connected = true;                                           //we are connected now                    
                     logger.log(Level.INFO, "Handshake successful");
                 }
