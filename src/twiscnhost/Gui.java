@@ -189,7 +189,7 @@ public class Gui extends javax.swing.JFrame {
         firmLbl.setText(firmware);
     }
     
-    private void setDeviceDefaults() {                                          //used to set the default device settings in the GUI
+    public void setDeviceDefaults() {                                           //used to set the default device settings in the GUI
         //reset all the necessary components
         brightnessSpnr.setValue(opt.getBrightnessInt());
         readSpnr.setValue(opt.getReadTime());
