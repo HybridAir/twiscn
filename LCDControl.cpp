@@ -237,14 +237,23 @@ void LCDControl::connectDisplay(bool connecting) {                              
     }
 }
 
+void LCDControl::disconnected() {
+    lcdc.clear();                                                           //display a warning message for 4 seconds
+    lcdc.setCursor(0, 0);
+    lcdc.print("Host has been");
+    lcdc.setCursor(0, 1);
+    lcdc.print("disconnected");
+    delay(4000);  
+}
+
 void LCDControl::sleepLCD(bool sleep) {                                         //used to control lcd power state
     if(sleep) {                                                                 //if the lcd needs to go to sleep
         lcdc.clear();                                                           //display a warning message for 4 seconds
         lcdc.setCursor(0, 0);
-        lcdc.print("Disconnected,");
+        lcdc.print("Going down for");
         lcdc.setCursor(0, 1);
-        lcdc.print("entering standby");
-        delay(4000);  
+        lcdc.print("standby...");
+        delay(2000);
         scroll = false;                                                         //no longer need to scroll
         byte b = opt.getBrightness();                                           //get the current brightness to reference later
         for(int i = b; i >= 0; i--) {                                           //fade out the backlight
@@ -255,9 +264,21 @@ void LCDControl::sleepLCD(bool sleep) {                                         
         lcdc.noDisplay();                                                       //turn the lcd "off"
     }
     else {                                                                      //lcd needs to wake up
-        lcdc.display();                                                         //turn the lcd "on"     
+        lcdc.display();                                                         //turn the lcd "on" 
+        lcdc.clear();
         bootAnim();                                                             //play the boot animation
     }
+}
+
+void LCDControl::wakeUp() {
+    lcdc.display();                                                         //turn the lcd "on" 
+    lcdc.clear();
+    printNewTweet(true);
+    byte brightness = opt.getBrightness();
+    for(int i = 0; i <= brightness; i++) {                                             //fades the backlight on
+        opt.setBrightness(i);
+        delay(2);
+    } 
 }
 
 void LCDControl::scrollNotification(boolean paused) {                           //used to display the "scrolling paused" notification, needs the scroll status
