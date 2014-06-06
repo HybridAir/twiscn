@@ -29,6 +29,7 @@ public class UsbHidComms {
     public boolean connectDevice() {                                            //used to connect to the device
         deviceFindFirst();                                                      //find the device and connect if possible
         if(device == null) {                                                    //if the device was not connected
+            device_initialized = false;
             return false;
         }
         else {
@@ -48,10 +49,14 @@ public class UsbHidComms {
     private void deviceFindFirst() {                                            //look for the device, and then connect to it
         deviceInitialize();                                                     //maybe remove                                            
         HIDDeviceInfo[] devices = deviceFindAllDescriptors();                   //find the device that we want to connect to
-
         if (devices.length > 0) {                                               //check if we found a device (there will be something in that array)
-            try {                                                                       
-                device = devices[0].open();                                     //try to open the first device in the array, and set that to the active device var
+            System.out.println(devices.length);
+            try {
+                int i = 0;
+                while(device == null) {
+                    device = devices[i].open();                                     //try to open the first device in the array, and set that to the active device var
+                    i++;
+                }
             } 
             catch (Exception e) {
                 logger.log(Level.WARNING, "Unable to find device.", e);
@@ -75,7 +80,7 @@ public class UsbHidComms {
         try {
             HIDManager hidManager = HIDManager.getInstance();                   //create a new HIDManager, and set it to the result of HIDManager.getInstance()
             HIDDeviceInfo[] infos = hidManager.listDevices();                   //create a new HIDDeviceInfo array, fill it with a list of devices we got from the HIDManager 
-
+            
             for (HIDDeviceInfo info : infos) {                                  //for each device in HIDDeviceInfo
                 if (info.getVendor_id() == vndr
                     && info.getProduct_id() == pdct) {                          //look for a device that matches the vendor and product id we are looking for
@@ -148,6 +153,7 @@ public class UsbHidComms {
             device.sendFeatureReport(data);                                     //send that data array to the device
         } catch(Exception e) {
             logger.log(Level.WARNING, "Failed to write to device.", e);
+            device = null;
         }
     }
     
