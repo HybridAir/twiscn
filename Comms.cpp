@@ -52,9 +52,10 @@ void Comms::checkType() {                                                       
             gotTweet = true;                                                    //we got the tweet text
             break;
         case '$':                                                               //option transfer
-            String out = transferOut;                                           //get the transferOut into a new string
-            transferOut = "";                                                   //empty transferOut so it can accept a new transfer
-            opt.extractOption(out);                                             //get the option data out of the transfer
+            opt.extractOption(transferOut);                                             //get the option data out of the transfer
+            transferOut = ""; 
+            break;
+        default:
             break;
     }
     if (gotUser & gotTweet) {                                                   //if we got both the tweet and the user
