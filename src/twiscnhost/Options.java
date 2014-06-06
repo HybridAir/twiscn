@@ -271,6 +271,10 @@ public class Options {
         return fn1Action;
     }
     
+    public boolean getSleep() {
+        return sleep;
+    }
+    
     private String getFn1Str() {
         String out = "" + fn1Action;
         return out;
