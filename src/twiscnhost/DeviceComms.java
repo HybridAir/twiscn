@@ -19,7 +19,7 @@ public class DeviceComms {
         handshake();                                                            //try to send a handshake to the device
     }
     
-    private void tryConnecting() {                                              //tries to connect to the device, will block the program flow until connected
+    private void tryConnecting() {                                              //tries to connect to the device, will block the program flow until connected      
         boolean connected = false;
         while(!connected) {                                                     //while we are not connected
             connected = twiScnHID.connectDevice();                              //try connecting and get the connection result
