@@ -27,7 +27,7 @@ public class Gui extends javax.swing.JFrame {
     private final static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LogHandler.class.getName());
     private Options opt;
     private TweetHandler twt;
-    public boolean applyDevice = false;                                         //stores if the program needs to apply and save the device options
+    public boolean applyDevice = true;                                          //stores if the program needs to apply and save the device options
     public boolean applyTwitter = false;                                        //stores if the program needs to save the twitter options
     private SystemTray tray;
     private TrayIcon trayIcon;
@@ -175,9 +175,11 @@ public class Gui extends javax.swing.JFrame {
     public void setConnected(boolean connected) {                               //used to set the device connection status, needs a boolean
         if(connected) {
             statusLbl.setText("Connected");
+            sleepBtn.setEnabled(true);
         }
         else {
             statusLbl.setText("Searching");
+            sleepBtn.setEnabled(false);
             setVersions(null, null);
         }
     }
@@ -254,6 +256,7 @@ public class Gui extends javax.swing.JFrame {
         fn2Cbx = new javax.swing.JComboBox();
         deviceApplyBtn = new javax.swing.JButton();
         deviceDefaultsBtn = new javax.swing.JButton();
+        sleepBtn = new javax.swing.JButton();
         twitterTab = new javax.swing.JPanel();
         followingPane = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -610,6 +613,13 @@ public class Gui extends javax.swing.JFrame {
             }
         });
 
+        sleepBtn.setText("Sleep");
+        sleepBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sleepBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout deviceTabLayout = new javax.swing.GroupLayout(deviceTab);
         deviceTab.setLayout(deviceTabLayout);
         deviceTabLayout.setHorizontalGroup(
@@ -620,8 +630,10 @@ public class Gui extends javax.swing.JFrame {
                     .addComponent(deviceSettingsPane)
                     .addComponent(deviceInfoPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(deviceTabLayout.createSequentialGroup()
-                        .addComponent(deviceDefaultsBtn)
+                        .addComponent(sleepBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(deviceDefaultsBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deviceApplyBtn)))
                 .addContainerGap())
         );
@@ -635,7 +647,8 @@ public class Gui extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(deviceTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deviceApplyBtn)
-                    .addComponent(deviceDefaultsBtn))
+                    .addComponent(deviceDefaultsBtn)
+                    .addComponent(sleepBtn))
                 .addContainerGap())
         );
 
@@ -1073,6 +1086,11 @@ public class Gui extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_exitMenuMouseClicked
 
+    private void sleepBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sleepBtnActionPerformed
+        opt.setSleep(true);
+        applyDevice = true;
+    }//GEN-LAST:event_sleepBtnActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItm;
     private javax.swing.JButton addUserBtn;
@@ -1113,6 +1131,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JLabel readName;
     private javax.swing.JSpinner readSpnr;
     private javax.swing.JButton remUserBtn;
+    private javax.swing.JButton sleepBtn;
     protected javax.swing.JLabel statusLbl;
     private javax.swing.JLabel statusName;
     private javax.swing.JPanel statusPane;
