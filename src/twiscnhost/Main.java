@@ -43,7 +43,8 @@ public class Main extends javax.swing.JFrame {
                 }
                 twiScn.monitorFNs();                                            //monitor the FN buttons for updates
             }
-            else {                                                              //device got disconnected, try reconnecting it
+            else {
+                //device got disconnected, try reconnecting it
                 gui.setConnected(false);
                 logger.log(Level.WARNING, "Lost connection to device.");
                 twt.stopStream();
@@ -71,12 +72,12 @@ class ShutdownHook {
 class KeepAlive extends Thread {                                                //thread used to send keep alive packets to the device every 100 ms
      public void run() {
          while(true) {
-            if(UsbHidComms.connected()) {                                       //make sure the device is connected before sending it keepalives
-                twiScn.keepAlive();                                             //send a keep alive packet
-                try {                                                           //try to wait 100 ms before sending another
-                    Thread.sleep(100L);
-                } catch (Exception e) {}
+            if(UsbHidComms.connected() && DeviceComms.connected) {              //make sure the device is connected before sending it keep alives
+                twiScn.keepAlive();                                             //send a keep alive packet      
             }
+            try {                                                               //try to wait 100 ms before sending another
+                Thread.sleep(100L);
+            } catch (Exception e) {}
          }
      }
  }
