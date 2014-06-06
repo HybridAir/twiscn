@@ -22,6 +22,7 @@ class LCDControl {
         void scrollNotification(boolean paused);
         void disconnected();
         void wakeUp();
+        bool ranOnce;
     private:
         void CreateChar(byte code, PGM_P character);
         void clearRow(byte row);
@@ -33,7 +34,6 @@ class LCDControl {
         unsigned int textSpeed;
         bool printedBegin;
         bool scroll;
-        bool ranOnce;
         bool waitforbegin;
         bool currentTweet;
         byte animCount;
