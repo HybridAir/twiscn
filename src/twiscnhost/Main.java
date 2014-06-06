@@ -1,8 +1,9 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: killing the trayicon on exit, show device failures in gui, send sleep separately
+//TODO: 
 package twiscnhost;
 
 import java.util.logging.*;
+import static twiscnhost.Main.gui;
 import static twiscnhost.Main.opt;
 import static twiscnhost.Main.twiScn;
 
@@ -31,7 +32,7 @@ public class Main extends javax.swing.JFrame {
         twt.init();
         
         while(true) {
-            if(UsbHidComms.connected() && DeviceComms.connected) {                                       //keep doing this stuff while the device is still connected
+            if(UsbHidComms.connected() && DeviceComms.connected) {              //keep doing this stuff while the device is still connected
                 if(gui.applyDevice) {                                           //check if device settings need to be applied to the device and saved
                     props.writeAllProps(false);
                     twiScn.applyAllOptions();
@@ -41,14 +42,16 @@ public class Main extends javax.swing.JFrame {
                     props.writeAllProps(false);
                     gui.applyTwitter = false;
                 }
-                twiScn.monitorDevice();                                            //monitor the FN buttons for updates
+                twiScn.monitorDevice();                                         //monitor the FN buttons for updates
             }
             else {
                 //device got disconnected, try reconnecting it
                 gui.setConnected(false);
+                gui.addStatusLine("Lost connection to device.");
                 logger.log(Level.WARNING, "Lost connection to device.");
                 twt.stopStream();
                 twiScn.init();
+                gui.setDeviceDefaults();
                 gui.applyDevice = true;
                 gui.applyTwitter = true;
                 twt.sendLatestTweet();
@@ -63,10 +66,8 @@ class ShutdownHook {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                if(UsbHidComms.connected()) {                                   //make sure the device is connected first
-                    //opt.setSleep(true);                                         //set sleep to true
-                    //twiScn.applyAllOptions();                                   //tell the device to sleep/disconnect
-                }
+                Logger logger = Logger.getLogger(LogHandler.class.getName());
+                logger.log(Level.WARNING, "Program exiting.");
             }
         });
     }
