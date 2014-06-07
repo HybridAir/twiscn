@@ -1,5 +1,5 @@
 //used to process and manage the twitterscreen settings and stuff
-//TODO: add in fn button action settings
+//TODO: 
 
 package twiscnhost;
 
