@@ -17,6 +17,7 @@ class Comms {
         void handshake();
         void sendBtn(char in);
         void setConnected(bool in);
+        void connect();
         unsigned long keepAlive;
     private:
         void checkType();
