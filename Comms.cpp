@@ -15,6 +15,12 @@ Comms::Comms() {                                                                
     keepAlive = 1;
 }
 
+void Comms::connect() {                                                         //used to force usb enumeration
+    //something about stupid usb drivers not liking us or something
+    usbPoll();                                                                  //poll first for good measure
+    usb.println("%");                                                           //send a dummy packet to enumerate
+}
+
 void Comms::readComms() {                                                       //checks if we got anything new from the host, and then processes it, run this continuously
     usbPoll();                                                                  //make sure to run this as often as possible
     if (usb.available()) {                                                      //check if there's something in the usb buffer
@@ -81,7 +87,7 @@ void Comms::handshake() {                                                       
             }
         }  
     }
-    delay(50);                                                                  //give the host a little time to get ready
+    delay(250);                                                                  //give the host a little time to get ready
     char ver[8];                                                                //get a char array ready
     versions.toCharArray(ver, 8);                                               //put that String into that new char array
     usb.println(ver);                                                           //send the device version to the host
