@@ -3,11 +3,11 @@
 package twiscnhost;
 
 import java.util.logging.*;
-import static twiscnhost.Main.gui;
-import static twiscnhost.Main.opt;
-import static twiscnhost.Main.props;
-import static twiscnhost.Main.twiScn;
-import static twiscnhost.Main.twt;
+//import static twiscnhost.Main.gui;
+//import static twiscnhost.Main.opt;
+//import static twiscnhost.Main.props;
+////import static twiscnhost.Main.twiScn;
+////import static twiscnhost.Main.twt;
 
 public class Main extends javax.swing.JFrame {
     
@@ -22,9 +22,9 @@ public class Main extends javax.swing.JFrame {
     public static final Gui gui = new Gui(opt);
     public static final DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, opt, gui); 
     public static final TweetHandler twt = new TweetHandler(opt, twiScn);
-    public static final KeepAlive keepAlive = new KeepAlive();
-    public static final DeviceMon devMon = new DeviceMon();
-    public static final ShutdownHook shutdown = new ShutdownHook();
+    public static final KeepAlive keepAlive = new KeepAlive(twiScn);
+    public static final DeviceMon devMon = new DeviceMon(gui, props, twiScn, twt);
+    public static final ShutdownHook shutdown = new ShutdownHook(props);
 
     public static void main(String[] args) {
         shutdown.attachShutDownHook();
@@ -34,68 +34,65 @@ public class Main extends javax.swing.JFrame {
         keepAlive.start();
         twt.init();
         devMon.start();
-        
-//        while(true) {
-//            if(UsbHidComms.connected() && DeviceComms.connected) {              //keep doing this stuff while the device is still connected
-//                if(gui.applyDevice) {                                           //check if device settings need to be applied to the device and saved
-//                    props.writeAllProps(false);
-//                    twiScn.applyAllOptions();
-//                    gui.applyDevice = false;
-//                }
-//                if(gui.applyTwitter) {                                          //check if twitter settings need to be saved
-//                    props.writeAllProps(false);
-//                    gui.applyTwitter = false;
-//                }
-//                twiScn.monitorDevice();                                         //monitor the FN buttons for updates
-//            }
-//            else {
-//                //device got disconnected, try reconnecting it
-//                gui.setConnected(false);
-//                gui.addStatusLine("Lost connection to device.");
-//                logger.log(Level.WARNING, "Lost connection to device.");
-//                twt.stopStream();
-//                twiScn.init();
-//                gui.setDeviceDefaults();
-//                gui.applyDevice = true;
-//                gui.applyTwitter = true;
-//                twt.sendLatestTweet();
-//                twt.startStream();
-//            }
-//        }
     }
 }
 
-class ShutdownHook {                                                                         
-    public void attachShutDownHook() {                                          //used to monitor when the program is told to shutdown
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+class ShutdownHook {                                                            //used to monitor when the program is told to shutdown
+    PropHandler props;
+    
+    public ShutdownHook(PropHandler props) {
+        this.props = props;
+    }
+    
+    public void attachShutDownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {                     //this will get triggered when a program shutdown happens
             @Override
             public void run() {
+                props.writeAllProps(false);                                     //save all settings
                 Logger logger = Logger.getLogger(LogHandler.class.getName());
                 logger.log(Level.WARNING, "Program exiting.");
+                //program will exit here
             }
         });
     }
 }
 
-class KeepAlive extends Thread {                                                //thread used to send keep alive packets to the device every 100 ms
-     public void run() {
-         while(true) {
+class KeepAlive extends Thread {                                                //thread used to send keep alive packets to the device every 750 ms            
+    DeviceHandler twiScn;
+    
+    public KeepAlive(DeviceHandler twiScn) {
+        this.twiScn = twiScn;
+    }
+    
+    public void run() {                                                        
+        while(true) {                                                           //always do this once this thread has started
             if(UsbHidComms.connected() && DeviceComms.connected) {              //make sure the device is connected before sending it keep alives
                 twiScn.keepAlive();                                             //send a keep alive packet      
             }
-            try {                                                               //try to wait 100 ms before sending another
+            try {                                                               //try to wait 750 ms before sending another
                 Thread.sleep(750L);
             } catch (Exception e) {}
-         }
-     }
- }
+        }
+    }
+}
 
-class DeviceMon extends Thread {                                                //thread used to send keep alive packets to the device every 100 ms
-     public void run() {
-         //while(true) {
-             Logger logger = Logger.getLogger(LogHandler.class.getName());
-                    while(true) {
-            if(UsbHidComms.connected() && DeviceComms.connected) {              //keep doing this stuff while the device is still connected
+class DeviceMon extends Thread {                                                //thread used for main device operation and monitoring 
+    Gui gui;
+    PropHandler props;
+    DeviceHandler twiScn;
+    TweetHandler twt;
+    Logger logger = Logger.getLogger(LogHandler.class.getName());
+    
+    public DeviceMon(Gui gui, PropHandler props, DeviceHandler twiScn, TweetHandler twt) {
+        this.gui = gui;
+        this.props = props;
+        this.twiScn = twiScn;
+        this.twt = twt;
+    }
+    
+    public void run() {                                                          
+        while(true) {                                                           //keep doing this forever
+            if(UsbHidComms.connected() && DeviceComms.connected) {              //but only this while the device is still connected
                 if(gui.applyDevice) {                                           //check if device settings need to be applied to the device and saved
                     props.writeAllProps(false);
                     twiScn.applyAllOptions();
@@ -107,8 +104,7 @@ class DeviceMon extends Thread {                                                
                 }
                 twiScn.monitorDevice();                                         //monitor the FN buttons for updates
             }
-            else {
-                //device got disconnected, try reconnecting it
+            else {                                                              //device got disconnected, try reconnecting it
                 gui.setConnected(false);
                 gui.addStatusLine("Lost connection to device.");
                 logger.log(Level.WARNING, "Lost connection to device.");
@@ -121,6 +117,5 @@ class DeviceMon extends Thread {                                                
                 twt.startStream();
             }
         }
-         //}
-     }
+    }
  }
