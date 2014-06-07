@@ -1,13 +1,8 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: move handshake check to the cxheckalive thread
+//TODO: 
 package twiscnhost;
 
 import java.util.logging.*;
-//import static twiscnhost.Main.gui;
-//import static twiscnhost.Main.opt;
-//import static twiscnhost.Main.props;
-////import static twiscnhost.Main.twiScn;
-////import static twiscnhost.Main.twt;
 
 public class Main extends javax.swing.JFrame {
     
