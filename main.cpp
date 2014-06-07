@@ -25,7 +25,7 @@ void checkSleep();
 //global variables, shouldn't hurt anything
 bool deadHost = false;                                                          //stores the dead host status
 bool sleeping = false;                                                          //stores the sleep status    
-const unsigned int ALIVEDELAY = 1000;                                           //max time to wait in between keepAlive updates
+const unsigned int ALIVEDELAY = 5000;                                           //max time to wait in between keepAlive updates
 unsigned long previousAlive = 0;                                                //last time an SOF happened in ms
 unsigned long previousMillis2 = 0;                                              //used for keeping track of SOF checking times
 const int LCDWIDTH = 16;                                                        //character width of the LCD
