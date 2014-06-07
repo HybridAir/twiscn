@@ -215,6 +215,12 @@ public class Gui extends javax.swing.JFrame {
         }
     }
     
+    private void apply(boolean enabled) {                                       //used to set the enabled status of the device apply button
+        if(!opt.getSleep()) {                                                   //make sure the device is not sleeping
+            deviceApplyBtn.setEnabled(enabled);
+        }
+    }
+    
 //==============================================================================    
     
     @SuppressWarnings("unchecked")
@@ -257,6 +263,7 @@ public class Gui extends javax.swing.JFrame {
         deviceApplyBtn = new javax.swing.JButton();
         deviceDefaultsBtn = new javax.swing.JButton();
         sleepBtn = new javax.swing.JButton();
+        sleepNoteLbl = new javax.swing.JLabel();
         twitterTab = new javax.swing.JPanel();
         followingPane = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -631,6 +638,8 @@ public class Gui extends javax.swing.JFrame {
                     .addComponent(deviceInfoPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(deviceTabLayout.createSequentialGroup()
                         .addComponent(sleepBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sleepNoteLbl)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(deviceDefaultsBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -648,7 +657,8 @@ public class Gui extends javax.swing.JFrame {
                 .addGroup(deviceTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deviceApplyBtn)
                     .addComponent(deviceDefaultsBtn)
-                    .addComponent(sleepBtn))
+                    .addComponent(sleepBtn)
+                    .addComponent(sleepNoteLbl))
                 .addContainerGap())
         );
 
@@ -886,15 +896,15 @@ public class Gui extends javax.swing.JFrame {
             rainSpeedSpnr.setEnabled(false);
             userColorBtn.setEnabled(true);
         }
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+        apply(true);                                                            //enable the apply button, since there has been a new change
     }//GEN-LAST:event_rainEnabledChkItemStateChanged
 
     private void fn1CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn1CbxItemStateChanged
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button when the fn1 action combobox is changed
+        apply(true);                                        //enable the apply button when the fn1 action combobox is changed
     }//GEN-LAST:event_fn1CbxItemStateChanged
 
     private void fn2CbxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fn2CbxItemStateChanged
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button when the fn2 action combobox is changed
+        apply(true);                                        //enable the apply button when the fn2 action combobox is changed
     }//GEN-LAST:event_fn2CbxItemStateChanged
 
     private void userColorBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userColorBtnActionPerformed
@@ -903,7 +913,7 @@ public class Gui extends javax.swing.JFrame {
         //opens the color chooser dialog, and stores the selected color
         if(selectedColor != null) {                                             //if the user actually chose a new color
             opt.setLCDColor(selectedColor);                                     //give Options that new color
-            deviceApplyBtn.setEnabled(true);                                    //enable the apply button, since there has been a new change
+            apply(true);                                                        //enable the apply button, since there has been a new change
         }      
     }//GEN-LAST:event_userColorBtnActionPerformed
 
@@ -913,7 +923,7 @@ public class Gui extends javax.swing.JFrame {
         //opens the color chooser dialog, and stores the selected color
         if(selectedColor != null) {                                             //if the user actually chose a new color
             opt.setBlinkColor(selectedColor);                                   //give Options that new color
-            deviceApplyBtn.setEnabled(true);                                    //enable the apply button, since there has been a new change
+            apply(true);                                                        //enable the apply button, since there has been a new change
         }  
     }//GEN-LAST:event_blinkColorBtnActionPerformed
 
@@ -932,20 +942,20 @@ public class Gui extends javax.swing.JFrame {
         else {
             addStatusLine("Settings sent to device");
         }
-        applyDevice = true;                                                    //tell the program to apply the options asap
-        deviceApplyBtn.setEnabled(false);                                       //disable the apply button, just applied changes
+        applyDevice = true;                                                     //tell the program to apply the options asap
+        apply(false);                                                           //disable the apply button, just applied changes
     }//GEN-LAST:event_deviceApplyBtnActionPerformed
 
     private void brightnessSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_brightnessSpnrStateChanged
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+        apply(true);                                                            //enable the apply button, since there has been a new change
     }//GEN-LAST:event_brightnessSpnrStateChanged
 
     private void readSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_readSpnrStateChanged
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+        apply(true);                                                            //enable the apply button, since there has been a new change
     }//GEN-LAST:event_readSpnrStateChanged
 
     private void rainSpeedSpnrStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rainSpeedSpnrStateChanged
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+        apply(true);                                                            //enable the apply button, since there has been a new change
     }//GEN-LAST:event_rainSpeedSpnrStateChanged
 
     private void blinkEnabledChkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_blinkEnabledChkItemStateChanged
@@ -956,13 +966,14 @@ public class Gui extends javax.swing.JFrame {
         else {
             blinkColorBtn.setEnabled(false);
         }
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+        apply(true);                                                            //enable the apply button, since there has been a new change
     }//GEN-LAST:event_blinkEnabledChkItemStateChanged
 
     private void deviceDefaultsBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deviceDefaultsBtnActionPerformed
         opt.setDeviceDefaults();                                                //tell Options to set all device settings to default
         setDeviceDefaults();                                                    //apply the default device settings
-        deviceApplyBtn.setEnabled(true);                                        //enable the apply button, since there has been a new change
+        sleepBtn.setText("Sleep");                                              //reset the sleep button text
+        apply(true);                                                            //enable the apply button, since there has been a new change
     }//GEN-LAST:event_deviceDefaultsBtnActionPerformed
 
     private void twtUserLstValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_twtUserLstValueChanged
@@ -1090,11 +1101,13 @@ public class Gui extends javax.swing.JFrame {
         if(opt.getSleep()) {                                                    //if the device should already be sleeping
             opt.setSleep(false);                                                //set sleep to false
             sleepBtn.setText("Sleep");                                          //reset the sleep button text
+            sleepNoteLbl.setText("");
             applyDevice = true;                                                 //go apply it
         }
         else {
             opt.setSleep(true);                                                 //set sleep to true
             sleepBtn.setText("Wake Up");                                        //reset the sleep button text
+            sleepNoteLbl.setText("Unable to apply settings while sleeping");
             applyDevice = true;                                                 //go apply it
         }
     }//GEN-LAST:event_sleepBtnActionPerformed
@@ -1140,6 +1153,7 @@ public class Gui extends javax.swing.JFrame {
     private javax.swing.JSpinner readSpnr;
     private javax.swing.JButton remUserBtn;
     private javax.swing.JButton sleepBtn;
+    private javax.swing.JLabel sleepNoteLbl;
     protected javax.swing.JLabel statusLbl;
     private javax.swing.JLabel statusName;
     private javax.swing.JPanel statusPane;
