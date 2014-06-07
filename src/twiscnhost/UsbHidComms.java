@@ -51,15 +51,14 @@ public class UsbHidComms {
         HIDDeviceInfo[] devices = deviceFindAllDescriptors();                   //find the device that we want to connect to
         if (devices.length > 0) {                                               //check if we found a device (there will be something in that array)
             try {
-                int i = 0;
-                while(device == null) {
-                    device = devices[i].open();                                     //try to open the first device in the array, and set that to the active device var
-                    i++;
+                for(int i = 0;i <= devices.length && device == null;i++) {
+                    device = devices[i].open();                                 //try to open the first device in the array, and set that to the active device var
                 }
             } 
             catch (Exception e) {
-                logger.log(Level.WARNING, "Unable to find device.", e);
+                logger.log(Level.SEVERE, "Unable to find device.", e);
                 device = null;                                                  //device cannot be found error, device is null
+                System.exit(0);
             }
         }  
     }
@@ -140,7 +139,7 @@ public class UsbHidComms {
 
     private void deviceWrite(String value) {                                    //actually writes that stuff to the device
         char[] charArray = value.toCharArray();                                 //conver the string into an array of chars, and put it in a new char array
-        int size = (charArray.length > 32) ? 32 : charArray.length;             //get the transfer size (that array size), make sure it's not over 32 (some dumb hid limit)
+        int size = (charArray.length >= 32) ? 32 : charArray.length;             //get the transfer size (that array size), make sure it's not over 32 (some dumb hid limit)
         byte[] data = new byte[33];                                             //create a new byte array called data, size 33 (to hold the identifier byte in the beginning)
         data[0] = (byte)0;                                                      //first element needs to be a 0 converted to a byte
         int i;
