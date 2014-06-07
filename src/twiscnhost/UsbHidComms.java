@@ -58,7 +58,6 @@ public class UsbHidComms {
             catch (Exception e) {
                 logger.log(Level.SEVERE, "Unable to find device.", e);
                 device = null;                                                  //device cannot be found error, device is null
-                System.exit(0);
             }
         }  
     }
@@ -122,6 +121,9 @@ public class UsbHidComms {
             } else {
                 return null;                                                    //didn't get anything, darn
             }
+        } catch(NullPointerException e) {
+            logger.log(Level.WARNING, "Device read error.", e);
+            device = null;                                                      //device is probably fubar at this point, trigger a reconnection
         } catch(IOException e) {
             logger.log(Level.WARNING, "Device read error.", e);
             device = null;                                                      //device is probably fubar at this point, trigger a reconnection
