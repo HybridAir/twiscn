@@ -29,8 +29,10 @@ public class DeviceHandler {
         keepAlive();
         gui.setConnected(true);
         getVersion();
+        try {                                                                   //try to wait 500 ms to let the device catch up
+            Thread.sleep(500L);
+        } catch (Exception e) {}
         keepAlive();
-        applyAllOptions();
     }
     
     public void keepAlive() {
