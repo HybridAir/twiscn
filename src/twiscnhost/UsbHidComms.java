@@ -18,6 +18,7 @@ public class UsbHidComms {
     private int pdct;
     private static HIDDevice device = null;                                      
     private static Boolean device_initialized = false;
+    public static boolean restartComms = false;
     
     public UsbHidComms(int vndr, int pdct) {                                    //constructor, accepts the vendor ID, and the product ID
         this.vndr = vndr;
@@ -56,8 +57,9 @@ public class UsbHidComms {
                 }
             } 
             catch (Exception e) {
-                logger.log(Level.SEVERE, "Unable to find device.", e);
+                logger.log(Level.SEVERE, "Unable to find device, try reconnecting.", e);
                 device = null;                                                  //device cannot be found error, device is null
+                restartComms = true;
             }
         }  
     }
@@ -123,10 +125,12 @@ public class UsbHidComms {
             }
         } catch(NullPointerException e) {
             logger.log(Level.WARNING, "Device read error.", e);
-            device = null;                                                      //device is probably fubar at this point, trigger a reconnection
+            device = null;
+            device_initialized = false;//device is probably fubar at this point, trigger a reconnection
         } catch(IOException e) {
             logger.log(Level.WARNING, "Device read error.", e);
             device = null;                                                      //device is probably fubar at this point, trigger a reconnection
+            device_initialized = false;
         }
         return null;
     }
