@@ -37,7 +37,6 @@ public class DeviceHandler {
     
     public void keepAlive() {
         comms.sendRaw("%");
-        comms.sendRaw("=");
     }
     
     private void getVersion() {                                                 //used to set the device version
@@ -66,6 +65,9 @@ public class DeviceHandler {
     
     public void newTweet(String user, String text) {                            //used to send a new tweet to the device, needs a user and tweet text
         comms.row0(user);
+        try {                                                               //try to wait 750 ms before sending another
+                Thread.sleep(50L);
+            } catch (Exception e) {}
         comms.row1(text);
     }
          
