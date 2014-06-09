@@ -31,7 +31,10 @@ void Comms::readComms() {                                                       
         switch (inByte) {                                                       //check what character it is, and process accordingly
             case '=':                                                           //marks the end of the entire transfer, must always be in its own packet     
                 checkType();                                                    //process the completed data transfer
-                break;     
+                break;
+            case '%':
+                keepAlive++;
+                break;
             default:                                                            //this will only trigger for regular packet transfers           
                 transferOut += usbBufStr;                                       //add the current packet to the output transfer String
                 break;
@@ -43,10 +46,6 @@ void Comms::checkType() {                                                       
     char type = transferOut.charAt(0);                                          //get the first char out of the transfer output, it's the transfer type
     transferOut = transferOut.substring(1);                                     //remove the the first character, it's no longer needed in there
     switch(type) {                                                              //check the first char of the transferOut String
-        case '%':                                                               //keepalive transfer, lets the device know that the host is still alive
-            keepAlive++;                                                        //increase the keepalive value
-            transferOut = "";                                                   //empty transferOut so it can accept a new transfer
-            break;
         case '@':                                                               //username transfer, also signifies the start of a new tweet
             userOut = transferOut;                                              //put the transfer into a new String for the username
             transferOut = "";                                                   //empty transferOut so it can accept a new transfer
