@@ -1,8 +1,11 @@
 //Main console-based host program for controlling the TwiScnDevice
-//TODO: 
+//TODO: send device sleep when exit
 package twiscnhost;
 
 import java.util.logging.*;
+import static twiscnhost.Main.devMon;
+import static twiscnhost.Main.keepAlive;
+import static twiscnhost.Main.twiScn;
 
 public class Main extends javax.swing.JFrame {
     
@@ -18,19 +21,28 @@ public class Main extends javax.swing.JFrame {
     public static final DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, opt, gui); 
     public static final TweetHandler twt = new TweetHandler(opt, twiScn);
     public static final KeepAlive keepAlive = new KeepAlive(twiScn);
-    public static final DeviceMon devMon = new DeviceMon(gui, props, twiScn, twt);
+    public static final DeviceMon devMon = new DeviceMon(gui, props, twiScn, twt, opt);
     public static final ShutdownHook shutdown = new ShutdownHook(props);
 
     public static void main(String[] args) {
-        shutdown.attachShutDownHook();
+        shutdown.attachShutDownHook();       
         opt.init(props);
         gui.init(twt);
         twiScn.init();
         keepAlive.start();
         twt.init();
         devMon.start();
+        
+    }
+    
+    void mainInit() {
+        twiScn.init();
+        keepAlive.start();
+        devMon.start();
     }
 }
+
+
 
 class ShutdownHook {                                                            //used to monitor when the program is told to shutdown
     PropHandler props;
@@ -65,7 +77,7 @@ class KeepAlive extends Thread {                                                
                 twiScn.keepAlive();                                             //send a keep alive packet      
             }
             try {                                                               //try to wait 750 ms before sending another
-                Thread.sleep(750L);
+                Thread.sleep(1000L);
             } catch (Exception e) {}
         }
     }
@@ -76,13 +88,18 @@ class DeviceMon extends Thread {                                                
     PropHandler props;
     DeviceHandler twiScn;
     TweetHandler twt;
+    Options opt;
     Logger logger = Logger.getLogger(LogHandler.class.getName());
+    int VENDOR_ID = 0x16c0;                         
+    int PRODUCT_ID = 0x27d9;
+    int[] DEVICEIDS = {VENDOR_ID, PRODUCT_ID};
     
-    public DeviceMon(Gui gui, PropHandler props, DeviceHandler twiScn, TweetHandler twt) {
+    public DeviceMon(Gui gui, PropHandler props, DeviceHandler twiScn, TweetHandler twt, Options opt) {
         this.gui = gui;
         this.props = props;
         this.twiScn = twiScn;
         this.twt = twt;
+        this.opt = opt;
     }
     
     public void run() {                                                          
@@ -99,6 +116,17 @@ class DeviceMon extends Thread {                                                
                 }
                 twiScn.monitorDevice();                                         //monitor the FN buttons for updates
             }
+            else if(UsbHidComms.restartComms) {
+                UsbHidComms.restartComms = false;
+                try {
+                    keepAlive.wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(DeviceMon.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                DeviceHandler twiScn = new DeviceHandler(DEVICEIDS, opt, gui);
+                twiScn.init();
+                keepAlive.start();
+            }
             else {                                                              //device got disconnected, try reconnecting it
                 gui.setConnected(false);
                 gui.addStatusLine("Lost connection to device.");
@@ -114,3 +142,4 @@ class DeviceMon extends Thread {                                                
         }
     }
  }
+
