@@ -75,10 +75,10 @@ void Comms::checkType() {                                                       
 
 void Comms::handshake() {                                                       //used to establish a data connection with the host
     while (!connected) {                                                        //do this while we are not connected
-        lcd.connectDisplay(true);                                               //display the connecting animation on the LCD
-        inout.connectionLED(2);                                                 //blink the connection led to further signify that the device is connecting
         usbPoll();                                                              //keep polling the USB port for any new data
         usb.println("`");                                                       //continuously send this to the host so it knows the we are waiting for a handshake
+        lcd.connectDisplay(true);                                               //display the connecting animation on the LCD
+        inout.connectionLED(2);                                                 //blink the connection led to further signify that the device is connecting
         if (usb.available()) {                                                  //check if we got any data from the host
             usb.read((uint8_t*)usbBuffer);                                      //read that data into usbBuffer
             if ((uint8_t)usbBuffer[0] == '~') {                                 //a "~" is the host acknowledging that it got the "`" from before
