@@ -40,10 +40,10 @@ public class TweetHandler {
                     opt.delFollowUser(in[i]);                                   //remove the bad ID from the array if it is
                 }
             } catch (TwitterException e) {                                      //need to catch any twitter errors
-                logger.log(Level.SEVERE, "Failed to check if userID is protected", e);
+                logger.log(Level.WARNING, "Failed to check if userID is protected", e);
                 System.exit(0);                                                 //chances are twitter is not accessible, so kill the program
             } catch(IllegalStateException e) {                                  //check if there is a problem with the properties
-                logger.log(Level.SEVERE, "Unable to login to Twitter, check twitter4j.properties", e);
+                logger.log(Level.WARNING, "Unable to login to Twitter, check twitter4j.properties", e);
                 System.exit(0);
             }
         }
@@ -155,12 +155,40 @@ public class TweetHandler {
         //logger.log(Level.INFO, "TwitterStream stopped");
     }
     
+    private boolean correctUser(Status status) {                                //used to check if a tweet was made by the correct user
+        boolean checking = true;
+        long[] following = getFollowUsers();
+        
+        while(checking) {                                                       //while we are still checking
+            for(int i = 0;i < following.length; i++) {                          //for each user the program is following
+                String user = status.getUser().getScreenName();                 //get the screenname of the user who created the tweet
+                String checkUser = "";                                          //create this now to get it out of the way
+                try {
+                    checkUser = getScreenName(following[i]);                    //try to get the screenname of the current user we are checking
+                } catch (TwitterException ex) {
+                    java.util.logging.Logger.getLogger(TweetHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                if(!user.equalsIgnoreCase(checkUser)) {                         //if the usernames do not match
+                    return false;                                               //user is incorrect, return false
+                }
+            }
+            checking = false;                                                   //checked each user
+        }
+        return true;                                                            //assuming true at this point, return it
+            
+    }
+    
     private final UserStreamListener listener = new UserStreamListener() {      //UserStreamListener implementation
         @Override
         public void onStatus(Status status) {
             //System.out.println("onStatus @" + status.getUser().getScreenName() + " - " + status.getText());
             if(!stopped) {
-                sendTweet(status);
+                
+                //check if the tweet was sent by the correct user first
+                if(correctUser(status)) { 
+                    sendTweet(status);
+                }
             }
         }
 
