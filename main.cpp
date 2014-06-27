@@ -41,7 +41,6 @@ Comms comms;                                                                    
 //==============================================================================
 
 void setup() {  
-    comms.connect();
     prepare();                                                                  //prepare the device for operation
 }
 
