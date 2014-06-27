@@ -640,12 +640,13 @@
                     <Component class="javax.swing.JComboBox" name="fn1Cbx">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="5">
+                          <StringArray count="6">
                             <StringItem index="0" value="None"/>
                             <StringItem index="1" value="Increment Brightness"/>
                             <StringItem index="2" value="Toggle Rainbow Mode"/>
                             <StringItem index="3" value="Switch Tweet"/>
                             <StringItem index="4" value="Toggle Scroll"/>
+                            <StringItem index="5" value="Toggle Sleep"/>
                           </StringArray>
                         </Property>
                       </Properties>
@@ -661,12 +662,13 @@
                     <Component class="javax.swing.JComboBox" name="fn2Cbx">
                       <Properties>
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                          <StringArray count="5">
+                          <StringArray count="6">
                             <StringItem index="0" value="None"/>
                             <StringItem index="1" value="Increment Brightness"/>
                             <StringItem index="2" value="Toggle Rainbow Mode"/>
                             <StringItem index="3" value="Switch Tweet"/>
                             <StringItem index="4" value="Toggle Scroll"/>
+                            <StringItem index="5" value="Toggle Sleep"/>
                           </StringArray>
                         </Property>
                       </Properties>

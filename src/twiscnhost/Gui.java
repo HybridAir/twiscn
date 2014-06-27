@@ -61,7 +61,7 @@ public class Gui extends javax.swing.JFrame {
       
     public void init(TweetHandler twt) {                                        //used to finish setting up and displaying the GUI, needs the tweethandler instance
         this.twt = twt;
-        Image trayImage = Toolkit.getDefaultToolkit().getImage("icon.gif");
+        Image trayImage = Toolkit.getDefaultToolkit().getImage("icon.gif");    
         setIconImage(trayImage);
         setDeviceDefaults();                                                    //set the default settings for the device tab
         refreshUserList();                                                      //set up the user list in the twitter tab
@@ -556,7 +556,7 @@ public class Gui extends javax.swing.JFrame {
 
         fn1Name.setText("FN1:");
 
-        fn1Cbx.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Increment Brightness", "Toggle Rainbow Mode", "Switch Tweet", "Toggle Scroll" }));
+        fn1Cbx.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Increment Brightness", "Toggle Rainbow Mode", "Switch Tweet", "Toggle Scroll", "Toggle Sleep" }));
         fn1Cbx.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fn1CbxItemStateChanged(evt);
@@ -565,7 +565,7 @@ public class Gui extends javax.swing.JFrame {
 
         fn2Name.setText("FN2:");
 
-        fn2Cbx.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Increment Brightness", "Toggle Rainbow Mode", "Switch Tweet", "Toggle Scroll" }));
+        fn2Cbx.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None", "Increment Brightness", "Toggle Rainbow Mode", "Switch Tweet", "Toggle Scroll", "Toggle Sleep" }));
         fn2Cbx.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fn2CbxItemStateChanged(evt);
