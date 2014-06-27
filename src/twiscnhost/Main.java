@@ -1,5 +1,5 @@
-//Main console-based host program for controlling the TwiScnDevice
-//TODO: send device sleep when exit
+//Main host program for controlling the TwiScnDevice
+//TODO:
 package twiscnhost;
 
 import java.util.logging.*;
@@ -104,6 +104,9 @@ class DeviceMon extends Thread {                                                
     
     public void run() {                                                          
         while(true) {                                                           //keep doing this forever
+            try {                                                               //10 ms sleep to prevent excessive cpu usage
+                Thread.sleep(10L);
+            } catch (Exception e) {}
             if(UsbHidComms.connected() && DeviceComms.connected) {              //but only this while the device is still connected
                 if(gui.applyDevice) {                                           //check if device settings need to be applied to the device and saved
                     props.writeAllProps(false);
