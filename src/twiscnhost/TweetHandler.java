@@ -167,15 +167,13 @@ public class TweetHandler {
                     checkUser = getScreenName(following[i]);                    //try to get the screenname of the current user we are checking
                 } catch (TwitterException ex) {
                     java.util.logging.Logger.getLogger(TweetHandler.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                if(!user.equalsIgnoreCase(checkUser)) {                         //if the usernames do not match
-                    return false;                                               //user is incorrect, return false
+                }                
+                if(user.equalsIgnoreCase(checkUser)) {                          //if the usernames match
+                    return true;                                                //user is correct, return here
                 }
             }
-            checking = false;                                                   //checked each user
         }
-        return true;                                                            //assuming true at this point, return it
+        return false;                                                           //assuming false at this point, return it
             
     }
     
