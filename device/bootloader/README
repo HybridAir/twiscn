@@ -1,0 +1,9 @@
+This is the usb bootloader deal that the twiscn uses
+All settings are currently set
+
+To upload the bootloader:
+1. connect the twiscn to your ISP programmer of choice using the ISP pins
+2. cd to firmware
+3. make
+4. sudo avrdude -p atmega328p -C ~/avrdude_gpio.conf -c pi_1 -v -F -U flash:w:main.hex:i
+5. sudo avrdude -p atmega328p -C ~/avrdude_gpio.conf -c pi_1 -v -U lfuse:w:0xd7:m -U hfuse:w:0xd0:m -U efuse:w:0x04:m
