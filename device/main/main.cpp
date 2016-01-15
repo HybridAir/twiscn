@@ -1,21 +1,19 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-void init_io(void) {
-	DDRC = 0b00010000; // All outputs
-}
+#include "io.h"
 
 int main(void)
 {
-	init_io();
+    ioInit();
 
 	while (1)
 	{
 		PORTC = 0xFF;
-		_delay_ms(500);
+		_delay_ms(100);
 
 		PORTC = 0x00;
-		_delay_ms(500);
+		_delay_ms(100);
 	}
 
 	return 0;
