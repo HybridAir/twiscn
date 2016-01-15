@@ -1,0 +1,3 @@
+all the device firmware and hardware stuff will go in here
+
+you need arduino 1.6.7 and https://github.com/sudar/Arduino-Makefile to compile it

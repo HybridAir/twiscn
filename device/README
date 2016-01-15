@@ -1,1 +1,5 @@
-all the device firmware and hardware stuff will go in here
+bootloader: the device's bootloader
+main: main program
+lib: libraries
+
+yep
