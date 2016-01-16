@@ -1,4 +1,4 @@
-F_CPU           = 16000000L
+F_CPU           = 16000000
 BOARD_TAG       = uno
 MCU             = atmega328p
 ARDUINO_DIR     = /home/pi/arduino-1.6.7
