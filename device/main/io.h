@@ -7,6 +7,8 @@
 
 #define CON_LED             PC4
 #define SPEED_POT           PC0
+#define FN1_BTN             PC3
+#define FN2_BTN             PD4
 
 #define RED_LED             PB1
 #define GREEN_LED           PD5
@@ -18,6 +20,7 @@ void setConLed(bool enabled);
 void setBacklight(uint8_t r, uint8_t g, uint8_t b, uint8_t brightness);
 void setContrast(bool enabled);
 uint16_t getSpeed();
+uint8_t getButtons();
 
 
 #endif

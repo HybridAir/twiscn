@@ -19,7 +19,7 @@ int main(void)
 	while(1)
 	{
         lcd.setCursor(0,0);
-        lcd.print(getSpeed());
+        lcd.print(getButtons());
 	}
 
 	return 0;

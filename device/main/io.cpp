@@ -3,10 +3,10 @@
 #include "io.h"
 
 void ioInit() {
-    DDRB |= (1<<RED_LED);                       //the connection LED is an output
-    DDRC |= ((1<<CON_LED)|(1<<CONTRAST));             //the connection LED is an output
-    //DDRC &= ~(1<<SPEED_POT);
-    DDRD |= ((1<<GREEN_LED)|(1<<BLUE_LED));             //the connection LED is an output
+    //set pin outputs (ports are inputs by default)
+    DDRB |= (1<<RED_LED);
+    DDRC |= ((1<<CON_LED)|(1<<CONTRAST));
+    DDRD |= ((1<<GREEN_LED)|(1<<BLUE_LED));
     
     setConLed(true);
     setContrast(true);
@@ -36,6 +36,7 @@ void setBacklight(uint8_t r, uint8_t g, uint8_t b, uint8_t brightness) {
     g = map(g, 0, 255, 255, 0);
     b = map(b, 0, 255, 255, 0);
 
+    //set the backlight LEDs accordingly
     analogWrite(RED_LED, r);
     analogWrite(GREEN_LED, g);
     analogWrite(BLUE_LED, b);
@@ -58,4 +59,9 @@ uint16_t getSpeed() {
     return analogRead(SPEED_POT);
 }
 
-//button checking
+
+//returns the current button states as a byte, 0b000000xx
+//0x00 = None, 0x01 = FN1, 0x02 = FN2, 0x03 = FN1 and FN2
+uint8_t getButtons() {
+    return ((PIND & (1<<FN2_BTN)) | (PINC & (1<<FN1_BTN))) >> 3;
+}
