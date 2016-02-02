@@ -4,6 +4,7 @@
 //#include <avr/io.h>
 //#include <util/delay.h>
 #include <Arduino.h>
+#include <LiquidCrystal.h>  
 
 #define CON_LED             PC4
 #define SPEED_POT           PC0
@@ -16,9 +17,11 @@
 #define CONTRAST            PC2
 
 void ioInit();
+void monitorIo();
 void setConLed(bool enabled);
 void setBacklight(uint8_t r, uint8_t g, uint8_t b, uint8_t brightness);
 void setContrast(bool enabled);
+
 uint16_t getSpeed();
 uint8_t getButtons();
 

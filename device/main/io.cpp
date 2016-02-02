@@ -1,6 +1,9 @@
-//input/output stuff, except for the LCD
+//input/output stuff
 
 #include "io.h"
+
+LiquidCrystal lcd(7, 8, 13, 10, 11, 12);
+uint8_t prevBtn;
 
 void ioInit() {
     //set pin outputs (ports are inputs by default)
@@ -8,9 +11,27 @@ void ioInit() {
     DDRC |= ((1<<CON_LED)|(1<<CONTRAST));
     DDRD |= ((1<<GREEN_LED)|(1<<BLUE_LED));
     
+    lcd.begin(16, 2);
     setConLed(true);
     setContrast(true);
     setBacklight(0, 84, 255, 255);
+    
+    prevBtn = 0;
+    
+    //lcd start screen
+}
+
+
+void monitorIo() {
+    uint8_t currentBtn = getButtons();
+    if(currentBtn != prevBtn) {
+        prevBtn = currentBtn;
+        
+        lcd.clear();
+        lcd.print(currentBtn, BIN);
+    }
+    
+    
 }
 
 

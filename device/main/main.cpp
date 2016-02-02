@@ -4,16 +4,12 @@
 #include <avr/wdt.h>
 #include <avr/interrupt.h>  /* for sei() */
 
-#include "usbdrv.h"
 
-
-#include <LiquidCrystal.h>  
-#include <TwiscnUSB.h>
 
 #include "io.h"
 #include "comms.h"
 
-LiquidCrystal lcd(7, 8, 13, 10, 11, 12);
+
 
 
 
@@ -43,40 +39,23 @@ void get_input() {
 
 int main(void)
 {
-    init();
+    init();             //arduino library init thing
     ioInit();
-    lcd.begin(16, 2);
+    commsInit();
+    
+    //connect
    
-    TwiscnUSB.begin();
+    
 
     
-    
-    
-	while(1)
-	{
-        //lcd.setCursor(0,0);
-        //lcd.print(getButtons());
-        
-          // if (t == 0 || millis() > t+1000) {
-        // usb.println("Hello World!");
-        // t = millis();
-        // }
-        // usb.poll();
-        
-        
-          // if(usb.available()) {
-    // int size = usb.read(buffer);
-    // if (size!=0) {
-      // lcd.setCursor(0,0);
-      // lcd.print(buffer[3]);
-    // }
-  // }
-  // usb.poll();
-  
-    // print output
-  TwiscnUSB.println("Waiting for input...");
+	while(1) {
+        //monitor connection
+        //monitor io
+        monitorIo();
+
+  //TwiscnUSB.println("Waiting for input...");
   // get input
-  get_input();
+  //get_input();
         
 	}
 
