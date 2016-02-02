@@ -11,6 +11,7 @@
 
 
 void commsInit();
+void get_input();
 void monitorConnection();
 
 
